@@ -1,6 +1,5 @@
 import type { SpinePresetInput } from "../types.js";
-import { renderPs2Spine } from "./ps2.js";
-import { renderBlankSpine, renderTextSpine } from "./text.js";
+import { renderPs2SpineText, renderBlankSpine, renderTextSpine } from "./text.js";
 
 export interface RenderedSpine {
   png: Buffer;
@@ -14,7 +13,7 @@ export async function renderSpinePreset(
 ): Promise<RenderedSpine> {
   switch (spine.preset) {
     case "ps2":
-      return renderPs2Spine(spine, widthMm, heightMm, dpi);
+      return renderPs2SpineText(spine, widthMm, heightMm, dpi);
     case "blank":
       return renderBlankSpine(spine, widthMm, heightMm, dpi);
     case "text":

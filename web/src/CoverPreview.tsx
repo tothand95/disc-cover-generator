@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { buildSpineSvg, type SpineTextAlign as SpineTextAlignShared } from "../../core/spine/svg";
 
 interface CasePreset {
   id: string;
@@ -11,7 +12,7 @@ interface CasePreset {
 type Fit = "stretch" | "fill" | "fit";
 type BorderMode = "none" | "outer" | "sections";
 type SpinePreset = "ps2" | "ps1" | "xbox" | "xbox360" | "blank" | "text";
-type SpineTextAlign = "start" | "center" | "end";
+type SpineTextAlign = SpineTextAlignShared;
 
 interface CoverPreviewProps {
   preset: CasePreset;
@@ -94,113 +95,66 @@ function SectionImage({
   );
 }
 
-function Ps2SpinePreview({ title, height }: { title: string; height: number }) {
-  const fontSize = Math.max(9, Math.floor(height * 0.045));
-  return (
-    <div
-      className="w-full h-full relative overflow-hidden select-none"
-      style={{
-        background: "#ffffff",
-        boxSizing: "border-box",
-        padding: `${fontSize}px 0`,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {title && (
-        <div
-          style={{
-            writingMode: "vertical-rl",
-            color: "#000000",
-            fontFamily: "SpineFont, sans-serif",
-            fontWeight: 600,
-            fontSize,
-            lineHeight: 1,
-            letterSpacing: "0.02em",
-            whiteSpace: "nowrap",
-            transform: "translateX(-0.09em)",
-          }}
-        >
-          {title}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function TextSpinePreview({
+function SharedSpineSvg({
   title,
-  height,
+  widthPx,
+  heightPx,
   bg,
   textColor,
   align,
 }: {
   title: string;
-  height: number;
+  widthPx: number;
+  heightPx: number;
   bg: string;
   textColor: string;
   align: SpineTextAlign;
 }) {
-  const fontSize = Math.max(9, Math.floor(height * 0.045));
-  const alignItems =
-    align === "start" ? "flex-start" : align === "end" ? "flex-end" : "center";
+  if (widthPx <= 0 || heightPx <= 0) return null;
+  const svg = buildSpineSvg({ title, widthPx, heightPx, bg, textColor, align });
   return (
     <div
-      className="w-full h-full relative overflow-hidden select-none"
-      style={{
-        background: bg,
-        boxSizing: "border-box",
-        padding: `${fontSize}px 0`,
-        display: "flex",
-        justifyContent: "center",
-        alignItems,
-      }}
-    >
-      {title && (
-        <div
-          style={{
-            writingMode: "vertical-rl",
-            color: textColor,
-            fontFamily: "SpineFont, sans-serif",
-            fontWeight: 600,
-            fontSize,
-            lineHeight: 1,
-            letterSpacing: "0.02em",
-            whiteSpace: "nowrap",
-            transform: "translateX(-0.09em)",
-          }}
-        >
-          {title}
-        </div>
-      )}
-    </div>
+      className="w-full h-full overflow-hidden select-none"
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
   );
 }
 
 function SpinePresetPreview({
   preset,
   title,
-  height,
+  widthPx,
+  heightPx,
   bg,
   textColor,
   textAlign,
 }: {
   preset: SpinePreset;
   title: string;
-  height: number;
+  widthPx: number;
+  heightPx: number;
   bg: string;
   textColor: string;
   textAlign: SpineTextAlign;
 }) {
-  if (preset === "ps2") return <Ps2SpinePreview title={title} height={height} />;
-  if (preset === "blank")
-    return <div className="w-full h-full" style={{ background: bg }} />;
+  if (preset === "ps2")
+    return (
+      <SharedSpineSvg
+        title={title}
+        widthPx={widthPx}
+        heightPx={heightPx}
+        bg="#ffffff"
+        textColor="#000000"
+        align="center"
+      />
+    );
+  if (preset === "blank") return <div className="w-full h-full" style={{ background: bg }} />;
   if (preset === "text")
     return (
-      <TextSpinePreview
+      <SharedSpineSvg
         title={title}
-        height={height}
+        widthPx={widthPx}
+        heightPx={heightPx}
         bg={bg}
         textColor={textColor}
         align={textAlign}
@@ -342,7 +296,8 @@ export function CoverPreview(props: CoverPreviewProps) {
                 <SpinePresetPreview
                   preset={spinePreset}
                   title={spineTitle}
-                  height={heightPx}
+                  widthPx={spineWidthPx}
+                  heightPx={heightPx}
                   bg={spineBg}
                   textColor={spineTextColor}
                   textAlign={spineTextAlign}
@@ -407,6 +362,3 @@ export function CoverPreview(props: CoverPreviewProps) {
   );
 }
 
-function SectionLabel(_: { text: string; position: "top" | "bottom" | "center" }) {
-  return null;
-}
