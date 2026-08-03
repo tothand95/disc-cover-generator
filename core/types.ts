@@ -28,12 +28,18 @@ export interface BorderOptions {
   color: string;
 }
 
-export type SpinePresetId = "ps2" | "ps1" | "xbox" | "xbox360";
+export type SpinePresetId = "ps2" | "ps1" | "xbox" | "xbox360" | "blank" | "text";
+
+export type SpineTextAlign = "start" | "center" | "end";
 
 export interface SpinePresetInput {
   preset: SpinePresetId;
   title: string;
-  extras?: Record<string, unknown>;
+  extras?: {
+    backgroundColor?: string;
+    textColor?: string;
+    textAlign?: SpineTextAlign;
+  };
 }
 
 export interface SingleImageInput {
@@ -60,4 +66,6 @@ export interface GenerateOptions {
   outputPath: string;
   bleedMm?: number;
   dpi?: number;
+  /** Background color for empty area when fit = "fit" (contain). Hex, e.g. "#000000". */
+  fitBackground?: string;
 }

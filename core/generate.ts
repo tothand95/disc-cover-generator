@@ -1,5 +1,5 @@
 import { promises as fs } from "node:fs";
-import { PDFDocument, rgb } from "pdf-lib";
+import { PDFDocument, rgb, LineCapStyle } from "pdf-lib";
 import { getPreset } from "./presets.js";
 import { renderImageToSize } from "./image.js";
 import { renderSpinePreset } from "./spine/index.js";
@@ -56,6 +56,7 @@ async function buildSections(
       h,
       opts.input.fit,
       dpi,
+      opts.fitBackground,
     );
     return [{ xMm: 0, widthMm: preset.totalWidthMm, png }];
   }
@@ -63,8 +64,8 @@ async function buildSections(
   const three = opts.input as ThreePartInput;
 
   const [backPng, frontPng] = await Promise.all([
-    renderImageToSize(three.backImagePath, backW, h, three.fit, dpi),
-    renderImageToSize(three.frontImagePath, frontW, h, three.fit, dpi),
+    renderImageToSize(three.backImagePath, backW, h, three.fit, dpi, opts.fitBackground),
+    renderImageToSize(three.frontImagePath, frontW, h, three.fit, dpi, opts.fitBackground),
   ]);
 
   let spinePng: Buffer;
@@ -75,6 +76,7 @@ async function buildSections(
       h,
       three.fit,
       dpi,
+      opts.fitBackground,
     );
   } else if (three.spinePreset) {
     const rendered = await renderSpinePreset(three.spinePreset, spineW, h, dpi);
@@ -138,6 +140,64 @@ function drawBorders(
   }
 }
 
+function drawCropMarks(
+  page: import("pdf-lib").PDFPage,
+  wrapOriginXmm: number,
+  wrapOriginYmm: number,
+  preset: CasePreset,
+): void {
+  const markLenMm = 6;
+  const x0 = mmToPt(wrapOriginXmm);
+  const y0 = mmToPt(wrapOriginYmm);
+  const x1 = mmToPt(wrapOriginXmm + preset.totalWidthMm);
+  const y1 = mmToPt(wrapOriginYmm + preset.heightMm);
+  const len = mmToPt(markLenMm);
+
+  const grey = rgb(0.55, 0.55, 0.55);
+  const thickness = 0.5;
+  // Round caps + tight spacing renders the dashArray segments as dots.
+  const dashArray = [0.01, 2];
+
+  const line = (
+    a: { x: number; y: number },
+    b: { x: number; y: number },
+  ) =>
+    page.drawLine({
+      start: a,
+      end: b,
+      color: grey,
+      thickness,
+      dashArray,
+      lineCap: LineCapStyle.Round,
+    });
+
+  // Cover corner marks: each cover edge extended outward on both ends, aligned
+  // with the picture edge, stopping 1cm out.
+  // Bottom edge
+  line({ x: x0 - len, y: y0 }, { x: x0, y: y0 });
+  line({ x: x1, y: y0 }, { x: x1 + len, y: y0 });
+  // Top edge
+  line({ x: x0 - len, y: y1 }, { x: x0, y: y1 });
+  line({ x: x1, y: y1 }, { x: x1 + len, y: y1 });
+  // Left edge
+  line({ x: x0, y: y0 - len }, { x: x0, y: y0 });
+  line({ x: x0, y: y1 }, { x: x0, y: y1 + len });
+  // Right edge
+  line({ x: x1, y: y0 - len }, { x: x1, y: y0 });
+  line({ x: x1, y: y1 }, { x: x1, y: y1 + len });
+
+  // Spine fold marks — help fold the cover along the two spine boundaries.
+  const sideWmm = (preset.totalWidthMm - preset.spineWidthMm) / 2;
+  const spineLeftMm = wrapOriginXmm + sideWmm;
+  const spineRightMm = wrapOriginXmm + sideWmm + preset.spineWidthMm;
+  const spineLeft = mmToPt(spineLeftMm);
+  const spineRight = mmToPt(spineRightMm);
+  line({ x: spineLeft, y: y0 - len }, { x: spineLeft, y: y0 });
+  line({ x: spineLeft, y: y1 }, { x: spineLeft, y: y1 + len });
+  line({ x: spineRight, y: y0 - len }, { x: spineRight, y: y0 });
+  line({ x: spineRight, y: y1 }, { x: spineRight, y: y1 + len });
+}
+
 export async function generateCoverPdf(opts: GenerateOptions): Promise<string> {
   const preset = getPreset(opts.preset);
   const dpi = opts.dpi ?? 300;
@@ -158,6 +218,8 @@ export async function generateCoverPdf(opts: GenerateOptions): Promise<string> {
 
   const pdf = await PDFDocument.create();
   const page = pdf.addPage([mmToPt(A4_WIDTH_MM), mmToPt(A4_HEIGHT_MM)]);
+
+  drawCropMarks(page, offsetXmm + bleedMm, offsetYmm + bleedMm, preset);
 
   for (const section of sections) {
     const img = await pdf.embedPng(section.png);

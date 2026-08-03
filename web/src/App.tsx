@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { CoverPreview } from "./CoverPreview.js";
 
 interface CasePreset {
   id: string;
@@ -11,7 +12,8 @@ interface CasePreset {
 type Kind = "single" | "three";
 type Fit = "stretch" | "fill" | "fit";
 type BorderMode = "none" | "outer" | "sections";
-type SpinePreset = "ps2" | "ps1" | "xbox" | "xbox360";
+type SpinePreset = "ps2" | "ps1" | "xbox" | "xbox360" | "blank" | "text";
+type SpineTextAlign = "start" | "center" | "end";
 
 export function App() {
   const [presets, setPresets] = useState<CasePreset[]>([]);
@@ -21,6 +23,7 @@ export function App() {
   const [borderMode, setBorderMode] = useState<BorderMode>("none");
   const [borderThickness, setBorderThickness] = useState("2");
   const [borderColor, setBorderColor] = useState("#000000");
+  const [fitBackground, setFitBackground] = useState("#000000");
 
   const [singleImage, setSingleImage] = useState<File | null>(null);
   const [backImage, setBackImage] = useState<File | null>(null);
@@ -28,10 +31,12 @@ export function App() {
   const [spineImage, setSpineImage] = useState<File | null>(null);
   const [spinePreset, setSpinePreset] = useState<SpinePreset>("ps2");
   const [spineTitle, setSpineTitle] = useState("");
+  const [spineBg, setSpineBg] = useState("#ffffff");
+  const [spineTextColor, setSpineTextColor] = useState("#000000");
+  const [spineTextAlign, setSpineTextAlign] = useState<SpineTextAlign>("center");
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/presets")
@@ -40,79 +45,97 @@ export function App() {
       .catch((e) => setError(String(e)));
   }, []);
 
-  useEffect(() => {
-    return () => {
-      if (pdfUrl) URL.revokeObjectURL(pdfUrl);
-    };
-  }, [pdfUrl]);
-
-  async function onSubmit(e: React.FormEvent) {
+  function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setBusy(true);
-    if (pdfUrl) URL.revokeObjectURL(pdfUrl);
-    setPdfUrl(null);
 
     try {
-      const fd = new FormData();
-      fd.set("preset", preset);
-      fd.set("kind", kind);
-      fd.set("fit", fit);
-      fd.set("borderMode", borderMode);
-      fd.set("borderThickness", borderThickness);
-      fd.set("borderColor", borderColor);
-
       if (kind === "single") {
         if (!singleImage) throw new Error("Please choose an image.");
-        fd.set("image", singleImage);
       } else {
         if (!backImage || !frontImage)
           throw new Error("Please choose both back and front images.");
-        fd.set("back", backImage);
-        fd.set("front", frontImage);
+      }
+
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = "/api/generate";
+      form.target = "_blank";
+      form.enctype = "multipart/form-data";
+      form.style.display = "none";
+
+      const addField = (name: string, value: string) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+      };
+
+      const addFile = (name: string, file: File | null) => {
+        if (!file) return;
+        const input = document.createElement("input");
+        input.type = "file";
+        input.name = name;
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        input.files = dt.files;
+        form.appendChild(input);
+      };
+
+      addField("preset", preset);
+      addField("kind", kind);
+      addField("fit", fit);
+      addField("borderMode", borderMode);
+      addField("borderThickness", borderThickness);
+      addField("borderColor", borderColor);
+      addField("fitBackground", fitBackground);
+      const defaultName = preset.startsWith("bluray")
+        ? "generated-bluray-cover"
+        : preset.startsWith("cd")
+          ? "generated-cd-cover"
+          : "generated-dvd-cover";
+      addField("filename", spineTitle.trim() || defaultName);
+
+      if (kind === "single") {
+        addFile("image", singleImage);
+      } else {
+        addFile("back", backImage);
+        addFile("front", frontImage);
         if (spineImage) {
-          fd.set("spine", spineImage);
+          addFile("spine", spineImage);
         } else {
-          fd.set("spinePreset", spinePreset);
-          fd.set("spineTitle", spineTitle);
+          addField("spinePreset", spinePreset);
+          addField("spineTitle", spineTitle);
+          addField("spineBg", spineBg);
+          addField("spineTextColor", spineTextColor);
+          addField("spineTextAlign", spineTextAlign);
         }
       }
 
-      const res = await fetch("/api/generate", { method: "POST", body: fd });
-      if (!res.ok) {
-        const msg = await res.json().catch(() => ({ error: res.statusText }));
-        throw new Error(msg.error ?? "Generation failed");
-      }
-      const blob = await res.blob();
-      setPdfUrl(URL.createObjectURL(blob));
+      document.body.appendChild(form);
+      setBusy(true);
+      form.submit();
+      document.body.removeChild(form);
+      // Reset busy quickly — the new tab handles the actual generation.
+      setTimeout(() => setBusy(false), 400);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
-    } finally {
       setBusy(false);
     }
   }
 
   return (
     <div
-      className="mx-auto p-6 h-screen grid overflow-hidden"
-      style={{
-        maxWidth: "2540px",
-        gridTemplateRows: "auto 1fr",
-        rowGap: "1.5rem",
-      }}
+      className="mx-auto p-6 layout-root"
+      style={{ maxWidth: "2540px" }}
     >
       <h1 className="text-3xl font-bold">Disc Cover Generator</h1>
 
-      <div
-        className="grid min-h-0"
-        style={{
-          gridTemplateColumns: "420px 1fr",
-          columnGap: "1.5rem",
-        }}
-      >
+      <div className="layout-content min-h-0">
         <form
           onSubmit={onSubmit}
-          className="bg-white rounded-lg shadow p-6 space-y-5 overflow-y-auto min-h-0"
+          className="bg-white rounded-lg shadow p-6 space-y-5 min-h-0 layout-form"
         >
           <Field label="Case preset">
             <select
@@ -163,6 +186,8 @@ export function App() {
                       value={spinePreset}
                       onChange={(e) => setSpinePreset(e.target.value as SpinePreset)}
                     >
+                      <option value="blank">Blank (solid color)</option>
+                      <option value="text">Text only</option>
                       <option value="ps2">PS2</option>
                       <option value="ps1" disabled>
                         PS1 (coming soon)
@@ -175,14 +200,50 @@ export function App() {
                       </option>
                     </select>
                   </Field>
-                  <Field label="Spine title">
-                    <input
-                      className="input"
-                      value={spineTitle}
-                      onChange={(e) => setSpineTitle(e.target.value)}
-                      placeholder="e.g. Grand Theft Auto III"
-                    />
-                  </Field>
+                  {(spinePreset === "ps2" || spinePreset === "text") && (
+                    <Field label="Spine title">
+                      <input
+                        className="input"
+                        value={spineTitle}
+                        onChange={(e) => setSpineTitle(e.target.value)}
+                        placeholder="e.g. Grand Theft Auto III"
+                      />
+                    </Field>
+                  )}
+                  {(spinePreset === "blank" || spinePreset === "text") && (
+                    <Field label="Spine background">
+                      <input
+                        type="color"
+                        className="h-10 w-16 rounded border border-slate-300"
+                        value={spineBg}
+                        onChange={(e) => setSpineBg(e.target.value)}
+                      />
+                    </Field>
+                  )}
+                  {spinePreset === "text" && (
+                    <>
+                      <Field label="Text color">
+                        <input
+                          type="color"
+                          className="h-10 w-16 rounded border border-slate-300"
+                          value={spineTextColor}
+                          onChange={(e) => setSpineTextColor(e.target.value)}
+                        />
+                      </Field>
+                      <Field label="Text alignment">
+                        <RadioGroup
+                          name="spineTextAlign"
+                          value={spineTextAlign}
+                          onChange={(v) => setSpineTextAlign(v as SpineTextAlign)}
+                          options={[
+                            { value: "start", label: "Top" },
+                            { value: "center", label: "Center" },
+                            { value: "end", label: "Bottom" },
+                          ]}
+                        />
+                      </Field>
+                    </>
+                  )}
                 </div>
               )}
             </>
@@ -200,6 +261,22 @@ export function App() {
               ]}
             />
           </Field>
+
+          {fit === "fit" && (
+            <Field label="Fit background">
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  className="h-10 w-16 rounded border border-slate-300"
+                  value={fitBackground}
+                  onChange={(e) => setFitBackground(e.target.value)}
+                />
+                <span className="text-xs text-slate-500">
+                  Fills empty space around images when they don't cover the section.
+                </span>
+              </div>
+            </Field>
+          )}
 
           <Field label="Borders">
             <RadioGroup
@@ -221,9 +298,12 @@ export function App() {
                   className="input"
                   type="number"
                   step="1"
-                  min="1"
+                  min="0"
                   value={borderThickness}
-                  onChange={(e) => setBorderThickness(e.target.value)}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/[^\d]/g, "");
+                    setBorderThickness(cleaned === "" ? "0" : cleaned);
+                  }}
                 />
               </Field>
               <Field label="Color">
@@ -253,34 +333,78 @@ export function App() {
         </form>
 
         <div
-          className="bg-white rounded-lg shadow p-6 min-w-0 min-h-0 grid"
-          style={{ gridTemplateRows: "auto 1fr auto", rowGap: "0.75rem" }}
+          className="bg-white rounded-lg shadow p-6 min-w-0 min-h-0 grid preview-panel"
+          style={
+            {
+              gridTemplateRows: "auto 1fr",
+              rowGap: "0.75rem",
+              "--cover-aspect": `${(presets.find((p) => p.id === preset) ?? presets[0])?.totalWidthMm ?? 273} / ${(presets.find((p) => p.id === preset) ?? presets[0])?.heightMm ?? 183}`,
+            } as React.CSSProperties
+          }
         >
-          <h2 className="text-lg font-semibold">Preview</h2>
-          {pdfUrl ? (
-            <>
-              <iframe
-                title="cover-pdf"
-                src={pdfUrl}
-                className="w-full h-full border border-slate-200 rounded min-h-0"
+          <h2 className="text-lg font-semibold">Live preview</h2>
+
+          {presets.length > 0 && (
+            <div className="min-h-0 min-w-0 overflow-hidden">
+              <CoverPreview
+                preset={presets.find((p) => p.id === preset) ?? presets[0]}
+                kind={kind}
+                fit={fit}
+                borderMode={borderMode}
+                borderThicknessPx={Number(borderThickness) || 0}
+                borderColor={borderColor}
+                fitBackground={fitBackground}
+                dpi={300}
+                singleImage={singleImage}
+                backImage={backImage}
+                frontImage={frontImage}
+                spineImage={spineImage}
+                spinePreset={spinePreset}
+                spineTitle={spineTitle}
+                spineBg={spineBg}
+                spineTextColor={spineTextColor}
+                spineTextAlign={spineTextAlign}
               />
-              <a
-                href={pdfUrl}
-                download="cover.pdf"
-                className="justify-self-start px-4 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700"
-              >
-                Download PDF
-              </a>
-            </>
-          ) : (
-            <div className="text-slate-500 text-sm">
-              The generated PDF will appear here.
             </div>
           )}
         </div>
       </div>
 
       <style>{`
+        .layout-root {
+          height: 100vh;
+          display: grid;
+          grid-template-rows: auto 1fr;
+          row-gap: 1.5rem;
+          overflow: hidden;
+        }
+        .layout-content {
+          display: grid;
+          grid-template-columns: 420px 1fr;
+          column-gap: 1.5rem;
+        }
+        .layout-form {
+          overflow-y: auto;
+        }
+        @media (max-width: 999px) {
+          .layout-root {
+            height: auto;
+            min-height: 100vh;
+            overflow: visible;
+          }
+          .layout-content {
+            grid-template-columns: 1fr;
+            row-gap: 1.5rem;
+          }
+          .layout-form {
+            overflow-y: visible;
+          }
+          .preview-panel > div:last-child {
+            aspect-ratio: var(--cover-aspect);
+            width: 100%;
+          }
+        }
+
         .input {
           width: 100%;
           padding: 0.5rem 0.75rem;

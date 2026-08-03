@@ -58,6 +58,11 @@ function extFromMimetype(m: string): string {
   return "";
 }
 
+function sanitizeFilename(name: string | undefined): string {
+  if (!name) return "";
+  return name.replace(/[\\/:*?"<>|\r\n\t]/g, "").trim().slice(0, 120);
+}
+
 app.post("/api/generate", async (req, reply) => {
   const fields: FieldMap = {};
   const files: Record<string, string> = {};
@@ -82,6 +87,7 @@ app.post("/api/generate", async (req, reply) => {
     const borderThickness = Number(fields.borderThickness ?? "2");
     const borderColor = fields.borderColor || "#000000";
     const dpi = Number(fields.dpi ?? "300");
+    const fitBackground = fields.fitBackground || "#000000";
 
     const outDir = await fs.mkdtemp(path.join(os.tmpdir(), "disc-cover-out-"));
     cleanup.push(outDir);
@@ -95,6 +101,7 @@ app.post("/api/generate", async (req, reply) => {
         border: { mode: borderMode, thicknessPx: borderThickness, color: borderColor },
         outputPath,
         dpi,
+        fitBackground,
       });
     } else {
       if (!files.back || !files.front) {
@@ -102,6 +109,15 @@ app.post("/api/generate", async (req, reply) => {
       }
       const spinePresetId = fields.spinePreset as SpinePresetId | undefined;
       const spineTitle = fields.spineTitle ?? "";
+      const spineExtras = {
+        backgroundColor: fields.spineBg || undefined,
+        textColor: fields.spineTextColor || undefined,
+        textAlign: (fields.spineTextAlign || undefined) as
+          | "start"
+          | "center"
+          | "end"
+          | undefined,
+      };
       await generateCoverPdf({
         preset,
         input: {
@@ -111,20 +127,21 @@ app.post("/api/generate", async (req, reply) => {
           spineImagePath: files.spine,
           spinePreset:
             !files.spine && spinePresetId
-              ? { preset: spinePresetId, title: spineTitle }
+              ? { preset: spinePresetId, title: spineTitle, extras: spineExtras }
               : undefined,
           fit,
         },
         border: { mode: borderMode, thicknessPx: borderThickness, color: borderColor },
         outputPath,
         dpi,
+        fitBackground,
       });
     }
 
     const pdf = await fs.readFile(outputPath);
     reply
       .header("Content-Type", "application/pdf")
-      .header("Content-Disposition", 'attachment; filename="cover.pdf"')
+      .header("Content-Disposition", `inline; filename="${sanitizeFilename(fields.filename) || "cover"}.pdf"`)
       .send(pdf);
   } catch (err) {
     req.log.error(err);

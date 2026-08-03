@@ -45,6 +45,7 @@ program
   .addOption(borderOption)
   .option("--border-thickness <px>", "Border thickness in pixels", "2")
   .option("--border-color <hex>", "Border color", "#000000")
+  .option("--fit-background <hex>", "Background color for empty area in fit mode", "#000000")
   .option("--bleed <mm>", "Bleed in mm (defaults to preset)")
   .option("--dpi <n>", "Rasterization DPI", "300")
   .action(async (opts) => {
@@ -63,6 +64,7 @@ program
       outputPath: opts.output,
       bleedMm: opts.bleed ? Number(opts.bleed) : undefined,
       dpi: Number(opts.dpi),
+      fitBackground: opts.fitBackground,
     });
     console.log(`Wrote ${opts.output}`);
   });
@@ -79,11 +81,15 @@ program
     "Spine style preset when no spine image is given (ps2 | ps1 | xbox | xbox360)",
   )
   .option("--spine-title <text>", "Title text for spine preset")
+  .option("--spine-bg <hex>", "Background color for blank/text spine")
+  .option("--spine-text-color <hex>", "Text color for text spine")
+  .option("--spine-text-align <align>", "Text alignment (start | center | end)")
   .requiredOption("-o, --output <path>", "Path to output PDF")
   .addOption(fitOption)
   .addOption(borderOption)
   .option("--border-thickness <px>", "Border thickness in pixels", "2")
   .option("--border-color <hex>", "Border color", "#000000")
+  .option("--fit-background <hex>", "Background color for empty area in fit mode", "#000000")
   .option("--bleed <mm>", "Bleed in mm (defaults to preset)")
   .option("--dpi <n>", "Rasterization DPI", "300")
   .action(async (opts) => {
@@ -101,6 +107,11 @@ program
           ? {
               preset: opts.spinePreset as SpinePresetId,
               title: opts.spineTitle ?? "",
+              extras: {
+                backgroundColor: opts.spineBg,
+                textColor: opts.spineTextColor,
+                textAlign: opts.spineTextAlign,
+              },
             }
           : undefined,
         fit: opts.fit as FitMode,
@@ -113,6 +124,7 @@ program
       outputPath: opts.output,
       bleedMm: opts.bleed ? Number(opts.bleed) : undefined,
       dpi: Number(opts.dpi),
+      fitBackground: opts.fitBackground,
     });
     console.log(`Wrote ${opts.output}`);
   });
