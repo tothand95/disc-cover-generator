@@ -1,5 +1,4 @@
-import { PDFDocument, degrees, rgb, LineCapStyle, type PDFFont, type PDFPage } from "pdf-lib";
-import fontkit from "@pdf-lib/fontkit";
+import { PDFDocument, rgb, LineCapStyle, type PDFPage } from "pdf-lib";
 import type {
   BorderOptions,
   CasePreset,
@@ -7,9 +6,8 @@ import type {
   SpinePresetInput,
 } from "../../../core/types";
 import { getPreset } from "../../../core/presets";
-import { HIND_CAP_HEIGHT_RATIO } from "../../../core/spine/svg";
 import { renderImageToPng } from "./image";
-import { loadHindSemiBold } from "./fonts";
+import { rasterizeSpineSvg } from "./spineRaster";
 
 const MM_PER_INCH = 25.4;
 const PT_PER_INCH = 72;
@@ -52,78 +50,7 @@ export interface GenerateBrowserOptions {
 interface Section {
   xMm: number;
   widthMm: number;
-  /** Rasterized PNG bytes for image sections, or null when a vector spine is drawn instead. */
-  png: Uint8Array | null;
-  /** Spine preset input for vector-drawn spine sections. */
-  spineVector?: SpinePresetInput;
-}
-
-function drawSpineVector(
-  page: PDFPage,
-  font: PDFFont,
-  spine: SpinePresetInput,
-  spineXmm: number,
-  spineYmm: number,
-  spineWmm: number,
-  spineHmm: number,
-): void {
-  const bgColor =
-    spine.preset === "ps2"
-      ? "#ffffff"
-      : spine.extras?.backgroundColor || "#ffffff";
-  const textColor =
-    spine.preset === "ps2"
-      ? "#000000"
-      : spine.extras?.textColor || "#000000";
-  const align =
-    spine.preset === "ps2" ? "center" : spine.extras?.textAlign || "center";
-
-  const bg = parseHex(bgColor);
-  page.drawRectangle({
-    x: mmToPt(spineXmm),
-    y: mmToPt(spineYmm),
-    width: mmToPt(spineWmm),
-    height: mmToPt(spineHmm),
-    color: rgb(bg.r, bg.g, bg.b),
-  });
-
-  if (spine.preset === "blank" || !spine.title) return;
-
-  const spineWpt = mmToPt(spineWmm);
-  const spineHpt = mmToPt(spineHmm);
-  const sx = mmToPt(spineXmm);
-  const sy = mmToPt(spineYmm);
-
-  // Match the SVG builder: font size = 55% of the spine's (narrow) dimension.
-  const fontSize = Math.max(6, Math.floor(mmToPx(spineWmm, 72) * 0.55));
-  const capH = fontSize * HIND_CAP_HEIGHT_RATIO;
-  const textW = font.widthOfTextAtSize(spine.title, fontSize);
-
-  // Rotate -90° (clockwise). After rotation around the drawText origin (x, y):
-  //   - text extends downward by textW along y-
-  //   - cap-height extends rightward by capH along x+
-  // Center of the visible glyph box is (x + capH/2, y - textW/2).
-  const xCentered = sx + (spineWpt - capH) / 2;
-  const padPt = mmToPt(4);
-
-  let yBaseline: number;
-  if (align === "start") {
-    yBaseline = sy + spineHpt - padPt;
-  } else if (align === "end") {
-    yBaseline = sy + padPt + textW;
-  } else {
-    yBaseline = sy + (spineHpt + textW) / 2;
-  }
-
-  const tc = parseHex(textColor);
-  page.drawText(spine.title, {
-    x: xCentered,
-    y: yBaseline,
-    size: fontSize,
-    font,
-    color: rgb(tc.r, tc.g, tc.b),
-    rotate: degrees(-90),
-  });
+  png: Uint8Array;
 }
 
 function drawCropMarks(
@@ -248,12 +175,12 @@ async function buildSections(
     );
     spineSection = { xMm: sideW, widthMm: spineW, png: spinePng };
   } else if (three.spinePreset) {
-    spineSection = {
-      xMm: sideW,
-      widthMm: spineW,
-      png: null,
-      spineVector: three.spinePreset,
-    };
+    const spinePng = await rasterizeSpineSvg({
+      spine: three.spinePreset,
+      widthPx: mmToPx(spineW, dpi),
+      heightPx: mmToPx(h, dpi),
+    });
+    spineSection = { xMm: sideW, widthMm: spineW, png: spinePng };
   } else {
     throw new Error("Three-image mode requires either a spine image or a spine preset.");
   }
@@ -284,33 +211,19 @@ export async function generateCoverPdfInBrowser(
   const offsetYmm = (A4_HEIGHT_MM - wrapHeightMm) / 2 + bleedMm;
 
   const pdf = await PDFDocument.create();
-  pdf.registerFontkit(fontkit);
-  const spineFont = await pdf.embedFont(await loadHindSemiBold(), { subset: true });
 
   const page = pdf.addPage([mmToPt(A4_WIDTH_MM), mmToPt(A4_HEIGHT_MM)]);
 
   drawCropMarks(page, offsetXmm, offsetYmm, preset);
 
   for (const section of sections) {
-    if (section.png) {
-      const img = await pdf.embedPng(section.png);
-      page.drawImage(img, {
-        x: mmToPt(offsetXmm + section.xMm),
-        y: mmToPt(offsetYmm),
-        width: mmToPt(section.widthMm),
-        height: mmToPt(preset.heightMm),
-      });
-    } else if (section.spineVector) {
-      drawSpineVector(
-        page,
-        spineFont,
-        section.spineVector,
-        offsetXmm + section.xMm,
-        offsetYmm,
-        section.widthMm,
-        preset.heightMm,
-      );
-    }
+    const img = await pdf.embedPng(section.png);
+    page.drawImage(img, {
+      x: mmToPt(offsetXmm + section.xMm),
+      y: mmToPt(offsetYmm),
+      width: mmToPt(section.widthMm),
+      height: mmToPt(preset.heightMm),
+    });
   }
 
   drawBorders(page, sections, preset, offsetXmm, offsetYmm, opts.border, opts.dpi);

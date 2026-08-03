@@ -2,15 +2,18 @@
  * Pure spine SVG builder. Shared between server (rasterized via sharp) and
  * web preview (rendered inline). No Node-only imports so it works in both.
  *
- * Visual centering strategy: use dominant-baseline="alphabetic" (baseline at
- * the given y) and position the baseline at cap-height/2 BELOW the spine
- * centerline, so uppercase glyphs are perfectly centered on the spine axis.
- * Cap-height for the bundled Hind SemiBold is 700/1000 units.
+ * Visual centering: dominant-baseline="alphabetic" with baseline placed at
+ * y = fontSize * VISUAL_CENTER_RATIO below the rotation origin. The ratio
+ * was tuned empirically for the bundled Hind SemiBold — see the align tests
+ * that produced this constant.
  */
 export type SpineTextAlign = "start" | "center" | "end";
 
 export const SPINE_FONT_FAMILY = "SpineFont";
+/** Kept for pdf.ts vector rendering — cap-height / em for Hind SemiBold. */
 export const HIND_CAP_HEIGHT_RATIO = 0.7;
+/** Empirically tuned baseline offset for visually-centered caps. */
+export const VISUAL_CENTER_RATIO = 0.33;
 
 export interface SpineSvgOptions {
   title: string;
@@ -19,11 +22,6 @@ export interface SpineSvgOptions {
   bg: string;
   textColor: string;
   align: SpineTextAlign;
-  /**
-   * Optional <style> block with @font-face declarations. Server-side needs to
-   * embed the font as a data URI so librsvg can render it without fontconfig.
-   * Web-side leaves this empty and relies on the browser's loaded font.
-   */
   fontStyleBlock?: string;
 }
 
@@ -54,13 +52,10 @@ export function buildSpineSvg(opts: SpineSvgOptions): string {
     anchor = "middle";
   }
 
-  // Baseline is placed below the pre-rotation origin by capHeight/2 so the
-  // vertical center of uppercase glyphs lands exactly on the origin (which
-  // becomes the spine centerline after the rotation).
-  const baselineOffset = fontSizePx * (HIND_CAP_HEIGHT_RATIO / 2);
+  const y = fontSizePx * VISUAL_CENTER_RATIO;
 
   const textElement = title
-    ? `<text x="${x}" y="${baselineOffset}" fill="${textColor}" font-family="${SPINE_FONT_FAMILY}" font-weight="600" font-size="${fontSizePx}" text-anchor="${anchor}" dominant-baseline="alphabetic">${escapeXml(title)}</text>`
+    ? `<text x="${x}" y="${y}" fill="${textColor}" font-family="${SPINE_FONT_FAMILY}" font-weight="600" font-size="${fontSizePx}" text-anchor="${anchor}" dominant-baseline="alphabetic">${escapeXml(title)}</text>`
     : "";
 
   return `<?xml version="1.0" encoding="UTF-8"?>
