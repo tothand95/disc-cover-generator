@@ -53,7 +53,7 @@ export function CoverPreviewSingle({
     >
       <div
         ref={labelsRef}
-        className="mb-2"
+        className="mb-8"
         style={{ width: stageWidth > 0 ? stageWidth : "100%" }}
       >
         <div className="text-center text-xs font-medium text-slate-600">

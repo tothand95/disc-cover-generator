@@ -223,10 +223,16 @@ export function CoverForm(p: CoverFormProps) {
                 type="number"
                 step="1"
                 min="0"
+                max="30"
                 value={p.borderThickness}
                 onChange={(e) => {
                   const cleaned = e.target.value.replace(/[^\d]/g, "");
-                  p.setBorderThickness(cleaned === "" ? "0" : cleaned);
+                  if (cleaned === "") {
+                    p.setBorderThickness("0");
+                    return;
+                  }
+                  const n = Math.min(30, Number(cleaned));
+                  p.setBorderThickness(String(n));
                 }}
               />
             </Field>

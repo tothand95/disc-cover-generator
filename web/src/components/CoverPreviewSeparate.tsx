@@ -81,7 +81,7 @@ export function CoverPreviewSeparate(props: Props) {
     >
       <div
         ref={labelsRef}
-        className="mb-2"
+        className="mb-5"
         style={{ width: stageWidth > 0 ? stageWidth : "100%" }}
       >
         <div className="grid grid-cols-3 text-xs font-medium text-slate-600 whitespace-nowrap">
@@ -104,8 +104,14 @@ export function CoverPreviewSeparate(props: Props) {
           background: fit === "fit" ? fitBackground : "white",
         }}
       >
-        <div className="absolute inset-0 flex">
-          <div style={{ width: sideWidthPx, height: "100%", position: "relative" }}>
+        <div
+          className="absolute inset-0 grid"
+          style={{
+            gridTemplateColumns: `${sideWidthMm}fr ${preset.spineWidthMm}fr ${sideWidthMm}fr`,
+            gridTemplateRows: "100%",
+          }}
+        >
+          <div style={{ height: "100%", position: "relative" }}>
             <SectionImage url={backUrl} fit={fit} placeholder="Back" />
             {onSelectBack && (
               <DropOverlay
@@ -115,7 +121,7 @@ export function CoverPreviewSeparate(props: Props) {
               />
             )}
           </div>
-          <div style={{ width: spineWidthPx, height: "100%", position: "relative" }}>
+          <div style={{ height: "100%", position: "relative" }}>
             {spineUrl ? (
               <SectionImage url={spineUrl} fit={fit} placeholder="Spine" />
             ) : (
@@ -137,7 +143,7 @@ export function CoverPreviewSeparate(props: Props) {
               />
             )}
           </div>
-          <div style={{ width: sideWidthPx, height: "100%", position: "relative" }}>
+          <div style={{ height: "100%", position: "relative" }}>
             <SectionImage url={frontUrl} fit={fit} placeholder="Front" />
             {onSelectFront && (
               <DropOverlay

@@ -43,7 +43,7 @@ function SharedSpineSvg({
   if (!svg) return null;
   return (
     <div
-      className="w-full h-full overflow-hidden select-none"
+      className="spine-svg-host w-full h-full overflow-hidden select-none"
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   );

@@ -14,7 +14,7 @@ export function useCoverStage(preset: CasePreset) {
   const labelsSize = useContainerSize(labelsRef);
 
   const padding = 16;
-  const labelsGap = 8;
+  const labelsGap = 32;
 
   const availableW = Math.max(0, wrapSize.width - padding * 2);
   const availableH = Math.max(
