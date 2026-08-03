@@ -41,12 +41,32 @@ core/                    Pure, browser-safe TypeScript.
   presets.ts             Case dimensions (DVD normal/slim, Blu-Ray, CD, ...).
   spine/svg.ts           THE spine SVG builder. Preview AND PDF go through here.
 web/                     Vite root.
-  src/App.tsx            Form state + PDF trigger (Blob -> <a download>).
-  src/CoverPreview.tsx   Live preview; renders buildSpineSvg() inline via dangerouslySetInnerHTML.
-  src/index.css          Global @font-face for the Hind weights.
-  src/lib/image.ts       Canvas-based image fit (stretch / fill / fit) -> PNG bytes.
-  src/lib/spineRaster.ts buildSpineSvg() -> <img data:svg> -> canvas -> PNG bytes.
-  src/lib/pdf.ts         Assembles the final PDF via pdf-lib.
+  src/main.tsx           React entry point.
+  src/App.tsx            Shell: state, PDF trigger (open in new tab), preview switch.
+  src/index.css          Global @font-face for the Hind weights + .layout-*/.input styles.
+  src/types.ts           Shared UI-side aliases (CasePreset, Kind, Fit, ...).
+  src/components/        Domain-aware React components.
+    CoverForm.tsx        The whole left-column form.
+    CoverPreviewSingle.tsx    Single-image preview.
+    CoverPreviewSeparate.tsx  Back/spine/front preview + section-divider borders.
+    SpinePresetPreview.tsx    Inline spine SVG (used by Separate preview).
+    SectionImage.tsx     Placeholder + <img> with objectFit mapping.
+  src/ui/                Zero-domain UI primitives.
+    Field.tsx, Section.tsx, RadioGroup.tsx, FileInput.tsx, DropOverlay.tsx
+  src/hooks/             useObjectUrl, useContainerSize, useGlobalFileDrag, useCoverStage.
+  src/spine/             Web-side spine helpers.
+    assets.ts            Loads PS2 PNG + Hind fonts as data URIs (browser only).
+    buildOptions.ts      Preset -> SpineSvgOptions bridge (shared preview <-> PDF).
+    rasterize.ts         buildSpineSvg() -> <img data:svg> -> canvas -> PNG bytes.
+  src/pdf/               PDF generation, split by concern.
+    generate.ts          Orchestrator + public types (GenerateBrowserOptions, ...).
+    layout.ts            mm/pt/A4 constants, mmToPt, mmToPx.
+    cropMarks.ts         Dashed crop marks (grey rgb(0.25, 0.25, 0.25)).
+    borders.ts           Outer + section-divider borders.
+    sections.ts          Renders each section to PNG (uses utils/image + spine/rasterize).
+  src/utils/
+    image.ts             Canvas-based image fit (stretch / fill / fit) -> PNG bytes.
+    color.ts             parseHex.
 ```
 
 ## Spine rendering — read this before you touch spines
@@ -88,7 +108,7 @@ second rendering path.
 - The bundled font is Hind (OFL). All 5 static weights are shipped.
 - Preview uses the fonts via `@font-face` in `web/src/index.css` — Vite
   fingerprints the URLs at build time. No runtime loading logic needed.
-- Spine PDF rasterization uses `web/src/lib/spineAssets.ts`, which does
+- Spine PDF rasterization uses `web/src/spine/assets.ts`, which does
   **two** things:
   1. Fetches all Hind weights and inlines them as data-URI `@font-face`
      blocks embedded in the SVG. Required because the browser loads the
@@ -132,7 +152,7 @@ second rendering path.
 
 ## Image fit modes
 
-Implemented once in `web/src/lib/image.ts` via canvas. Mirrored in the
+Implemented once in `web/src/utils/image.ts` via canvas. Mirrored in the
 preview via CSS `object-fit`:
 
 | Fit mode | Canvas / CSS         |

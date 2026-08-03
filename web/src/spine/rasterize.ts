@@ -1,7 +1,7 @@
 import { buildSpineSvg } from "../../../core/spine/svg";
 import type { SpinePresetInput } from "../../../core/types";
-import { resolveSpineSvgOptions } from "./spineOptions";
-import { loadSpineFontStyleBlock, preloadSpineDocumentFonts } from "./spineAssets";
+import { resolveSpineSvgOptions } from "./buildOptions";
+import { loadSpineFontStyleBlock, preloadSpineDocumentFonts } from "./assets";
 
 interface RasterizeOptions {
   spine: SpinePresetInput;

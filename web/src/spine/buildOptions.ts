@@ -1,6 +1,6 @@
 import type { SpinePresetInput } from "../../../core/types";
 import type { SpineSvgOptions, SpineTextAlign } from "../../../core/spine/svg";
-import { loadPs2SpineImage } from "./spineAssets";
+import { loadPs2SpineImage } from "./assets";
 
 /**
  * Translate a SpinePresetInput into concrete buildSpineSvg options, resolving
