@@ -10,10 +10,17 @@
 export type SpineTextAlign = "start" | "center" | "end";
 
 export const SPINE_FONT_FAMILY = "SpineFont";
-/** Kept for pdf.ts vector rendering — cap-height / em for Hind SemiBold. */
 export const HIND_CAP_HEIGHT_RATIO = 0.7;
-/** Empirically tuned baseline offset for visually-centered caps. */
 export const VISUAL_CENTER_RATIO = 0.33;
+/** Gap in viewBox pixels between a topImage and the text below it. */
+export const TOP_IMAGE_TEXT_GAP_PX = 28;
+
+export interface SpineTopImage {
+  /** Image source — data URI recommended so rasterization is self-contained. */
+  href: string;
+  /** Natural width / natural height of the image. */
+  aspectRatio: number;
+}
 
 export interface SpineSvgOptions {
   title: string;
@@ -23,6 +30,12 @@ export interface SpineSvgOptions {
   textColor: string;
   align: SpineTextAlign;
   fontStyleBlock?: string;
+  /**
+   * When set, the image is rendered filling the spine width at the top of
+   * the spine, and the title (if any) runs top-to-bottom starting
+   * TOP_IMAGE_TEXT_GAP_PX below the image. `align` is ignored in this mode.
+   */
+  topImage?: SpineTopImage;
 }
 
 function escapeXml(s: string): string {
@@ -35,35 +48,45 @@ function escapeXml(s: string): string {
 }
 
 export function buildSpineSvg(opts: SpineSvgOptions): string {
-  const { title, widthPx, heightPx, bg, textColor, align, fontStyleBlock } = opts;
+  const { title, widthPx, heightPx, bg, textColor, align, fontStyleBlock, topImage } = opts;
   const fontSizePx = Math.max(6, Math.floor(widthPx * 0.55));
   const pad = fontSizePx;
 
-  let x: number;
-  let anchor: "start" | "middle" | "end";
-  if (align === "start") {
-    x = -heightPx / 2 + pad;
-    anchor = "start";
-  } else if (align === "end") {
-    x = heightPx / 2 - pad;
-    anchor = "end";
-  } else {
-    x = 0;
-    anchor = "middle";
-  }
-
   const y = fontSizePx * VISUAL_CENTER_RATIO;
 
-  const textElement = title
-    ? `<text x="${x}" y="${y}" fill="${textColor}" font-family="${SPINE_FONT_FAMILY}" font-weight="600" font-size="${fontSizePx}" text-anchor="${anchor}" dominant-baseline="alphabetic">${escapeXml(title)}</text>`
-    : "";
+  let textGroup = "";
+  if (topImage) {
+    const imgHeight = widthPx / topImage.aspectRatio;
+    const rotateOriginY = imgHeight + TOP_IMAGE_TEXT_GAP_PX;
+    const escapedHref = escapeXml(topImage.href);
+    const imageEl = `<image href="${escapedHref}" x="0" y="0" width="${widthPx}" height="${imgHeight}" preserveAspectRatio="xMidYMin meet"/>`;
+    const textEl = title
+      ? `<g transform="translate(${widthPx / 2} ${rotateOriginY}) rotate(90)"><text x="0" y="${y}" fill="${textColor}" font-family="${SPINE_FONT_FAMILY}" font-weight="600" font-size="${fontSizePx}" text-anchor="start" dominant-baseline="alphabetic">${escapeXml(title)}</text></g>`
+      : "";
+    textGroup = imageEl + textEl;
+  } else {
+    let x: number;
+    let anchor: "start" | "middle" | "end";
+    if (align === "start") {
+      x = -heightPx / 2 + pad;
+      anchor = "start";
+    } else if (align === "end") {
+      x = heightPx / 2 - pad;
+      anchor = "end";
+    } else {
+      x = 0;
+      anchor = "middle";
+    }
+    const textElement = title
+      ? `<text x="${x}" y="${y}" fill="${textColor}" font-family="${SPINE_FONT_FAMILY}" font-weight="600" font-size="${fontSizePx}" text-anchor="${anchor}" dominant-baseline="alphabetic">${escapeXml(title)}</text>`
+      : "";
+    textGroup = `<g transform="translate(${widthPx / 2} ${heightPx / 2}) rotate(90)">${textElement}</g>`;
+  }
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${widthPx}" height="${heightPx}" viewBox="0 0 ${widthPx} ${heightPx}">
   ${fontStyleBlock ?? ""}
   <rect width="100%" height="100%" fill="${bg}"/>
-  <g transform="translate(${widthPx / 2} ${heightPx / 2}) rotate(90)">
-    ${textElement}
-  </g>
+  ${textGroup}
 </svg>`;
 }

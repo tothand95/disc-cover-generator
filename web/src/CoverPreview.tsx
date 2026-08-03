@@ -1,5 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { buildSpineSvg, type SpineTextAlign as SpineTextAlignShared } from "../../core/spine/svg";
+import { resolveSpineSvgOptions } from "./lib/spineOptions";
+import type { SpinePresetInput } from "../../core/types";
 
 interface CasePreset {
   id: string;
@@ -96,22 +98,34 @@ function SectionImage({
 }
 
 function SharedSpineSvg({
-  title,
+  spine,
   widthPx,
   heightPx,
-  bg,
-  textColor,
-  align,
 }: {
-  title: string;
+  spine: SpinePresetInput;
   widthPx: number;
   heightPx: number;
-  bg: string;
-  textColor: string;
-  align: SpineTextAlign;
 }) {
-  if (widthPx <= 0 || heightPx <= 0) return null;
-  const svg = buildSpineSvg({ title, widthPx, heightPx, bg, textColor, align });
+  const [svg, setSvg] = useState<string>("");
+  useEffect(() => {
+    let cancelled = false;
+    if (widthPx <= 0 || heightPx <= 0) {
+      setSvg("");
+      return;
+    }
+    resolveSpineSvgOptions(spine, widthPx, heightPx)
+      .then((opts) => {
+        if (!cancelled) setSvg(buildSpineSvg(opts));
+      })
+      .catch(() => {
+        if (!cancelled) setSvg("");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [spine.preset, spine.title, spine.extras?.backgroundColor, spine.extras?.textColor, spine.extras?.textAlign, widthPx, heightPx]);
+
+  if (!svg) return null;
   return (
     <div
       className="w-full h-full overflow-hidden select-none"
@@ -137,29 +151,15 @@ function SpinePresetPreview({
   textColor: string;
   textAlign: SpineTextAlign;
 }) {
-  if (preset === "ps2")
-    return (
-      <SharedSpineSvg
-        title={title}
-        widthPx={widthPx}
-        heightPx={heightPx}
-        bg="#ffffff"
-        textColor="#000000"
-        align="center"
-      />
-    );
   if (preset === "blank") return <div className="w-full h-full" style={{ background: bg }} />;
-  if (preset === "text")
-    return (
-      <SharedSpineSvg
-        title={title}
-        widthPx={widthPx}
-        heightPx={heightPx}
-        bg={bg}
-        textColor={textColor}
-        align={textAlign}
-      />
-    );
+  if (preset === "ps2" || preset === "text") {
+    const spine: SpinePresetInput = {
+      preset,
+      title,
+      extras: { backgroundColor: bg, textColor, textAlign },
+    };
+    return <SharedSpineSvg spine={spine} widthPx={widthPx} heightPx={heightPx} />;
+  }
   return (
     <div className="w-full h-full flex items-center justify-center bg-slate-200 text-slate-500 text-[10px] px-1 text-center select-none">
       {preset.toUpperCase()} preset<br />coming soon
