@@ -18,8 +18,8 @@ export async function resolveSpineSvgOptions(
       title: spine.title || "",
       widthPx,
       heightPx,
-      bg: "#000000",
-      textColor: "#ffffff",
+      bg: "#ffffff",
+      textColor: "#000000",
       align: "start",
       topImage,
     };

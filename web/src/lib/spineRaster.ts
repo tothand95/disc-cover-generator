@@ -1,6 +1,7 @@
 import { buildSpineSvg } from "../../../core/spine/svg";
 import type { SpinePresetInput } from "../../../core/types";
 import { resolveSpineSvgOptions } from "./spineOptions";
+import { loadSpineFontStyleBlock, preloadSpineDocumentFonts } from "./spineAssets";
 
 interface RasterizeOptions {
   spine: SpinePresetInput;
@@ -15,7 +16,12 @@ interface RasterizeOptions {
  */
 export async function rasterizeSpineSvg(opts: RasterizeOptions): Promise<Uint8Array> {
   const { spine, widthPx, heightPx } = opts;
-  const svg = buildSpineSvg(await resolveSpineSvgOptions(spine, widthPx, heightPx));
+  const [options, fontStyleBlock] = await Promise.all([
+    resolveSpineSvgOptions(spine, widthPx, heightPx),
+    loadSpineFontStyleBlock(),
+    preloadSpineDocumentFonts(),
+  ]);
+  const svg = buildSpineSvg({ ...options, fontStyleBlock });
 
   const blob = new Blob([svg], { type: "image/svg+xml" });
   const url = URL.createObjectURL(blob);

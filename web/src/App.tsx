@@ -39,9 +39,30 @@ export function App() {
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
 
   useEffect(() => {
     setPresets(Object.values(CASE_PRESETS));
+  }, []);
+
+  useEffect(() => {
+    const hasFiles = (e: DragEvent) =>
+      Array.from(e.dataTransfer?.types ?? []).includes("Files");
+    const onOver = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      setIsDraggingFile(true);
+    };
+    const onDrop = (e: DragEvent) => {
+      if (hasFiles(e)) e.preventDefault();
+      setIsDraggingFile(false);
+    };
+    document.addEventListener("dragover", onOver);
+    document.addEventListener("drop", onDrop);
+    return () => {
+      document.removeEventListener("dragover", onOver);
+      document.removeEventListener("drop", onDrop);
+    };
   }, []);
 
   async function onSubmit(e: React.FormEvent) {
@@ -115,195 +136,211 @@ export function App() {
 
   return (
     <div
-      className="mx-auto p-6 layout-root"
+      className={`mx-auto p-6 layout-root ${isDraggingFile ? "is-dragging-file" : ""}`}
       style={{ maxWidth: "2540px" }}
     >
+      {isDraggingFile && (
+        <div
+          aria-hidden
+          className="fixed inset-0 bg-black/60 pointer-events-none"
+          style={{ zIndex: 40 }}
+        />
+      )}
       <h1 className="text-3xl font-bold">Disc Cover Generator</h1>
 
       <div className="layout-content min-h-0">
         <form
           onSubmit={onSubmit}
-          className="bg-white rounded-lg shadow p-6 space-y-5 min-h-0 layout-form"
+          className="bg-white rounded-lg shadow p-6 space-y-6 min-h-0 layout-form"
         >
-          <Field label="Case preset">
-            <select
-              className="input"
-              value={preset}
-              onChange={(e) => setPreset(e.target.value)}
-            >
-              {presets.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.label} ({p.totalWidthMm}×{p.heightMm}mm, spine {p.spineWidthMm}mm)
-                </option>
-              ))}
-            </select>
-          </Field>
-
-          <Field label="Input mode">
-            <RadioGroup
-              name="kind"
-              value={kind}
-              onChange={(v) => setKind(v as Kind)}
-              options={[
-                { value: "single", label: "Single image" },
-                { value: "three", label: "Separate images" },
-              ]}
-            />
-          </Field>
-
-          {kind === "single" ? (
-            <Field label="Image">
-              <FileInput onFile={setSingleImage} file={singleImage} />
+          <Section title="Case">
+            <Field label="Case preset">
+              <select
+                className="input"
+                value={preset}
+                onChange={(e) => setPreset(e.target.value)}
+              >
+                {presets.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.label} ({p.totalWidthMm}×{p.heightMm}mm, spine {p.spineWidthMm}mm)
+                  </option>
+                ))}
+              </select>
             </Field>
-          ) : (
-            <>
-              <Field label="Back image">
-                <FileInput onFile={setBackImage} file={backImage} />
-              </Field>
-              <Field label="Front image">
-                <FileInput onFile={setFrontImage} file={frontImage} />
-              </Field>
-              <Field label="Spine image (optional)">
-                <FileInput onFile={setSpineImage} file={spineImage} />
-              </Field>
-              {!spineImage && (
-                <div className="pl-4 border-l-2 border-slate-200 space-y-3">
-                  <Field label="Spine preset">
-                    <select
-                      className="input"
-                      value={spinePreset}
-                      onChange={(e) => setSpinePreset(e.target.value as SpinePreset)}
-                    >
-                      <option value="blank">Blank (solid color)</option>
-                      <option value="text">Text only</option>
-                      <option value="ps2">PS2</option>
-                      <option value="ps1" disabled>
-                        PS1 (coming soon)
-                      </option>
-                      <option value="xbox" disabled>
-                        Xbox (coming soon)
-                      </option>
-                      <option value="xbox360" disabled>
-                        Xbox 360 (coming soon)
-                      </option>
-                    </select>
-                  </Field>
-                  {(spinePreset === "ps2" || spinePreset === "text") && (
-                    <Field label="Spine title">
-                      <input
-                        className="input"
-                        value={spineTitle}
-                        onChange={(e) => setSpineTitle(e.target.value)}
-                        placeholder="e.g. Grand Theft Auto III"
-                      />
-                    </Field>
-                  )}
-                  {(spinePreset === "blank" || spinePreset === "text") && (
-                    <Field label="Spine background">
-                      <input
-                        type="color"
-                        className="h-10 w-16 rounded border border-slate-300"
-                        value={spineBg}
-                        onChange={(e) => setSpineBg(e.target.value)}
-                      />
-                    </Field>
-                  )}
-                  {spinePreset === "text" && (
-                    <>
-                      <Field label="Text color">
-                        <input
-                          type="color"
-                          className="h-10 w-16 rounded border border-slate-300"
-                          value={spineTextColor}
-                          onChange={(e) => setSpineTextColor(e.target.value)}
-                        />
-                      </Field>
-                      <Field label="Text alignment">
-                        <RadioGroup
-                          name="spineTextAlign"
-                          value={spineTextAlign}
-                          onChange={(v) => setSpineTextAlign(v as SpineTextAlign)}
-                          options={[
-                            { value: "start", label: "Top" },
-                            { value: "center", label: "Center" },
-                            { value: "end", label: "Bottom" },
-                          ]}
-                        />
-                      </Field>
-                    </>
-                  )}
-                </div>
-              )}
-            </>
-          )}
+          </Section>
 
-          <Field label="Fit mode">
-            <RadioGroup
-              name="fit"
-              value={fit}
-              onChange={(v) => setFit(v as Fit)}
-              options={[
-                { value: "stretch", label: "Stretch" },
-                { value: "fill", label: "Fill (cover)" },
-                { value: "fit", label: "Fit (contain)" },
-              ]}
-            />
-          </Field>
-
-          {fit === "fit" && (
-            <Field label="Fit background">
-              <div className="flex items-center gap-3">
-                <input
-                  type="color"
-                  className="h-10 w-16 rounded border border-slate-300"
-                  value={fitBackground}
-                  onChange={(e) => setFitBackground(e.target.value)}
-                />
-                <span className="text-xs text-slate-500">
-                  Fills empty space around images when they don't cover the section.
-                </span>
-              </div>
+          <Section title="Images">
+            <Field label="Input mode">
+              <RadioGroup
+                name="kind"
+                value={kind}
+                onChange={(v) => setKind(v as Kind)}
+                options={[
+                  { value: "single", label: "Single image" },
+                  { value: "three", label: "Separate images" },
+                ]}
+              />
             </Field>
-          )}
 
-          <Field label="Borders">
-            <RadioGroup
-              name="borderMode"
-              value={borderMode}
-              onChange={(v) => setBorderMode(v as BorderMode)}
-              options={[
-                { value: "none", label: "None" },
-                { value: "outer", label: "Outer only" },
-                { value: "sections", label: "Outer + section dividers" },
-              ]}
-            />
-          </Field>
+            {kind === "single" ? (
+              <Field label="Image">
+                <FileInput onFile={setSingleImage} file={singleImage} />
+              </Field>
+            ) : (
+              <>
+                <Field label="Back image">
+                  <FileInput onFile={setBackImage} file={backImage} />
+                </Field>
+                <Field label="Front image">
+                  <FileInput onFile={setFrontImage} file={frontImage} />
+                </Field>
+                <Field label="Spine image (optional)">
+                  <FileInput onFile={setSpineImage} file={spineImage} />
+                </Field>
+              </>
+            )}
+          </Section>
 
-          {borderMode !== "none" && (
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Thickness (px)">
-                <input
+          {kind === "three" && !spineImage && (
+            <Section title="Spine">
+              <Field label="Spine preset">
+                <select
                   className="input"
-                  type="number"
-                  step="1"
-                  min="0"
-                  value={borderThickness}
-                  onChange={(e) => {
-                    const cleaned = e.target.value.replace(/[^\d]/g, "");
-                    setBorderThickness(cleaned === "" ? "0" : cleaned);
-                  }}
-                />
+                  value={spinePreset}
+                  onChange={(e) => setSpinePreset(e.target.value as SpinePreset)}
+                >
+                  <option value="blank">Blank (solid color)</option>
+                  <option value="text">Text only</option>
+                  <option value="ps2">PS2</option>
+                  <option value="ps1" disabled>
+                    PS1 (coming soon)
+                  </option>
+                  <option value="xbox" disabled>
+                    Xbox (coming soon)
+                  </option>
+                  <option value="xbox360" disabled>
+                    Xbox 360 (coming soon)
+                  </option>
+                </select>
               </Field>
-              <Field label="Color">
-                <input
-                  type="color"
-                  className="h-10 w-full rounded border border-slate-300"
-                  value={borderColor}
-                  onChange={(e) => setBorderColor(e.target.value)}
-                />
-              </Field>
-            </div>
+              {(spinePreset === "ps2" || spinePreset === "text") && (
+                <Field label="Spine title">
+                  <input
+                    className="input"
+                    value={spineTitle}
+                    onChange={(e) => setSpineTitle(e.target.value)}
+                    placeholder="e.g. Grand Theft Auto III"
+                  />
+                </Field>
+              )}
+              {(spinePreset === "blank" || spinePreset === "text") && (
+                <Field label="Spine background">
+                  <input
+                    type="color"
+                    className="h-10 w-16 rounded border border-slate-300"
+                    value={spineBg}
+                    onChange={(e) => setSpineBg(e.target.value)}
+                  />
+                </Field>
+              )}
+              {spinePreset === "text" && (
+                <>
+                  <Field label="Text color">
+                    <input
+                      type="color"
+                      className="h-10 w-16 rounded border border-slate-300"
+                      value={spineTextColor}
+                      onChange={(e) => setSpineTextColor(e.target.value)}
+                    />
+                  </Field>
+                  <Field label="Text alignment">
+                    <RadioGroup
+                      name="spineTextAlign"
+                      value={spineTextAlign}
+                      onChange={(v) => setSpineTextAlign(v as SpineTextAlign)}
+                      options={[
+                        { value: "start", label: "Top" },
+                        { value: "center", label: "Center" },
+                        { value: "end", label: "Bottom" },
+                      ]}
+                    />
+                  </Field>
+                </>
+              )}
+            </Section>
           )}
+
+          <Section title="Layout">
+            <Field label="Fit mode">
+              <RadioGroup
+                name="fit"
+                value={fit}
+                onChange={(v) => setFit(v as Fit)}
+                options={[
+                  { value: "stretch", label: "Stretch" },
+                  { value: "fill", label: "Fill (cover)" },
+                  { value: "fit", label: "Fit (contain)" },
+                ]}
+              />
+            </Field>
+
+            {fit === "fit" && (
+              <Field label="Fit background">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    className="h-10 w-16 rounded border border-slate-300"
+                    value={fitBackground}
+                    onChange={(e) => setFitBackground(e.target.value)}
+                  />
+                  <span className="text-xs text-slate-500">
+                    Fills empty space around images when they don't cover the section.
+                  </span>
+                </div>
+              </Field>
+            )}
+          </Section>
+
+          <Section title="Borders">
+            <Field label="Border mode">
+              <RadioGroup
+                name="borderMode"
+                value={borderMode}
+                onChange={(v) => setBorderMode(v as BorderMode)}
+                options={[
+                  { value: "none", label: "None" },
+                  { value: "outer", label: "Outer only" },
+                  { value: "sections", label: "Outer + section dividers" },
+                ]}
+              />
+            </Field>
+
+            {borderMode !== "none" && (
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Thickness (px)">
+                  <input
+                    className="input"
+                    type="number"
+                    step="1"
+                    min="0"
+                    value={borderThickness}
+                    onChange={(e) => {
+                      const cleaned = e.target.value.replace(/[^\d]/g, "");
+                      setBorderThickness(cleaned === "" ? "0" : cleaned);
+                    }}
+                  />
+                </Field>
+                <Field label="Color">
+                  <input
+                    type="color"
+                    className="h-10 w-full rounded border border-slate-300"
+                    value={borderColor}
+                    onChange={(e) => setBorderColor(e.target.value)}
+                  />
+                </Field>
+              </div>
+            )}
+          </Section>
 
           <button
             type="submit"
@@ -352,6 +389,11 @@ export function App() {
                 spineBg={spineBg}
                 spineTextColor={spineTextColor}
                 spineTextAlign={spineTextAlign}
+                onSelectSingle={setSingleImage}
+                onSelectBack={setBackImage}
+                onSelectFront={setFrontImage}
+                onSelectSpine={setSpineImage}
+                isDraggingFile={isDraggingFile}
               />
             </div>
           )}
@@ -368,7 +410,7 @@ export function App() {
         }
         .layout-content {
           display: grid;
-          grid-template-columns: 420px 1fr;
+          grid-template-columns: 480px 1fr;
           column-gap: 1.5rem;
         }
         .layout-form {
@@ -432,6 +474,17 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <fieldset className="border border-slate-200 rounded-md px-4 pt-2 pb-4">
+      <legend className="px-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        {title}
+      </legend>
+      <div className="space-y-4">{children}</div>
+    </fieldset>
+  );
+}
+
 function RadioGroup({
   name,
   value,
@@ -477,6 +530,24 @@ function FileInput({
   onFile: (f: File | null) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    if (file) {
+      if (el.files && el.files.length === 1 && el.files[0] === file) return;
+      try {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        el.files = dt.files;
+      } catch {
+        // Older browsers may block programmatic FileList assignment; ignore.
+      }
+    } else if (el.value) {
+      el.value = "";
+    }
+  }, [file]);
+
   return (
     <div className="flex items-center gap-3">
       <input
@@ -489,10 +560,7 @@ function FileInput({
       {file && (
         <button
           type="button"
-          onClick={() => {
-            if (inputRef.current) inputRef.current.value = "";
-            onFile(null);
-          }}
+          onClick={() => onFile(null)}
           className="text-xs text-slate-500 hover:text-slate-700"
         >
           clear

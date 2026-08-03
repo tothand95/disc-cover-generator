@@ -35,6 +35,12 @@ interface CoverPreviewProps {
   spineBg: string;
   spineTextColor: string;
   spineTextAlign: SpineTextAlign;
+
+  onSelectSingle?: (file: File) => void;
+  onSelectBack?: (file: File) => void;
+  onSelectFront?: (file: File) => void;
+  onSelectSpine?: (file: File) => void;
+  isDraggingFile?: boolean;
 }
 
 const MM_PER_INCH = 25.4;
@@ -71,6 +77,48 @@ function fitToObjectFit(fit: Fit): React.CSSProperties["objectFit"] {
   return fit === "stretch" ? "fill" : fit === "fill" ? "cover" : "contain";
 }
 
+function DropOverlay({
+  globalDragging,
+  label,
+  onSelectFile,
+}: {
+  globalDragging?: boolean;
+  label: string;
+  onSelectFile: (file: File) => void;
+}) {
+  const [isDragging, setIsDragging] = useState(false);
+  if (!globalDragging) return null;
+  return (
+    <div
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "copy";
+      }}
+      onDragEnter={() => setIsDragging(true)}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const file = Array.from(e.dataTransfer.files).find((f) =>
+          f.type.startsWith("image/"),
+        );
+        if (file) onSelectFile(file);
+      }}
+      className={`absolute inset-0 flex items-center justify-center text-white text-center font-semibold select-none transition-colors ${
+        isDragging ? "bg-indigo-600/85" : "bg-indigo-500/70"
+      }`}
+      style={{
+        border: "4px dashed white",
+        zIndex: 50,
+        fontSize: "0.85rem",
+        padding: "0.25rem",
+      }}
+    >
+      {isDragging ? `Release for ${label}` : `Drop for ${label}`}
+    </div>
+  );
+}
+
 function SectionImage({
   url,
   fit,
@@ -82,7 +130,7 @@ function SectionImage({
 }) {
   if (!url) {
     return (
-      <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs bg-slate-100 select-none">
+      <div className="w-full h-full flex items-center justify-center text-slate-500 text-lg font-medium select-none bg-slate-100">
         {placeholder}
       </div>
     );
@@ -92,7 +140,12 @@ function SectionImage({
       src={url}
       alt=""
       draggable={false}
-      style={{ width: "100%", height: "100%", objectFit: fitToObjectFit(fit), display: "block" }}
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: fitToObjectFit(fit),
+        display: "block",
+      }}
     />
   );
 }
@@ -186,6 +239,11 @@ export function CoverPreview(props: CoverPreviewProps) {
     spineBg,
     spineTextColor,
     spineTextAlign,
+    onSelectSingle,
+    onSelectBack,
+    onSelectFront,
+    onSelectSpine,
+    isDraggingFile,
   } = props;
 
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -283,11 +341,25 @@ export function CoverPreview(props: CoverPreviewProps) {
         {kind === "single" ? (
           <div className="absolute inset-0">
             <SectionImage url={singleUrl} fit={fit} placeholder="Single image" />
+            {onSelectSingle && (
+              <DropOverlay
+                globalDragging={isDraggingFile}
+                label="cover"
+                onSelectFile={onSelectSingle}
+              />
+            )}
           </div>
         ) : (
           <div className="absolute inset-0 flex">
             <div style={{ width: sideWidthPx, height: "100%", position: "relative" }}>
               <SectionImage url={backUrl} fit={fit} placeholder="Back" />
+              {onSelectBack && (
+                <DropOverlay
+                  globalDragging={isDraggingFile}
+                  label="back cover"
+                  onSelectFile={onSelectBack}
+                />
+              )}
             </div>
             <div style={{ width: spineWidthPx, height: "100%", position: "relative" }}>
               {spineUrl ? (
@@ -303,58 +375,47 @@ export function CoverPreview(props: CoverPreviewProps) {
                   textAlign={spineTextAlign}
                 />
               )}
+              {onSelectSpine && (
+                <DropOverlay
+                  globalDragging={isDraggingFile}
+                  label="spine"
+                  onSelectFile={onSelectSpine}
+                />
+              )}
             </div>
             <div style={{ width: sideWidthPx, height: "100%", position: "relative" }}>
               <SectionImage url={frontUrl} fit={fit} placeholder="Front" />
+              {onSelectFront && (
+                <DropOverlay
+                  globalDragging={isDraggingFile}
+                  label="front cover"
+                  onSelectFile={onSelectFront}
+                />
+              )}
             </div>
           </div>
         )}
 
-        {kind === "three" && borderMode !== "none" && (
+        {kind === "three" && borderMode === "sections" && borderPreviewPx > 0 && (
           <>
-            {borderMode === "sections" && borderPreviewPx > 0 ? (
-              <>
-                <div
-                  className="absolute top-0 bottom-0"
-                  style={{
-                    left: sideWidthPx,
-                    width: borderPreviewPx,
-                    transform: `translateX(-${borderPreviewPx / 2}px)`,
-                    background: borderColor,
-                  }}
-                />
-                <div
-                  className="absolute top-0 bottom-0"
-                  style={{
-                    left: sideWidthPx + spineWidthPx,
-                    width: borderPreviewPx,
-                    transform: `translateX(-${borderPreviewPx / 2}px)`,
-                    background: borderColor,
-                  }}
-                />
-              </>
-            ) : (
-              // Preview guide only (not rendered in the PDF): lighter dashed
-              // lines showing where the section boundaries are.
-              <>
-                <div
-                  className="absolute top-0 bottom-0 pointer-events-none"
-                  style={{
-                    left: sideWidthPx,
-                    borderLeft: "1px dashed rgba(148, 163, 184, 0.8)",
-                    transform: "translateX(-0.5px)",
-                  }}
-                />
-                <div
-                  className="absolute top-0 bottom-0 pointer-events-none"
-                  style={{
-                    left: sideWidthPx + spineWidthPx,
-                    borderLeft: "1px dashed rgba(148, 163, 184, 0.8)",
-                    transform: "translateX(-0.5px)",
-                  }}
-                />
-              </>
-            )}
+            <div
+              className="absolute top-0 bottom-0"
+              style={{
+                left: sideWidthPx,
+                width: borderPreviewPx,
+                transform: `translateX(-${borderPreviewPx / 2}px)`,
+                background: borderColor,
+              }}
+            />
+            <div
+              className="absolute top-0 bottom-0"
+              style={{
+                left: sideWidthPx + spineWidthPx,
+                width: borderPreviewPx,
+                transform: `translateX(-${borderPreviewPx / 2}px)`,
+                background: borderColor,
+              }}
+            />
           </>
         )}
       </div>
