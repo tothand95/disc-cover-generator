@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CoverPreview } from "./CoverPreview.js";
+import { generateCoverPdfInBrowser } from "./lib/pdf";
+import { CASE_PRESETS } from "../../core/presets";
 
 interface CasePreset {
   id: string;
@@ -39,13 +41,10 @@ export function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/presets")
-      .then((r) => r.json())
-      .then((d) => setPresets(d.presets))
-      .catch((e) => setError(String(e)));
+    setPresets(Object.values(CASE_PRESETS));
   }, []);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
@@ -57,70 +56,59 @@ export function App() {
           throw new Error("Please choose both back and front images.");
       }
 
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = "/api/generate";
-      form.target = "_blank";
-      form.enctype = "multipart/form-data";
-      form.style.display = "none";
+      setBusy(true);
 
-      const addField = (name: string, value: string) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = name;
-        input.value = value;
-        form.appendChild(input);
-      };
-
-      const addFile = (name: string, file: File | null) => {
-        if (!file) return;
-        const input = document.createElement("input");
-        input.type = "file";
-        input.name = name;
-        const dt = new DataTransfer();
-        dt.items.add(file);
-        input.files = dt.files;
-        form.appendChild(input);
-      };
-
-      addField("preset", preset);
-      addField("kind", kind);
-      addField("fit", fit);
-      addField("borderMode", borderMode);
-      addField("borderThickness", borderThickness);
-      addField("borderColor", borderColor);
-      addField("fitBackground", fitBackground);
       const defaultName = preset.startsWith("bluray")
         ? "generated-bluray-cover"
         : preset.startsWith("cd")
           ? "generated-cd-cover"
           : "generated-dvd-cover";
-      addField("filename", spineTitle.trim() || defaultName);
+      const filename = (spineTitle.trim() || defaultName) + ".pdf";
 
-      if (kind === "single") {
-        addFile("image", singleImage);
-      } else {
-        addFile("back", backImage);
-        addFile("front", frontImage);
-        if (spineImage) {
-          addFile("spine", spineImage);
-        } else {
-          addField("spinePreset", spinePreset);
-          addField("spineTitle", spineTitle);
-          addField("spineBg", spineBg);
-          addField("spineTextColor", spineTextColor);
-          addField("spineTextAlign", spineTextAlign);
-        }
-      }
+      const bytes = await generateCoverPdfInBrowser({
+        presetId: preset as (typeof CASE_PRESETS)[keyof typeof CASE_PRESETS]["id"],
+        fit,
+        border: {
+          mode: borderMode,
+          thicknessPx: Number(borderThickness) || 0,
+          color: borderColor,
+        },
+        fitBackground,
+        dpi: 300,
+        input:
+          kind === "single"
+            ? { kind: "single", image: singleImage! }
+            : {
+                kind: "three",
+                back: backImage!,
+                front: frontImage!,
+                spineImage: spineImage,
+                spinePreset: spineImage
+                  ? null
+                  : {
+                      preset: spinePreset,
+                      title: spineTitle,
+                      extras: {
+                        backgroundColor: spineBg,
+                        textColor: spineTextColor,
+                        textAlign: spineTextAlign,
+                      },
+                    },
+              },
+      });
 
-      document.body.appendChild(form);
-      setBusy(true);
-      form.submit();
-      document.body.removeChild(form);
-      // Reset busy quickly — the new tab handles the actual generation.
-      setTimeout(() => setBusy(false), 400);
+      const blob = new Blob([bytes as BlobPart], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
+    } finally {
       setBusy(false);
     }
   }
