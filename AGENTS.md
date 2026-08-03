@@ -88,18 +88,42 @@ second rendering path.
 - The bundled font is Hind (OFL). All 5 static weights are shipped.
 - Preview uses the fonts via `@font-face` in `web/src/index.css` — Vite
   fingerprints the URLs at build time. No runtime loading logic needed.
-- Spine PDF rasterization loads an `<img src="data:image/svg+xml,...">`.
-  The browser resolves the `SpineFont` `@font-face` from the current
-  document, so the same fonts apply automatically.
-- Do not embed fonts as base64 in the SVG. It bloats the PNG round-trip
-  and isn't needed in a pure-browser app.
+- Spine PDF rasterization uses `web/src/lib/spineAssets.ts`, which does
+  **two** things:
+  1. Fetches all Hind weights and inlines them as data-URI `@font-face`
+     blocks embedded in the SVG. Required because the browser loads the
+     SVG via `<img data:image/svg+xml,...>` in an isolated context that
+     does **not** inherit page CSS.
+  2. Registers the same weights on `document.fonts` via the `FontFace`
+     API and awaits `document.fonts.ready` before rasterizing. Warms
+     Chrome's font cache so the SVG-in-`<img>` picks them up
+     synchronously and doesn't fall back to sans-serif under a race.
+- Both preload and font-block calls are memoized after the first PDF
+  generation, so subsequent generations are fast.
+- The PDF itself contains **no font data and no text objects** — only
+  the rasterized PNG of the spine. That's why the app has zero
+  fontkit-related deps.
+- All available weights are always embedded, so if `buildSpineSvg`
+  later switches `font-weight` (or exposes it as an option), no loader
+  changes are needed.
+
+## PDF output
+
+- The Generate PDF button opens the result in a **new tab** using
+  `window.open(blobUrl, "_blank")` — the browser's built-in viewer
+  renders it inline. No forced download. The blob URL is revoked after
+  60s so the new tab has time to load it.
+- If the user's browser blocks the pop-up, the app surfaces a visible
+  error asking them to allow pop-ups.
 
 ## PDF layout
 
 - Page: A4 landscape, hardcoded (`297 x 210 mm`).
 - Cover is centered on the page. Every preset fits with default bleed.
-- Crop marks are drawn **first** (dotted grey, 6 mm long, from all four
-  corners plus the two spine folds), so images and borders sit on top.
+- Crop marks are drawn **first** (dotted grey `rgb(0.25, 0.25, 0.25)`,
+  6 mm long, from all four corners plus the two spine folds), so images
+  and borders sit on top. The grey is dark enough to see when printed
+  but light enough to trim by.
 - Outer border is grown by `thickness/2` so its centered stroke sits
   fully outside the cover — the cover's visible area equals the preset
   dimensions.
@@ -158,6 +182,54 @@ Do not remove this or `pnpm install` will fail on a clean checkout.
   `VISUAL_CENTER_RATIO`.
 - **Rendering fonts via base64 in the SVG.** Not needed once the SVG is
   rasterized in the same browser tab that has the fonts loaded.
+  *(Update: partially revisited — see "Font handling" above. When the
+  SVG is loaded via `<img data:image/svg+xml,...>`, the browser DOES
+  NOT inherit the page's `@font-face`. Data-URI-embedded fonts inside
+  the SVG plus a `FontFace`-API preload on the main document are both
+  required.)*
+- **Google Fonts / external CDN font URLs.** Browsers block external
+  resource loads from within SVG-in-`<img>` for security. Fonts still
+  need to be embedded as data URIs, so a CDN wouldn't reduce our
+  work — it would only add a network dependency and remove offline
+  capability. Rejected.
+- **Counter-based drag tracking (`dragenter++/dragleave--`).** Bounces
+  every time the mouse crosses a child element boundary, leaving the
+  overlay stuck after a drop when different zone DOMs have different
+  child-element structures. Replaced with `dragover` + `drop` on the
+  document.
+- **`e.stopPropagation()` inside drop handlers.** Combined with the
+  document `drop` listener, this leaves the overlay visible after a
+  drop. Always let drop events bubble.
+
+## Drag-and-drop image inputs
+
+The preview panel is a drop target: users can drag OS images onto the
+Back / Front / Spine / Single-image slots.
+
+- **Global drag detection** lives in `App.tsx`: two document-level
+  listeners (`dragover` sets `isDraggingFile = true`, `drop` sets it
+  false). Kept intentionally simple — no counter, no timers.
+- **`DropOverlay`** in `CoverPreview.tsx` is the *one* component that
+  renders the highlighted drop UI. Each cover section mounts one
+  instance on top of its normal contents; it's `null` when no drag is
+  in flight.
+- Do **not** call `stopPropagation()` in local drop handlers. Doing so
+  suppresses the document's `drop` listener and leaves the overlay
+  stuck. All zones must use the same identical handler pattern —
+  copy-paste, don't diverge.
+- `FileInput` (App.tsx) syncs its underlying `<input type="file">`
+  filename via `DataTransfer` in a `useEffect`, so a drop that sets
+  the React `file` state also updates the native input's displayed
+  filename.
+
+## Form layout
+
+- Left column is split into `<Section>` fieldsets (Case, Images, Spine,
+  Layout, Borders). Each fieldset is a `<fieldset>` with a small
+  uppercase `<legend>`. Don't add new top-level `<Field>`s outside a
+  section — the layout breaks visually.
+- The Spine section only renders in three-image mode when no spine
+  image file is uploaded (falls back to preset-driven spine).
 
 ## Coding style
 

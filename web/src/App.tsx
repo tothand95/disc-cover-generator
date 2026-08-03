@@ -79,13 +79,6 @@ export function App() {
 
       setBusy(true);
 
-      const defaultName = preset.startsWith("bluray")
-        ? "generated-bluray-cover"
-        : preset.startsWith("cd")
-          ? "generated-cd-cover"
-          : "generated-dvd-cover";
-      const filename = (spineTitle.trim() || defaultName) + ".pdf";
-
       const bytes = await generateCoverPdfInBrowser({
         presetId: preset as (typeof CASE_PRESETS)[keyof typeof CASE_PRESETS]["id"],
         fit,
@@ -120,13 +113,11 @@ export function App() {
 
       const blob = new Blob([bytes as BlobPart], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      const win = window.open(url, "_blank");
+      if (!win) {
+        setError("Pop-up blocked. Please allow pop-ups to view the generated PDF.");
+      }
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {

@@ -65,7 +65,7 @@ function drawCropMarks(
   const x1 = mmToPt(wrapOriginXmm + preset.totalWidthMm);
   const y1 = mmToPt(wrapOriginYmm + preset.heightMm);
   const len = mmToPt(markLenMm);
-  const grey = rgb(0.55, 0.55, 0.55);
+  const grey = rgb(0.25, 0.25, 0.25);
   const thickness = 0.5;
   const dashArray = [0.01, 2];
 

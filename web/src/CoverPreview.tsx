@@ -108,7 +108,9 @@ function DropOverlay({
         isDragging ? "bg-indigo-600/85" : "bg-indigo-500/70"
       }`}
       style={{
-        border: "4px dashed white",
+        margin: "2px",
+        border: "3px dashed white",
+        borderRadius: "1.5rem",
         zIndex: 50,
         fontSize: "0.85rem",
         padding: "0.25rem",
