@@ -107,7 +107,7 @@ export function App() {
   return (
     <div
       className={`mx-auto p-6 layout-root ${isDraggingFile ? "is-dragging-file" : ""}`}
-      style={{ maxWidth: "2540px" }}
+      style={{ maxWidth: "2300px" }}
     >
       {isDraggingFile && (
         <div

@@ -13,6 +13,7 @@
     "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "dependencies": {
+    "lucide-react": "^1.28.0",
     "pdf-lib": "^1.17.1"
   },
   "devDependencies": {

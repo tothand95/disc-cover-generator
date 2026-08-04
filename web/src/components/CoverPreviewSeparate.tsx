@@ -23,9 +23,9 @@ interface Props {
   spineTextColor: string;
   spineTextAlign: SpineTextAlign;
 
-  onSelectBack?: (file: File) => void;
-  onSelectFront?: (file: File) => void;
-  onSelectSpine?: (file: File) => void;
+  onSelectBack?: (file: File | null) => void;
+  onSelectFront?: (file: File | null) => void;
+  onSelectSpine?: (file: File | null) => void;
   isDraggingFile?: boolean;
 }
 
@@ -112,7 +112,12 @@ export function CoverPreviewSeparate(props: Props) {
           }}
         >
           <div style={{ height: "100%", position: "relative" }}>
-            <SectionImage url={backUrl} fit={fit} placeholder="Back" />
+            <SectionImage
+              url={backUrl}
+              fit={fit}
+              placeholder="back cover"
+              onChange={onSelectBack}
+            />
             {onSelectBack && (
               <DropOverlay
                 globalDragging={isDraggingFile}
@@ -121,9 +126,14 @@ export function CoverPreviewSeparate(props: Props) {
               />
             )}
           </div>
-          <div style={{ height: "100%", position: "relative" }}>
+          <div style={{ height: "100%", position: "relative" }} className="hover:z-10">
             {spineUrl ? (
-              <SectionImage url={spineUrl} fit={fit} placeholder="Spine" />
+              <SectionImage
+                url={spineUrl}
+                fit={fit}
+                placeholder="spine image"
+                onChange={onSelectSpine}
+              />
             ) : (
               <SpinePresetPreview
                 preset={spinePreset}
@@ -144,7 +154,12 @@ export function CoverPreviewSeparate(props: Props) {
             )}
           </div>
           <div style={{ height: "100%", position: "relative" }}>
-            <SectionImage url={frontUrl} fit={fit} placeholder="Front" />
+            <SectionImage
+              url={frontUrl}
+              fit={fit}
+              placeholder="front cover"
+              onChange={onSelectFront}
+            />
             {onSelectFront && (
               <DropOverlay
                 globalDragging={isDraggingFile}

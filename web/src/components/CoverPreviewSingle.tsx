@@ -13,7 +13,7 @@ interface Props {
   fitBackground: string;
   dpi: number;
   singleImage: File | null;
-  onSelectSingle?: (file: File) => void;
+  onSelectSingle?: (file: File | null) => void;
   isDraggingFile?: boolean;
 }
 
@@ -71,7 +71,12 @@ export function CoverPreviewSingle({
         }}
       >
         <div className="absolute inset-0">
-          <SectionImage url={singleUrl} fit={fit} placeholder="Single image" />
+          <SectionImage
+            url={singleUrl}
+            fit={fit}
+            placeholder="cover image"
+            onChange={onSelectSingle}
+          />
           {onSelectSingle && (
             <DropOverlay
               globalDragging={isDraggingFile}

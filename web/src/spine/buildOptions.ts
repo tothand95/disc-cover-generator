@@ -1,6 +1,6 @@
 import type { SpinePresetInput } from "../../../core/types";
 import type { SpineSvgOptions, SpineTextAlign } from "../../../core/spine/svg";
-import { loadPs2SpineImage } from "./assets";
+import { loadPs2SpineImage, loadXboxSpineImage } from "./assets";
 
 /**
  * Translate a SpinePresetInput into concrete buildSpineSvg options, resolving
@@ -12,8 +12,9 @@ export async function resolveSpineSvgOptions(
   widthPx: number,
   heightPx: number,
 ): Promise<SpineSvgOptions> {
-  if (spine.preset === "ps2") {
-    const topImage = await loadPs2SpineImage();
+  if (spine.preset === "ps2" || spine.preset === "xbox") {
+    const topImage =
+      spine.preset === "ps2" ? await loadPs2SpineImage() : await loadXboxSpineImage();
     return {
       title: spine.title || "",
       widthPx,

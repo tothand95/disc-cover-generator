@@ -42,6 +42,18 @@ body {
   @apply bg-slate-50 text-slate-900 antialiased;
 }
 
+button:not(:disabled),
+select:not(:disabled),
+input[type="color"]:not(:disabled),
+input[type="file"]:not(:disabled),
+input[type="file"]:not(:disabled)::file-selector-button {
+  cursor: pointer;
+}
+button:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
 .layout-root {
   height: 100vh;
   display: grid;
@@ -87,19 +99,6 @@ body {
   outline: none;
   border-color: rgb(99 102 241);
   box-shadow: 0 0 0 3px rgb(199 210 254);
-}
-select.input {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  padding-right: 2.25rem;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 8 10 12 14 8'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 0.65rem center;
-  background-size: 1.1rem 1.1rem;
-}
-select.input::-ms-expand {
-  display: none;
 }
 
 .spine-svg-host > svg {

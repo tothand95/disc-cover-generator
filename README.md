@@ -7,7 +7,7 @@ Generate print-ready PDF covers for DVD, Blu-Ray, and CD cases.
 - Predefined case sizes: DVD Normal, DVD Slim, Blu-Ray, CD Jewel, CD Jewel (folded front)
 - Single-image mode: one image stretched/filled/fitted across the whole cover
 - 3-image mode: back + front + optional spine
-- Auto-generated spine styles (PS2 first; XBOX, XBOX360, PS1 planned)
+- Auto-generated spine styles (PS2 first; XBOX, XBOX360 planned)
 - Fit modes: `stretch` | `fill` (cover) | `fit` (contain)
 - Border modes: `none` | `outer` | `sections`
 - Input formats: PNG, JPEG, WebP

@@ -1,4 +1,5 @@
 import ps2SpineUrl from "../../../assets/images/ps2-spine.png?url";
+import xboxSpineUrl from "../../../assets/images/xbox-spine.jpg?url";
 import hindLightUrl from "../../../assets/fonts/Hind-Light.ttf?url";
 import hindRegularUrl from "../../../assets/fonts/Hind-Regular.ttf?url";
 import hindMediumUrl from "../../../assets/fonts/Hind-Medium.ttf?url";
@@ -6,16 +7,25 @@ import hindSemiBoldUrl from "../../../assets/fonts/Hind-SemiBold.ttf?url";
 import hindBoldUrl from "../../../assets/fonts/Hind-Bold.ttf?url";
 import { SPINE_FONT_FAMILY, type SpineTopImage } from "../../../core/spine/svg";
 
-const PS2_NATURAL_WIDTH = 500;
-const PS2_NATURAL_HEIGHT = 1687;
+interface TopImageSpec {
+  url: string;
+  naturalWidth: number;
+  naturalHeight: number;
+}
 
-let cached: SpineTopImage | null = null;
+const TOP_IMAGES: Record<"ps2" | "xbox", TopImageSpec> = {
+  ps2: { url: ps2SpineUrl, naturalWidth: 500, naturalHeight: 1687 },
+  xbox: { url: xboxSpineUrl, naturalWidth: 164, naturalHeight: 453 },
+};
 
-/** Fetches the bundled PS2 spine PNG and returns it as a self-contained data URI. */
-export async function loadPs2SpineImage(): Promise<SpineTopImage> {
+const cache = new Map<string, SpineTopImage>();
+
+async function loadTopImage(key: "ps2" | "xbox"): Promise<SpineTopImage> {
+  const cached = cache.get(key);
   if (cached) return cached;
-  const res = await fetch(ps2SpineUrl);
-  if (!res.ok) throw new Error(`Failed to load PS2 spine image: ${res.status}`);
+  const spec = TOP_IMAGES[key];
+  const res = await fetch(spec.url);
+  if (!res.ok) throw new Error(`Failed to load ${key} spine image: ${res.status}`);
   const blob = await res.blob();
   const dataUrl: string = await new Promise((resolve, reject) => {
     const fr = new FileReader();
@@ -23,8 +33,22 @@ export async function loadPs2SpineImage(): Promise<SpineTopImage> {
     fr.onerror = () => reject(fr.error);
     fr.readAsDataURL(blob);
   });
-  cached = { href: dataUrl, aspectRatio: PS2_NATURAL_WIDTH / PS2_NATURAL_HEIGHT };
-  return cached;
+  const value: SpineTopImage = {
+    href: dataUrl,
+    aspectRatio: spec.naturalWidth / spec.naturalHeight,
+  };
+  cache.set(key, value);
+  return value;
+}
+
+/** Fetches the bundled PS2 spine PNG and returns it as a self-contained data URI. */
+export function loadPs2SpineImage(): Promise<SpineTopImage> {
+  return loadTopImage("ps2");
+}
+
+/** Fetches the bundled Xbox spine JPG and returns it as a self-contained data URI. */
+export function loadXboxSpineImage(): Promise<SpineTopImage> {
+  return loadTopImage("xbox");
 }
 
 const SPINE_FONT_WEIGHTS: Array<{ weight: number; url: string }> = [

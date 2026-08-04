@@ -28,7 +28,7 @@ export interface BorderOptions {
   color: string;
 }
 
-export type SpinePresetId = "ps2" | "ps1" | "xbox" | "xbox360" | "blank" | "text";
+export type SpinePresetId = "ps2" | "xbox" | "xbox360" | "blank" | "text";
 
 export type SpineTextAlign = "start" | "center" | "end";
 

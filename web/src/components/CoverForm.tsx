@@ -2,6 +2,7 @@ import { Field } from "../ui/Field";
 import { Section } from "../ui/Section";
 import { RadioGroup } from "../ui/RadioGroup";
 import { FileInput } from "../ui/FileInput";
+import { Select } from "../ui/Select";
 import type {
   BorderMode,
   CasePreset,
@@ -61,8 +62,7 @@ export function CoverForm(p: CoverFormProps) {
     >
       <Section title="Case">
         <Field label="Case preset">
-          <select
-            className="input"
+          <Select
             value={p.preset}
             onChange={(e) => p.setPreset(e.target.value)}
           >
@@ -71,7 +71,7 @@ export function CoverForm(p: CoverFormProps) {
                 {cp.label} ({cp.totalWidthMm}×{cp.heightMm}mm, spine {cp.spineWidthMm}mm)
               </option>
             ))}
-          </select>
+          </Select>
         </Field>
       </Section>
 
@@ -110,20 +110,18 @@ export function CoverForm(p: CoverFormProps) {
       {p.kind === "three" && !p.spineImage && (
         <Section title="Spine">
           <Field label="Spine preset">
-            <select
-              className="input"
+            <Select
               value={p.spinePreset}
               onChange={(e) => p.setSpinePreset(e.target.value as SpinePreset)}
             >
               <option value="blank">Blank (solid color)</option>
               <option value="text">Text only</option>
               <option value="ps2">PS2</option>
-              <option value="ps1" disabled>PS1 (coming soon)</option>
-              <option value="xbox" disabled>Xbox (coming soon)</option>
+              <option value="xbox">Xbox</option>
               <option value="xbox360" disabled>Xbox 360 (coming soon)</option>
-            </select>
+            </Select>
           </Field>
-          {(p.spinePreset === "ps2" || p.spinePreset === "text") && (
+          {(p.spinePreset === "ps2" || p.spinePreset === "xbox" || p.spinePreset === "text") && (
             <Field label="Spine title">
               <input
                 className="input"
@@ -209,8 +207,8 @@ export function CoverForm(p: CoverFormProps) {
             onChange={(v) => p.setBorderMode(v as BorderMode)}
             options={[
               { value: "none", label: "None" },
-              { value: "outer", label: "Outer only" },
-              { value: "sections", label: "Outer + section dividers" },
+              { value: "outer", label: "Outer" },
+              { value: "sections", label: "All" },
             ]}
           />
         </Field>

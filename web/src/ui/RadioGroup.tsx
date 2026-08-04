@@ -10,27 +10,33 @@ export function RadioGroup({
   options: { value: string; label: string }[];
 }) {
   return (
-    <div className="flex flex-wrap gap-3">
-      {options.map((o) => (
-        <label
-          key={o.value}
-          className={`px-3 py-1.5 rounded-md text-sm border cursor-pointer transition ${
-            value === o.value
-              ? "border-indigo-600 bg-indigo-50 text-indigo-700"
-              : "border-slate-300 hover:border-slate-400"
-          }`}
-        >
-          <input
-            type="radio"
-            name={name}
-            value={o.value}
-            checked={value === o.value}
-            onChange={(e) => onChange(e.target.value)}
-            className="sr-only"
-          />
-          {o.label}
-        </label>
-      ))}
+    <div
+      role="radiogroup"
+      className="inline-flex w-full items-stretch rounded-md border border-slate-300 bg-white p-0.5"
+    >
+      {options.map((o) => {
+        const selected = value === o.value;
+        return (
+          <label
+            key={o.value}
+            className={`flex flex-1 cursor-pointer select-none items-center justify-center rounded px-3 py-1.5 text-center text-sm font-medium transition ${
+              selected
+                ? "bg-indigo-600 text-white shadow-sm"
+                : "text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            <input
+              type="radio"
+              name={name}
+              value={o.value}
+              checked={selected}
+              onChange={(e) => onChange(e.target.value)}
+              className="sr-only"
+            />
+            {o.label}
+          </label>
+        );
+      })}
     </div>
   );
 }

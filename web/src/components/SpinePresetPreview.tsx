@@ -67,7 +67,7 @@ export function SpinePresetPreview({
   textAlign: SpineTextAlign;
 }) {
   if (preset === "blank") return <div className="w-full h-full" style={{ background: bg }} />;
-  if (preset === "ps2" || preset === "text") {
+  if (preset === "ps2" || preset === "xbox" || preset === "text") {
     const spine: SpinePresetInput = {
       preset,
       title,
