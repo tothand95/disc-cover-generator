@@ -1,0 +1,35 @@
+<div
+  #wrap
+  class="preview-wrap"
+  [style.padding.px]="layout().padding"
+>
+  <div
+    #labels
+    class="preview-labels"
+    [style.width.px]="layout().stageWidth > 0 ? layout().stageWidth : null"
+  >
+    {{ preset().totalWidthMm }} × {{ preset().heightMm }} mm
+  </div>
+
+  <div
+    class="preview-stage"
+    [style.width.px]="layout().stageWidth"
+    [style.height.px]="layout().stageHeight"
+    [style.box-shadow]="outerShadow()"
+    [style.background]="fit() === 'fit' ? fitBackground() : '#ffffff'"
+  >
+    <div class="preview-stage__cell">
+      <app-section-image
+        [url]="imageUrl()"
+        [fit]="fit()"
+        placeholder="cover image"
+        (fileChange)="fileSelected.emit($event)"
+      />
+      <app-drop-overlay
+        [visible]="isDraggingFile()"
+        label="cover"
+        (fileSelected)="fileSelected.emit($event)"
+      />
+    </div>
+  </div>
+</div>

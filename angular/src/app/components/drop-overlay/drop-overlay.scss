@@ -1,0 +1,23 @@
+.drop-overlay {
+  position: absolute;
+  inset: 0;
+  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.25rem;
+  user-select: none;
+  border: 3px dashed white;
+  border-radius: 1.5rem;
+  background: rgba(99, 102, 241, 0.7);
+  z-index: 50;
+  transition: background-color 0.15s;
+
+  &--active {
+    background: rgba(79, 70, 229, 0.85);
+  }
+}

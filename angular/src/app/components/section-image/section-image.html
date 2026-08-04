@@ -1,0 +1,58 @@
+@if (!url()) {
+  <button
+    type="button"
+    class="section-image__placeholder"
+    [disabled]="!editable()"
+    (click)="editable() && openPicker()"
+  >
+    <i class="pi pi-image"></i>
+    <span>
+      @if (editable()) {
+        Click or drop to add {{ placeholder() }}
+      } @else {
+        {{ placeholder() }}
+      }
+    </span>
+    @if (editable()) {
+      <input
+        #fileInput
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        hidden
+        (change)="onFileChange($event)"
+      />
+    }
+  </button>
+} @else {
+  <div class="section-image">
+    <img
+      [src]="url()"
+      alt=""
+      draggable="false"
+      [style.object-fit]="objectFit()"
+    />
+    @if (editable()) {
+      <div class="section-image__overlay">
+        <button type="button" class="section-image__pill" (click)="openPicker()">
+          <i class="pi pi-pencil"></i>
+          <span>Replace</span>
+        </button>
+        <button
+          type="button"
+          class="section-image__pill section-image__pill--danger"
+          (click)="clear()"
+        >
+          <i class="pi pi-trash"></i>
+          <span>Clear</span>
+        </button>
+      </div>
+      <input
+        #fileInput
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        hidden
+        (change)="onFileChange($event)"
+      />
+    }
+  </div>
+}

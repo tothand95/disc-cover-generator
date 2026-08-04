@@ -1,0 +1,16 @@
+@if (visible()) {
+  <div
+    class="drop-overlay"
+    [class.drop-overlay--active]="isDragging()"
+    (dragover)="onDragOver($event)"
+    (dragenter)="onDragEnter()"
+    (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)"
+  >
+    @if (isDragging()) {
+      Release for {{ label() }}
+    } @else {
+      Drop for {{ label() }}
+    }
+  </div>
+}

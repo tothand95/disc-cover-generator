@@ -1,0 +1,90 @@
+:host {
+  display: block;
+}
+
+.cover-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.section {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem 1rem;
+
+  legend {
+    padding: 0 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+  }
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: block;
+
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 0.25rem;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__hint {
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
+// Make PrimeNG components stretch to full width
+::ng-deep {
+  p-select .p-select,
+  p-selectbutton .p-selectbutton,
+  p-inputnumber .p-inputnumber,
+  input[pInputText] {
+    width: 100%;
+  }
+
+  p-selectbutton .p-selectbutton {
+    display: flex;
+
+    .p-togglebutton {
+      flex: 1;
+    }
+  }
+
+  .cover-form__submit {
+    width: 100%;
+
+    .p-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

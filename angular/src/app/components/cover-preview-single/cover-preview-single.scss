@@ -1,0 +1,33 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.preview-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  min-width: 0;
+}
+
+.preview-labels {
+  margin-bottom: 2rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.preview-stage {
+  position: relative;
+
+  &__cell {
+    position: absolute;
+    inset: 0;
+  }
+}
