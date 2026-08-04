@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   root: "web",
+  base: process.env.GITHUB_PAGES ? "/disc-cover-generator/" : "/",
   plugins: [react()],
   server: { port: 5173 },
   build: {
