@@ -12,8 +12,8 @@ export type SpineTextAlign = "start" | "center" | "end";
 export const SPINE_FONT_FAMILY = "SpineFont";
 export const HIND_CAP_HEIGHT_RATIO = 0.7;
 export const VISUAL_CENTER_RATIO = 0.33;
-/** Gap in viewBox pixels between the spine preset image and the text below it. */
-export const TOP_IMAGE_TEXT_GAP_PX = 14;
+/** Gap between the spine preset image and the text below it, as a fraction of the spine width. */
+export const TOP_IMAGE_TEXT_GAP_RATIO = 0.22;
 
 export interface SpinePresetImage {
   /** Image source — data URI recommended so rasterization is self-contained. */
@@ -33,7 +33,7 @@ export interface SpineSvgOptions {
   /**
    * When set, the image is rendered filling the spine width at the top of
    * the spine, and the title (if any) runs top-to-bottom starting
-   * TOP_IMAGE_TEXT_GAP_PX below the image. `align` is ignored in this mode.
+   * widthPx * TOP_IMAGE_TEXT_GAP_RATIO below the image. `align` is ignored in this mode.
    */
   presetImage?: SpinePresetImage;
 }
@@ -57,7 +57,7 @@ export function buildSpineSvg(opts: SpineSvgOptions): string {
   let textGroup = "";
   if (presetImage) {
     const imgHeight = widthPx / presetImage.aspectRatio;
-    const rotateOriginY = imgHeight + TOP_IMAGE_TEXT_GAP_PX;
+    const rotateOriginY = imgHeight + widthPx * TOP_IMAGE_TEXT_GAP_RATIO;
     const escapedHref = escapeXml(presetImage.href);
     const imageEl = `<image href="${escapedHref}" x="0" y="0" width="${widthPx}" height="${imgHeight}" preserveAspectRatio="xMidYMin meet"/>`;
     const textEl = title
