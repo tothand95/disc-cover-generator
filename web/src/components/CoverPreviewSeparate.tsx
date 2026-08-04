@@ -25,6 +25,7 @@ interface Props {
   spineTextAlign: SpineTextAlign;
   showFrontPresetImage: boolean;
   frontImageWidening: number;
+  showFrontSeparator: boolean;
 
   onSelectBack?: (file: File | null) => void;
   onSelectFront?: (file: File | null) => void;
@@ -53,6 +54,7 @@ export function CoverPreviewSeparate(props: Props) {
     spineTextAlign,
     showFrontPresetImage,
     frontImageWidening,
+    showFrontSeparator,
     onSelectBack,
     onSelectFront,
     onSelectSpine,
@@ -171,32 +173,43 @@ export function CoverPreviewSeparate(props: Props) {
                 const key = spinePreset as SpinePresetImageKey;
                 const url = getSpinePresetImageUrl(key, "front");
                 const ar = getSpinePresetImageAspectRatio(key, "front");
-                const previewWideningPx =
-                  frontImageWidening > 0
-                    ? (frontImageWidening * sideWidthPx) /
-                      ((sideWidthMm * dpi) / MM_PER_INCH)
-                    : 0;
+                const scale = sideWidthPx / ((sideWidthMm * dpi) / MM_PER_INCH);
+                const previewWideningPx = frontImageWidening > 0 ? frontImageWidening * scale : 0;
+                const previewSeparatorPx =
+                  key === "ps2" && showFrontSeparator ? Math.max(1, 4 * scale) : 0;
                 const imgHeightPx = sideWidthPx / ar;
-                const totalHeightPx = imgHeightPx + previewWideningPx * 2;
+                const blockHeightPx = imgHeightPx + previewWideningPx * 2;
                 return (
-                  <div
-                    className="pointer-events-none absolute left-0 top-0 w-full select-none"
-                    style={{
-                      height: totalHeightPx,
-                      background: previewWideningPx > 0 ? "#000000" : "transparent",
-                    }}
-                  >
-                    <img
-                      src={url}
-                      alt=""
-                      draggable={false}
-                      className="pointer-events-none absolute left-0 w-full select-none"
+                  <>
+                    <div
+                      className="pointer-events-none absolute left-0 top-0 w-full select-none"
                       style={{
-                        top: previewWideningPx,
-                        height: imgHeightPx,
+                        height: blockHeightPx,
+                        background: previewWideningPx > 0 ? "#000000" : "transparent",
                       }}
-                    />
-                  </div>
+                    >
+                      <img
+                        src={url}
+                        alt=""
+                        draggable={false}
+                        className="pointer-events-none absolute left-0 w-full select-none"
+                        style={{
+                          top: previewWideningPx,
+                          height: imgHeightPx,
+                        }}
+                      />
+                    </div>
+                    {previewSeparatorPx > 0 && (
+                      <div
+                        className="pointer-events-none absolute left-0 w-full select-none"
+                        style={{
+                          top: blockHeightPx,
+                          height: previewSeparatorPx,
+                          background: "#ffffff",
+                        }}
+                      />
+                    )}
+                  </>
                 );
               })()}
             {onSelectFront && (

@@ -52,6 +52,8 @@ export interface CoverFormProps {
   setSpineShowFrontImage: (v: boolean) => void;
   spineFrontImageWidening: string;
   setSpineFrontImageWidening: (v: string) => void;
+  spineShowFrontSeparator: boolean;
+  setSpineShowFrontSeparator: (v: boolean) => void;
 
   busy: boolean;
   error: string | null;
@@ -166,6 +168,19 @@ export function CoverForm(p: CoverFormProps) {
                   const n = Math.min(30, Number(cleaned));
                   p.setSpineFrontImageWidening(String(n));
                 }}
+              />
+            </Field>
+          )}
+          {p.spinePreset === "ps2" && p.spineShowFrontImage && (
+            <Field label="White separator line">
+              <RadioGroup
+                name="spineShowFrontSeparator"
+                value={p.spineShowFrontSeparator ? "on" : "off"}
+                onChange={(v) => p.setSpineShowFrontSeparator(v === "on")}
+                options={[
+                  { value: "off", label: "Off" },
+                  { value: "on", label: "On" },
+                ]}
               />
             </Field>
           )}

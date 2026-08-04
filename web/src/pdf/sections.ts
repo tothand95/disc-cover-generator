@@ -49,6 +49,10 @@ export async function buildSections(
     three.spinePreset.extras.frontImageWidening > 0
       ? Math.round((three.spinePreset.extras.frontImageWidening * dpi) / 300)
       : 0;
+  const frontSeparatorPx =
+    frontPresetKey === "ps2" && three.spinePreset?.extras?.showFrontSeparator
+      ? Math.max(1, Math.round((4 * dpi) / 300))
+      : 0;
 
   const sideWpx = mmToPx(sideW, dpi);
   const sideHpx = mmToPx(h, dpi);
@@ -65,6 +69,7 @@ export async function buildSections(
           frontPresetImage.aspectRatio,
           frontWideningPx,
           frontWideningPx,
+          frontSeparatorPx,
         )
       : renderImageToPng(three.front, sideWpx, sideHpx, fit, fitBackground),
   ]);

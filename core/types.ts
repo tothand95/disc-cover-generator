@@ -43,6 +43,8 @@ export interface SpinePresetInput {
     showFrontImage?: boolean;
     /** Extra height in pixels added to the front preset image via black top/bottom borders (0-30). */
     frontImageWidening?: number;
+    /** PS2 only: draw a thin white separator line under the extended top image. */
+    showFrontSeparator?: boolean;
   };
 }
 

@@ -77,6 +77,8 @@ export async function renderImageToPng(
  * width at y=0 with its aspect ratio preserved. Optionally adds a black
  * top border of `topPaddingPx` and a black bottom border of `bottomPaddingPx`
  * around the overlay to widen it (top edge always at y=0 — never bleeds up).
+ * If `separatorHeightPx` > 0, a white separator line is drawn immediately
+ * below the extended block.
  */
 export async function renderImageWithPresetTopToPng(
   file: File,
@@ -88,6 +90,7 @@ export async function renderImageWithPresetTopToPng(
   topImageAspectRatio: number,
   topPaddingPx: number,
   bottomPaddingPx: number,
+  separatorHeightPx: number,
 ): Promise<Uint8Array> {
   const canvas = await drawFileToCanvas(file, widthPx, heightPx, fit, fitBackground);
   const ctx = canvas.getContext("2d");
@@ -105,6 +108,10 @@ export async function renderImageWithPresetTopToPng(
       ctx.fillRect(0, 0, widthPx, totalHeight);
     }
     ctx.drawImage(topBitmap, 0, topPaddingPx, widthPx, topHeightPx);
+    if (separatorHeightPx > 0) {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, totalHeight, widthPx, separatorHeightPx);
+    }
   } finally {
     topBitmap.close();
   }

@@ -35,6 +35,7 @@ export function App() {
   const [spineTextAlign, setSpineTextAlign] = useState<SpineTextAlign>("center");
   const [spineShowFrontImage, setSpineShowFrontImage] = useState(true);
   const [spineFrontImageWidening, setSpineFrontImageWidening] = useState("0");
+  const [spineShowFrontSeparator, setSpineShowFrontSeparator] = useState(true);
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -89,6 +90,7 @@ export function App() {
                         textAlign: spineTextAlign,
                         showFrontImage: spineShowFrontImage,
                         frontImageWidening: Number(spineFrontImageWidening) || 0,
+                        showFrontSeparator: spineShowFrontSeparator,
                       },
                     },
               },
@@ -161,6 +163,8 @@ export function App() {
           setSpineShowFrontImage={setSpineShowFrontImage}
           spineFrontImageWidening={spineFrontImageWidening}
           setSpineFrontImageWidening={setSpineFrontImageWidening}
+          spineShowFrontSeparator={spineShowFrontSeparator}
+          setSpineShowFrontSeparator={setSpineShowFrontSeparator}
           busy={busy}
           error={error}
           onSubmit={onSubmit}
@@ -212,6 +216,7 @@ export function App() {
                   spineTextAlign={spineTextAlign}
                   showFrontPresetImage={spineShowFrontImage}
                   frontImageWidening={Number(spineFrontImageWidening) || 0}
+                  showFrontSeparator={spineShowFrontSeparator}
                   onSelectBack={setBackImage}
                   onSelectFront={setFrontImage}
                   onSelectSpine={setSpineImage}
