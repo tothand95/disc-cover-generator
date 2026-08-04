@@ -50,6 +50,8 @@ export interface CoverFormProps {
   setSpineTextAlign: (v: SpineTextAlign) => void;
   spineShowFrontImage: boolean;
   setSpineShowFrontImage: (v: boolean) => void;
+  spineFrontImageWidening: string;
+  setSpineFrontImageWidening: (v: string) => void;
 
   busy: boolean;
   error: string | null;
@@ -143,6 +145,27 @@ export function CoverForm(p: CoverFormProps) {
                   { value: "off", label: "Off" },
                   { value: "on", label: "On" },
                 ]}
+              />
+            </Field>
+          )}
+          {(p.spinePreset === "ps2" || p.spinePreset === "xbox") && p.spineShowFrontImage && (
+            <Field label="Top image extra height (px)">
+              <input
+                className="input"
+                type="number"
+                step="1"
+                min="0"
+                max="30"
+                value={p.spineFrontImageWidening}
+                onChange={(e) => {
+                  const cleaned = e.target.value.replace(/[^\d]/g, "");
+                  if (cleaned === "") {
+                    p.setSpineFrontImageWidening("0");
+                    return;
+                  }
+                  const n = Math.min(30, Number(cleaned));
+                  p.setSpineFrontImageWidening(String(n));
+                }}
               />
             </Field>
           )}

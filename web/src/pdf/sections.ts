@@ -44,6 +44,11 @@ export async function buildSections(
   const frontPresetImage = frontPresetKey
     ? await loadSpinePresetImage(frontPresetKey, "front")
     : null;
+  const frontWideningPx =
+    three.spinePreset?.extras?.frontImageWidening &&
+    three.spinePreset.extras.frontImageWidening > 0
+      ? Math.round((three.spinePreset.extras.frontImageWidening * dpi) / 300)
+      : 0;
 
   const sideWpx = mmToPx(sideW, dpi);
   const sideHpx = mmToPx(h, dpi);
@@ -58,6 +63,8 @@ export async function buildSections(
           fitBackground,
           frontPresetImage.href,
           frontPresetImage.aspectRatio,
+          frontWideningPx,
+          frontWideningPx,
         )
       : renderImageToPng(three.front, sideWpx, sideHpx, fit, fitBackground),
   ]);

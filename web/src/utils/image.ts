@@ -74,7 +74,9 @@ export async function renderImageToPng(
 
 /**
  * Draw an image file, then overlay a preset "top" image spanning the full
- * width at y=0 with its aspect ratio preserved. Returns the composited PNG.
+ * width at y=0 with its aspect ratio preserved. Optionally adds a black
+ * top border of `topPaddingPx` and a black bottom border of `bottomPaddingPx`
+ * around the overlay to widen it (top edge always at y=0 — never bleeds up).
  */
 export async function renderImageWithPresetTopToPng(
   file: File,
@@ -84,6 +86,8 @@ export async function renderImageWithPresetTopToPng(
   fitBackground: string,
   topImageHref: string,
   topImageAspectRatio: number,
+  topPaddingPx: number,
+  bottomPaddingPx: number,
 ): Promise<Uint8Array> {
   const canvas = await drawFileToCanvas(file, widthPx, heightPx, fit, fitBackground);
   const ctx = canvas.getContext("2d");
@@ -95,7 +99,12 @@ export async function renderImageWithPresetTopToPng(
   const topBitmap = await createImageBitmap(blob);
   try {
     const topHeightPx = widthPx / topImageAspectRatio;
-    ctx.drawImage(topBitmap, 0, 0, widthPx, topHeightPx);
+    const totalHeight = topHeightPx + topPaddingPx + bottomPaddingPx;
+    if (topPaddingPx > 0 || bottomPaddingPx > 0) {
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, widthPx, totalHeight);
+    }
+    ctx.drawImage(topBitmap, 0, topPaddingPx, widthPx, topHeightPx);
   } finally {
     topBitmap.close();
   }

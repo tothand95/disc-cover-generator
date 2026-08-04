@@ -41,6 +41,8 @@ export interface SpinePresetInput {
     textAlign?: SpineTextAlign;
     /** When true and the preset has a front image, overlay it on top of the front cover. */
     showFrontImage?: boolean;
+    /** Extra height in pixels added to the front preset image via black top/bottom borders (0-30). */
+    frontImageWidening?: number;
   };
 }
 

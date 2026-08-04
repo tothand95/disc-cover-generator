@@ -3,7 +3,7 @@ import { useCoverStage } from "../hooks/useCoverStage";
 import { SectionImage } from "./SectionImage";
 import { SpinePresetPreview } from "./SpinePresetPreview";
 import { DropOverlay } from "../ui/DropOverlay";
-import { getSpinePresetImageUrl, type SpinePresetImageKey } from "../spine/assets";
+import { getSpinePresetImageUrl, getSpinePresetImageAspectRatio, type SpinePresetImageKey } from "../spine/assets";
 import type { BorderMode, CasePreset, Fit, SpinePreset, SpineTextAlign } from "../types";
 
 interface Props {
@@ -24,6 +24,7 @@ interface Props {
   spineTextColor: string;
   spineTextAlign: SpineTextAlign;
   showFrontPresetImage: boolean;
+  frontImageWidening: number;
 
   onSelectBack?: (file: File | null) => void;
   onSelectFront?: (file: File | null) => void;
@@ -51,6 +52,7 @@ export function CoverPreviewSeparate(props: Props) {
     spineTextColor,
     spineTextAlign,
     showFrontPresetImage,
+    frontImageWidening,
     onSelectBack,
     onSelectFront,
     onSelectSpine,
@@ -164,15 +166,39 @@ export function CoverPreviewSeparate(props: Props) {
               onChange={onSelectFront}
             />
             {showFrontPresetImage &&
-              (spinePreset === "ps2" || spinePreset === "xbox") && (
-                <img
-                  src={getSpinePresetImageUrl(spinePreset as SpinePresetImageKey, "front")}
-                  alt=""
-                  draggable={false}
-                  className="pointer-events-none absolute top-0 left-0 w-full select-none"
-                  style={{ height: "auto" }}
-                />
-              )}
+              (spinePreset === "ps2" || spinePreset === "xbox") &&
+              (() => {
+                const key = spinePreset as SpinePresetImageKey;
+                const url = getSpinePresetImageUrl(key, "front");
+                const ar = getSpinePresetImageAspectRatio(key, "front");
+                const previewWideningPx =
+                  frontImageWidening > 0
+                    ? (frontImageWidening * sideWidthPx) /
+                      ((sideWidthMm * dpi) / MM_PER_INCH)
+                    : 0;
+                const imgHeightPx = sideWidthPx / ar;
+                const totalHeightPx = imgHeightPx + previewWideningPx * 2;
+                return (
+                  <div
+                    className="pointer-events-none absolute left-0 top-0 w-full select-none"
+                    style={{
+                      height: totalHeightPx,
+                      background: previewWideningPx > 0 ? "#000000" : "transparent",
+                    }}
+                  >
+                    <img
+                      src={url}
+                      alt=""
+                      draggable={false}
+                      className="pointer-events-none absolute left-0 w-full select-none"
+                      style={{
+                        top: previewWideningPx,
+                        height: imgHeightPx,
+                      }}
+                    />
+                  </div>
+                );
+              })()}
             {onSelectFront && (
               <DropOverlay
                 globalDragging={isDraggingFile}

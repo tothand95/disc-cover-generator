@@ -13,7 +13,7 @@ export const SPINE_FONT_FAMILY = "SpineFont";
 export const HIND_CAP_HEIGHT_RATIO = 0.7;
 export const VISUAL_CENTER_RATIO = 0.33;
 /** Gap in viewBox pixels between the spine preset image and the text below it. */
-export const TOP_IMAGE_TEXT_GAP_PX = 28;
+export const TOP_IMAGE_TEXT_GAP_PX = 14;
 
 export interface SpinePresetImage {
   /** Image source — data URI recommended so rasterization is self-contained. */
