@@ -1,6 +1,7 @@
 import type { CasePreset } from "../../../core/types";
-import { renderImageToPng } from "../utils/image";
+import { renderImageToPng, renderImageWithPresetTopToPng } from "../utils/image";
 import { rasterizeSpineSvg } from "../spine/rasterize";
+import { loadSpinePresetImage, type SpinePresetImageKey } from "../spine/assets";
 import { mmToPx } from "./layout";
 import type { GenerateBrowserOptions } from "./generate";
 
@@ -8,6 +9,14 @@ export interface Section {
   xMm: number;
   widthMm: number;
   png: Uint8Array;
+}
+
+function getFrontPresetImageKey(opts: GenerateBrowserOptions): SpinePresetImageKey | null {
+  if (opts.input.kind !== "three") return null;
+  const spine = opts.input.spinePreset;
+  if (!spine || !spine.extras?.showFrontImage) return null;
+  if (spine.preset === "ps2" || spine.preset === "xbox") return spine.preset;
+  return null;
 }
 
 export async function buildSections(
@@ -31,9 +40,26 @@ export async function buildSections(
   }
 
   const three = opts.input;
+  const frontPresetKey = getFrontPresetImageKey(opts);
+  const frontPresetImage = frontPresetKey
+    ? await loadSpinePresetImage(frontPresetKey, "front")
+    : null;
+
+  const sideWpx = mmToPx(sideW, dpi);
+  const sideHpx = mmToPx(h, dpi);
   const [backPng, frontPng] = await Promise.all([
-    renderImageToPng(three.back, mmToPx(sideW, dpi), mmToPx(h, dpi), fit, fitBackground),
-    renderImageToPng(three.front, mmToPx(sideW, dpi), mmToPx(h, dpi), fit, fitBackground),
+    renderImageToPng(three.back, sideWpx, sideHpx, fit, fitBackground),
+    frontPresetImage
+      ? renderImageWithPresetTopToPng(
+          three.front,
+          sideWpx,
+          sideHpx,
+          fit,
+          fitBackground,
+          frontPresetImage.href,
+          frontPresetImage.aspectRatio,
+        )
+      : renderImageToPng(three.front, sideWpx, sideHpx, fit, fitBackground),
   ]);
 
   let spineSection: Section;

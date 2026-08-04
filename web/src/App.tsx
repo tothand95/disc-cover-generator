@@ -33,6 +33,7 @@ export function App() {
   const [spineBg, setSpineBg] = useState("#ffffff");
   const [spineTextColor, setSpineTextColor] = useState("#000000");
   const [spineTextAlign, setSpineTextAlign] = useState<SpineTextAlign>("center");
+  const [spineShowFrontImage, setSpineShowFrontImage] = useState(true);
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,6 +86,7 @@ export function App() {
                         backgroundColor: spineBg,
                         textColor: spineTextColor,
                         textAlign: spineTextAlign,
+                        showFrontImage: spineShowFrontImage,
                       },
                     },
               },
@@ -153,6 +155,8 @@ export function App() {
           setSpineTextColor={setSpineTextColor}
           spineTextAlign={spineTextAlign}
           setSpineTextAlign={setSpineTextAlign}
+          spineShowFrontImage={spineShowFrontImage}
+          setSpineShowFrontImage={setSpineShowFrontImage}
           busy={busy}
           error={error}
           onSubmit={onSubmit}
@@ -202,6 +206,7 @@ export function App() {
                   spineBg={spineBg}
                   spineTextColor={spineTextColor}
                   spineTextAlign={spineTextAlign}
+                  showFrontPresetImage={spineShowFrontImage}
                   onSelectBack={setBackImage}
                   onSelectFront={setFrontImage}
                   onSelectSpine={setSpineImage}

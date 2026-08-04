@@ -3,6 +3,7 @@ import { useCoverStage } from "../hooks/useCoverStage";
 import { SectionImage } from "./SectionImage";
 import { SpinePresetPreview } from "./SpinePresetPreview";
 import { DropOverlay } from "../ui/DropOverlay";
+import { getSpinePresetImageUrl, type SpinePresetImageKey } from "../spine/assets";
 import type { BorderMode, CasePreset, Fit, SpinePreset, SpineTextAlign } from "../types";
 
 interface Props {
@@ -22,6 +23,7 @@ interface Props {
   spineBg: string;
   spineTextColor: string;
   spineTextAlign: SpineTextAlign;
+  showFrontPresetImage: boolean;
 
   onSelectBack?: (file: File | null) => void;
   onSelectFront?: (file: File | null) => void;
@@ -48,6 +50,7 @@ export function CoverPreviewSeparate(props: Props) {
     spineBg,
     spineTextColor,
     spineTextAlign,
+    showFrontPresetImage,
     onSelectBack,
     onSelectFront,
     onSelectSpine,
@@ -160,6 +163,16 @@ export function CoverPreviewSeparate(props: Props) {
               placeholder="front cover"
               onChange={onSelectFront}
             />
+            {showFrontPresetImage &&
+              (spinePreset === "ps2" || spinePreset === "xbox") && (
+                <img
+                  src={getSpinePresetImageUrl(spinePreset as SpinePresetImageKey, "front")}
+                  alt=""
+                  draggable={false}
+                  className="pointer-events-none absolute top-0 left-0 w-full select-none"
+                  style={{ height: "auto" }}
+                />
+              )}
             {onSelectFront && (
               <DropOverlay
                 globalDragging={isDraggingFile}

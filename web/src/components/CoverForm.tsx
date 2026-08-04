@@ -48,6 +48,8 @@ export interface CoverFormProps {
   setSpineTextColor: (v: string) => void;
   spineTextAlign: SpineTextAlign;
   setSpineTextAlign: (v: SpineTextAlign) => void;
+  spineShowFrontImage: boolean;
+  setSpineShowFrontImage: (v: boolean) => void;
 
   busy: boolean;
   error: string | null;
@@ -108,8 +110,8 @@ export function CoverForm(p: CoverFormProps) {
       </Section>
 
       {p.kind === "three" && !p.spineImage && (
-        <Section title="Spine">
-          <Field label="Spine preset">
+        <Section title="Preset">
+          <Field label="Preset">
             <Select
               value={p.spinePreset}
               onChange={(e) => p.setSpinePreset(e.target.value as SpinePreset)}
@@ -128,6 +130,19 @@ export function CoverForm(p: CoverFormProps) {
                 value={p.spineTitle}
                 onChange={(e) => p.setSpineTitle(e.target.value)}
                 placeholder="e.g. Grand Theft Auto III"
+              />
+            </Field>
+          )}
+          {(p.spinePreset === "ps2" || p.spinePreset === "xbox") && (
+            <Field label="Front cover top image">
+              <RadioGroup
+                name="spineShowFrontImage"
+                value={p.spineShowFrontImage ? "on" : "off"}
+                onChange={(v) => p.setSpineShowFrontImage(v === "on")}
+                options={[
+                  { value: "off", label: "Off" },
+                  { value: "on", label: "On" },
+                ]}
               />
             </Field>
           )}

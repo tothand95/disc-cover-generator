@@ -39,6 +39,8 @@ export interface SpinePresetInput {
     backgroundColor?: string;
     textColor?: string;
     textAlign?: SpineTextAlign;
+    /** When true and the preset has a front image, overlay it on top of the front cover. */
+    showFrontImage?: boolean;
   };
 }
 

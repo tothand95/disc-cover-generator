@@ -1,31 +1,67 @@
 import ps2SpineUrl from "../../../assets/images/ps2-spine.png?url";
+import ps2FrontUrl from "../../../assets/images/ps2-top.jpg?url";
 import xboxSpineUrl from "../../../assets/images/xbox-spine.jpg?url";
+import xboxFrontUrl from "../../../assets/images/xbox-top.jpg?url";
 import hindLightUrl from "../../../assets/fonts/Hind-Light.ttf?url";
 import hindRegularUrl from "../../../assets/fonts/Hind-Regular.ttf?url";
 import hindMediumUrl from "../../../assets/fonts/Hind-Medium.ttf?url";
 import hindSemiBoldUrl from "../../../assets/fonts/Hind-SemiBold.ttf?url";
 import hindBoldUrl from "../../../assets/fonts/Hind-Bold.ttf?url";
-import { SPINE_FONT_FAMILY, type SpineTopImage } from "../../../core/spine/svg";
+import { SPINE_FONT_FAMILY, type SpinePresetImage } from "../../../core/spine/svg";
 
-interface TopImageSpec {
+export type SpinePresetImageKey = "ps2" | "xbox";
+export type SpinePresetImageRole = "spine" | "front";
+
+interface SpinePresetImageSpec {
   url: string;
   naturalWidth: number;
   naturalHeight: number;
 }
 
-const TOP_IMAGES: Record<"ps2" | "xbox", TopImageSpec> = {
-  ps2: { url: ps2SpineUrl, naturalWidth: 500, naturalHeight: 1687 },
-  xbox: { url: xboxSpineUrl, naturalWidth: 164, naturalHeight: 453 },
+const SPINE_PRESET_IMAGES: Record<
+  SpinePresetImageKey,
+  Record<SpinePresetImageRole, SpinePresetImageSpec>
+> = {
+  ps2: {
+    spine: { url: ps2SpineUrl, naturalWidth: 500, naturalHeight: 1687 },
+    front: { url: ps2FrontUrl, naturalWidth: 1525, naturalHeight: 203 },
+  },
+  xbox: {
+    spine: { url: xboxSpineUrl, naturalWidth: 164, naturalHeight: 453 },
+    front: { url: xboxFrontUrl, naturalWidth: 1540, naturalHeight: 230 },
+  },
 };
 
-const cache = new Map<string, SpineTopImage>();
+const cache = new Map<string, SpinePresetImage>();
 
-async function loadTopImage(key: "ps2" | "xbox"): Promise<SpineTopImage> {
-  const cached = cache.get(key);
+/** Returns the plain bundled URL for a preset image (useful for preview <img>). */
+export function getSpinePresetImageUrl(
+  key: SpinePresetImageKey,
+  role: SpinePresetImageRole,
+): string {
+  return SPINE_PRESET_IMAGES[key][role].url;
+}
+
+/** Returns the aspect ratio (width / height) of a preset image. */
+export function getSpinePresetImageAspectRatio(
+  key: SpinePresetImageKey,
+  role: SpinePresetImageRole,
+): number {
+  const spec = SPINE_PRESET_IMAGES[key][role];
+  return spec.naturalWidth / spec.naturalHeight;
+}
+
+/** Fetches a bundled preset image and returns it as a self-contained data URI. */
+export async function loadSpinePresetImage(
+  key: SpinePresetImageKey,
+  role: SpinePresetImageRole = "spine",
+): Promise<SpinePresetImage> {
+  const cacheKey = `${key}:${role}`;
+  const cached = cache.get(cacheKey);
   if (cached) return cached;
-  const spec = TOP_IMAGES[key];
+  const spec = SPINE_PRESET_IMAGES[key][role];
   const res = await fetch(spec.url);
-  if (!res.ok) throw new Error(`Failed to load ${key} spine image: ${res.status}`);
+  if (!res.ok) throw new Error(`Failed to load ${key} ${role} preset image: ${res.status}`);
   const blob = await res.blob();
   const dataUrl: string = await new Promise((resolve, reject) => {
     const fr = new FileReader();
@@ -33,22 +69,12 @@ async function loadTopImage(key: "ps2" | "xbox"): Promise<SpineTopImage> {
     fr.onerror = () => reject(fr.error);
     fr.readAsDataURL(blob);
   });
-  const value: SpineTopImage = {
+  const value: SpinePresetImage = {
     href: dataUrl,
     aspectRatio: spec.naturalWidth / spec.naturalHeight,
   };
-  cache.set(key, value);
+  cache.set(cacheKey, value);
   return value;
-}
-
-/** Fetches the bundled PS2 spine PNG and returns it as a self-contained data URI. */
-export function loadPs2SpineImage(): Promise<SpineTopImage> {
-  return loadTopImage("ps2");
-}
-
-/** Fetches the bundled Xbox spine JPG and returns it as a self-contained data URI. */
-export function loadXboxSpineImage(): Promise<SpineTopImage> {
-  return loadTopImage("xbox");
 }
 
 const SPINE_FONT_WEIGHTS: Array<{ weight: number; url: string }> = [

@@ -1,13 +1,12 @@
 import type { FitMode } from "../../../core/types";
 
-/** Draw an image file into a canvas at the target pixel size using the fit mode. */
-export async function renderImageToPng(
+async function drawFileToCanvas(
   file: File,
   widthPx: number,
   heightPx: number,
   fit: FitMode,
   fitBackground: string,
-): Promise<Uint8Array> {
+): Promise<HTMLCanvasElement> {
   const bitmap = await createImageBitmap(file);
   try {
     const canvas = document.createElement("canvas");
@@ -45,15 +44,60 @@ export async function renderImageToPng(
       const dy = (heightPx - dh) / 2;
       ctx.drawImage(bitmap, dx, dy, dw, dh);
     }
-
-    const blob: Blob = await new Promise((resolve, reject) => {
-      canvas.toBlob(
-        (b) => (b ? resolve(b) : reject(new Error("canvas.toBlob returned null"))),
-        "image/png",
-      );
-    });
-    return new Uint8Array(await blob.arrayBuffer());
+    return canvas;
   } finally {
     bitmap.close();
   }
+}
+
+async function canvasToPng(canvas: HTMLCanvasElement): Promise<Uint8Array> {
+  const blob: Blob = await new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (b) => (b ? resolve(b) : reject(new Error("canvas.toBlob returned null"))),
+      "image/png",
+    );
+  });
+  return new Uint8Array(await blob.arrayBuffer());
+}
+
+/** Draw an image file into a canvas at the target pixel size using the fit mode. */
+export async function renderImageToPng(
+  file: File,
+  widthPx: number,
+  heightPx: number,
+  fit: FitMode,
+  fitBackground: string,
+): Promise<Uint8Array> {
+  const canvas = await drawFileToCanvas(file, widthPx, heightPx, fit, fitBackground);
+  return canvasToPng(canvas);
+}
+
+/**
+ * Draw an image file, then overlay a preset "top" image spanning the full
+ * width at y=0 with its aspect ratio preserved. Returns the composited PNG.
+ */
+export async function renderImageWithPresetTopToPng(
+  file: File,
+  widthPx: number,
+  heightPx: number,
+  fit: FitMode,
+  fitBackground: string,
+  topImageHref: string,
+  topImageAspectRatio: number,
+): Promise<Uint8Array> {
+  const canvas = await drawFileToCanvas(file, widthPx, heightPx, fit, fitBackground);
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Failed to acquire 2D canvas context");
+
+  const res = await fetch(topImageHref);
+  if (!res.ok) throw new Error(`Failed to load preset top image: ${res.status}`);
+  const blob = await res.blob();
+  const topBitmap = await createImageBitmap(blob);
+  try {
+    const topHeightPx = widthPx / topImageAspectRatio;
+    ctx.drawImage(topBitmap, 0, 0, widthPx, topHeightPx);
+  } finally {
+    topBitmap.close();
+  }
+  return canvasToPng(canvas);
 }
