@@ -11,7 +11,6 @@
   "private": true,
   "packageManager": "pnpm@11.20.0",
   "dependencies": {
-    "@angular/animations": "^22.1.0",
     "@angular/cdk": "^22.1.0",
     "@angular/common": "^22.1.0",
     "@angular/compiler": "^22.1.0",
@@ -19,10 +18,7 @@
     "@angular/forms": "^22.1.0",
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
-    "@primeuix/themes": "^3.0.0",
     "pdf-lib": "^1.17.1",
-    "primeicons": "^8.0.0",
-    "primeng": "^22.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

@@ -6,34 +6,21 @@ import {
   inject,
   output,
 } from '@angular/core';
-import { SelectModule } from 'primeng/select';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { InputTextModule } from 'primeng/inputtext';
-import { ColorPickerModule } from 'primeng/colorpicker';
-import { ButtonModule } from 'primeng/button';
-import { MessageModule } from 'primeng/message';
 import { CoverStore } from '../../services/cover.store';
 import { FileInput } from '../file-input/file-input';
+import { Segmented, SegmentedOption } from '../../ui/segmented/segmented';
+import type { FitMode, BorderMode, SpineTextAlign } from '@core/types';
+
+type CoverKind = 'single' | 'three';
 
 /**
- * The whole left-column form. Reads/writes state directly through the
- * CoverStore signals so we never pass a prop bag through the tree.
+ * Left-column form. Reads/writes state directly through CoverStore signals.
+ * Uses native form controls + a custom `<app-segmented>` for segmented picks.
  */
 @Component({
   selector: 'app-cover-form',
   standalone: true,
-  imports: [
-    FormsModule,
-    SelectModule,
-    SelectButtonModule,
-    InputNumberModule,
-    InputTextModule,
-    ColorPickerModule,
-    ButtonModule,
-    MessageModule,
-    FileInput,
-  ],
+  imports: [FormsModule, FileInput, Segmented],
   templateUrl: './cover-form.html',
   styleUrl: './cover-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,18 +33,18 @@ export class CoverForm {
     value: p.id,
   }));
 
-  readonly kindOptions = [
+  readonly kindOptions: readonly SegmentedOption<CoverKind>[] = [
     { label: 'Single image', value: 'single' },
     { label: 'Separate images', value: 'three' },
   ];
 
-  readonly fitOptions = [
+  readonly fitOptions: readonly SegmentedOption<FitMode>[] = [
     { label: 'Stretch', value: 'stretch' },
     { label: 'Fill (cover)', value: 'fill' },
     { label: 'Fit (contain)', value: 'fit' },
   ];
 
-  readonly borderOptions = [
+  readonly borderOptions: readonly SegmentedOption<BorderMode>[] = [
     { label: 'None', value: 'none' },
     { label: 'Outer', value: 'outer' },
     { label: 'All', value: 'sections' },
@@ -71,13 +58,13 @@ export class CoverForm {
     { label: 'Xbox 360 (coming soon)', value: 'xbox360', disabled: true },
   ];
 
-  readonly textAlignOptions = [
+  readonly textAlignOptions: readonly SegmentedOption<SpineTextAlign>[] = [
     { label: 'Top', value: 'start' },
     { label: 'Center', value: 'center' },
     { label: 'Bottom', value: 'end' },
   ];
 
-  readonly toggleOptions = [
+  readonly toggleOptions: readonly SegmentedOption<boolean>[] = [
     { label: 'Off', value: false },
     { label: 'On', value: true },
   ];
@@ -107,9 +94,9 @@ export class CoverForm {
 
   protected readonly isTextPreset = computed(() => this.store.spine.preset() === 'text');
 
+  readonly submit = output<void>();
+
   onSubmit(): void {
     this.submit.emit();
   }
-
-  readonly submit = output<void>();
 }

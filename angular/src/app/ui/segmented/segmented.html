@@ -1,0 +1,14 @@
+<div class="segmented" role="group" [attr.aria-label]="ariaLabel() || null">
+  @for (opt of options(); track opt.value) {
+    <button
+      type="button"
+      class="segmented__btn"
+      [class.segmented__btn--active]="opt.value === value()"
+      [disabled]="opt.disabled"
+      [attr.aria-pressed]="opt.value === value()"
+      (click)="select(opt.value)"
+    >
+      {{ opt.label }}
+    </button>
+  }
+</div>

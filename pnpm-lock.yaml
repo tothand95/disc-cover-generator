@@ -48,9 +48,6 @@ importers:
 
   angular:
     dependencies:
-      '@angular/animations':
-        specifier: ^22.1.0
-        version: 22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))
       '@angular/cdk':
         specifier: ^22.1.0
         version: 22.1.0(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(@angular/platform-browser@22.1.0(@angular/animations@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(rxjs@7.8.2)
@@ -72,18 +69,9 @@ importers:
       '@angular/router':
         specifier: ^22.1.0
         version: 22.1.0(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(@angular/platform-browser@22.1.0(@angular/animations@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(rxjs@7.8.2)
-      '@primeuix/themes':
-        specifier: ^3.0.0
-        version: 3.0.0
       pdf-lib:
         specifier: ^1.17.1
         version: 1.17.1
-      primeicons:
-        specifier: ^8.0.0
-        version: 8.0.0
-      primeng:
-        specifier: ^22.0.0
-        version: 22.0.0(5515c3ca08de176913b1fbb2a79f2951)
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
@@ -93,7 +81,7 @@ importers:
     devDependencies:
       '@angular/build':
         specifier: ^22.1.2
-        version: 22.1.2(@angular/compiler-cli@22.1.0(@angular/compiler@22.1.0)(typescript@6.0.3))(@angular/compiler@22.1.0)(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(@angular/platform-browser@22.1.0(@angular/animations@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(chokidar@5.0.0)(jiti@1.21.7)(postcss@8.5.25)(rollup@4.62.4)(tailwindcss@3.4.19)(tslib@2.8.1)(typescript@6.0.3)(vitest@4.1.10(jsdom@28.1.0(@noble/hashes@2.2.0))(vite@5.4.21(lightningcss@1.33.0)(sass@1.101.0)))
+        version: 22.1.2(@angular/compiler-cli@22.1.0(@angular/compiler@22.1.0)(typescript@6.0.3))(@angular/compiler@22.1.0)(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(@angular/platform-browser@22.1.0(@angular/animations@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(chokidar@5.0.0)(jiti@1.21.7)(postcss@8.5.25)(rollup@4.62.4)(tailwindcss@3.4.19)(tslib@2.8.1)(typescript@6.0.3)(vitest@4.1.10(jsdom@28.1.0(@noble/hashes@2.2.0))(vite@8.1.5(esbuild@0.28.1)(jiti@1.21.7)(sass@1.101.0)))
       '@angular/cli':
         specifier: ^22.1.2
         version: 22.1.2(chokidar@5.0.0)
@@ -111,7 +99,7 @@ importers:
         version: 6.0.3
       vitest:
         specifier: ^4.0.8
-        version: 4.1.10(jsdom@28.1.0(@noble/hashes@2.2.0))(vite@5.4.21(lightningcss@1.33.0)(sass@1.101.0))
+        version: 4.1.10(jsdom@28.1.0(@noble/hashes@2.2.0))(vite@8.1.5(esbuild@0.28.1)(jiti@1.21.7)(sass@1.101.0))
 
 packages:
 
@@ -1168,9 +1156,6 @@ packages:
       '@emnapi/core': ^1.7.1 || ^2.0.0-alpha.3
       '@emnapi/runtime': ^1.7.1 || ^2.0.0-alpha.3
 
-  '@noble/ed25519@2.3.0':
-    resolution: {integrity: sha512-M7dvXL2B92/M7dw9+gzuydL8qn/jiqNHaoR3Q+cb1q1GHV7uwE17WCyFMG+Y+TZb5izcaXk5TdJRrDUxHXL78A==}
-
   '@noble/hashes@2.2.0':
     resolution: {integrity: sha512-IYqDGiTXab6FniAgnSdZwgWbomxpy9FtYvLKs7wCUs2a8RkITG+DFGO1DM9cr+E3/RgADRpFjrKVaJ1z6sjtEg==}
     engines: {node: '>= 20.19.0'}
@@ -1410,35 +1395,6 @@ packages:
 
   '@pdf-lib/upng@1.0.1':
     resolution: {integrity: sha512-dQK2FUMQtowVP00mtIksrlZhdFXQZPC+taih1q4CvPZ5vqdxR/LKBaFg0oAfzd1GlHZXXSPdQfzQnt+ViGvEIQ==}
-
-  '@primeicons/angular@8.0.0':
-    resolution: {integrity: sha512-WFpJ8xeXxae2tg/CHxauUxbdSsuem2k8la0CxKqyf6nhDFSss8jFop+S0vmixJfOAVZK/S+6OPQ73XRvhhTAiQ==}
-    peerDependencies:
-      '@angular/core': '>=21'
-
-  '@primeicons/core@8.0.0':
-    resolution: {integrity: sha512-vPif+sXxajXCSL2bmNBP0QYliJONVRgFVpCg9e7hGn7IG18JkMAm4fF5HVld1N4sDATkZQM7jKVxdZ8EK09Giw==}
-
-  '@primeui/license-manager@1.0.0':
-    resolution: {integrity: sha512-89J7r8cclEqoHVwjOX1adPcB/blFSocpzuYlzmd+6r0gxzg2Vd4jM54TKXt9/qwAT/kOv4vYnHKZ6hcP2GFtfA==}
-
-  '@primeuix/motion@1.0.0':
-    resolution: {integrity: sha512-rqpFRKmUVp9BI3YQKdok0rLUwzYShXzuuxy72Kq74xYRV14eR+4+XrIXOdyVs7j7CYV0ajYowiRpJCrVgdrq6A==}
-    engines: {node: '>=12.11.0'}
-
-  '@primeuix/styled@1.0.0':
-    resolution: {integrity: sha512-6SXoeQWwKswSqTv1ygaXNfY7otHo6Rb9mxbKJK5WF8adWlZ6CtwmlNfIP+p8cH/zGccsei/5Bu7IetXlMoZGjQ==}
-    engines: {node: '>=12.11.0'}
-
-  '@primeuix/styles@3.0.0':
-    resolution: {integrity: sha512-nFsG2V0kbn3Q/fr0EV0Lxy2cKeW1F+WFXyxWI1CxWAAXW34mTCLkDd6OFbN5dP9hrSJOVaeXWzTdoonh1sdklQ==}
-
-  '@primeuix/themes@3.0.0':
-    resolution: {integrity: sha512-lNMOhorzu4vHRKbTDIU2/raS7/Z6Oyq2WXGfFDVhOwAIVDF4e7hCX75jlgfC7bo4D0Bl5f+oW5HPGZpG52r6lw==}
-
-  '@primeuix/utils@0.8.0':
-    resolution: {integrity: sha512-dZSMKU2XJ7W7VDLuFMS/o4k+QYw4SYIpqSNhR/jdasMaaXl8eq0Gt7fTzTwwq7hgfmfOsI6V5xtzUUIvybOJ/w==}
-    engines: {node: '>=12.11.0'}
 
   '@rolldown/binding-android-arm64@1.1.5':
     resolution: {integrity: sha512-lZg8fqIv2v7FF237bwMgzGZEJvGL79/s5knJ/i6FmsGF4XXlzccZ4jb+TrFIxtSSxFtIpdsgrPZeMk1I9AFcyQ==}
@@ -2819,20 +2775,6 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
-  primeicons@8.0.0:
-    resolution: {integrity: sha512-eZGk+Mgb4fE+LkJi9LvllbnB4RVUF9kzmnLVnT3ZMY6stqKVh7TUJ0mFoMNIEgTnJSvhaGcJotDiSvtVvkHd7g==}
-
-  primeng@22.0.0:
-    resolution: {integrity: sha512-6TJ3y1YoSNhp2Njp36lPkytgXHTNB4IoQslYMwn0iONK57nuHWXvRUATjYAAieGh+TNG0UMQxmSshnKpU7TlFA==}
-    peerDependencies:
-      '@angular/cdk': ^22.0.0
-      '@angular/common': ^22.0.0
-      '@angular/core': ^22.0.0
-      '@angular/forms': ^22.0.0
-      '@angular/platform-browser': ^22.0.0
-      '@angular/router': ^22.0.0
-      rxjs: ^6.0.0 || ^7.8.1
-
   proc-log@7.0.0:
     resolution: {integrity: sha512-FYgfaA69XZ93zaXLoMNQ+ViDXGGBgR8aLh03txzcFhV+9xOXx7+8DLCULrKKpR9+GsH9ZfHm82aSUPpozX0Ztg==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
@@ -3406,8 +3348,9 @@ snapshots:
     dependencies:
       '@angular/core': 22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)
       tslib: 2.8.1
+    optional: true
 
-  '@angular/build@22.1.2(@angular/compiler-cli@22.1.0(@angular/compiler@22.1.0)(typescript@6.0.3))(@angular/compiler@22.1.0)(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(@angular/platform-browser@22.1.0(@angular/animations@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(chokidar@5.0.0)(jiti@1.21.7)(postcss@8.5.25)(rollup@4.62.4)(tailwindcss@3.4.19)(tslib@2.8.1)(typescript@6.0.3)(vitest@4.1.10(jsdom@28.1.0(@noble/hashes@2.2.0))(vite@5.4.21(lightningcss@1.33.0)(sass@1.101.0)))':
+  '@angular/build@22.1.2(@angular/compiler-cli@22.1.0(@angular/compiler@22.1.0)(typescript@6.0.3))(@angular/compiler@22.1.0)(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(@angular/platform-browser@22.1.0(@angular/animations@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(chokidar@5.0.0)(jiti@1.21.7)(postcss@8.5.25)(rollup@4.62.4)(tailwindcss@3.4.19)(tslib@2.8.1)(typescript@6.0.3)(vitest@4.1.10(jsdom@28.1.0(@noble/hashes@2.2.0))(vite@8.1.5(esbuild@0.28.1)(jiti@1.21.7)(sass@1.101.0)))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@angular-devkit/architect': 0.2201.2(chokidar@5.0.0)
@@ -3446,7 +3389,7 @@ snapshots:
       postcss: 8.5.25
       rollup: 4.62.4
       tailwindcss: 3.4.19
-      vitest: 4.1.10(jsdom@28.1.0(@noble/hashes@2.2.0))(vite@5.4.21(lightningcss@1.33.0)(sass@1.101.0))
+      vitest: 4.1.10(jsdom@28.1.0(@noble/hashes@2.2.0))(vite@8.1.5(esbuild@0.28.1)(jiti@1.21.7)(sass@1.101.0))
     transitivePeerDependencies:
       - '@types/node'
       - '@vitejs/devtools'
@@ -4251,9 +4194,8 @@ snapshots:
       '@tybys/wasm-util': 0.10.3
     optional: true
 
-  '@noble/ed25519@2.3.0': {}
-
-  '@noble/hashes@2.2.0': {}
+  '@noble/hashes@2.2.0':
+    optional: true
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -4401,41 +4343,6 @@ snapshots:
   '@pdf-lib/upng@1.0.1':
     dependencies:
       pako: 1.0.11
-
-  '@primeicons/angular@8.0.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))':
-    dependencies:
-      '@angular/core': 22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)
-      '@primeicons/core': 8.0.0
-      '@primeuix/utils': 0.8.0
-      tslib: 2.8.1
-
-  '@primeicons/core@8.0.0':
-    dependencies:
-      '@primeuix/utils': 0.8.0
-
-  '@primeui/license-manager@1.0.0':
-    dependencies:
-      '@noble/ed25519': 2.3.0
-      '@noble/hashes': 2.2.0
-
-  '@primeuix/motion@1.0.0':
-    dependencies:
-      '@primeuix/utils': 0.8.0
-
-  '@primeuix/styled@1.0.0':
-    dependencies:
-      '@primeui/license-manager': 1.0.0
-      '@primeuix/utils': 0.8.0
-
-  '@primeuix/styles@3.0.0':
-    dependencies:
-      '@primeuix/styled': 1.0.0
-
-  '@primeuix/themes@3.0.0':
-    dependencies:
-      '@primeuix/styled': 1.0.0
-
-  '@primeuix/utils@0.8.0': {}
 
   '@rolldown/binding-android-arm64@1.1.5':
     optional: true
@@ -4700,13 +4607,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.1
 
-  '@vitest/mocker@4.1.10(vite@5.4.21(lightningcss@1.33.0)(sass@1.101.0))':
+  '@vitest/mocker@4.1.10(vite@8.1.5(esbuild@0.28.1)(jiti@1.21.7)(sass@1.101.0))':
     dependencies:
       '@vitest/spy': 4.1.10
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 5.4.21(lightningcss@1.33.0)(sass@1.101.0)
+      vite: 8.1.5(esbuild@0.28.1)(jiti@1.21.7)(sass@1.101.0)
 
   '@vitest/pretty-format@4.1.10':
     dependencies:
@@ -5715,25 +5622,6 @@ snapshots:
 
   prettier@3.9.6: {}
 
-  primeicons@8.0.0: {}
-
-  primeng@22.0.0(5515c3ca08de176913b1fbb2a79f2951):
-    dependencies:
-      '@angular/cdk': 22.1.0(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(@angular/platform-browser@22.1.0(@angular/animations@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(rxjs@7.8.2)
-      '@angular/common': 22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2)
-      '@angular/core': 22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)
-      '@angular/forms': 22.1.0(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(@angular/platform-browser@22.1.0(@angular/animations@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(rxjs@7.8.2)
-      '@angular/platform-browser': 22.1.0(@angular/animations@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))
-      '@angular/router': 22.1.0(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(@angular/platform-browser@22.1.0(@angular/animations@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(@angular/common@22.1.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2)))(rxjs@7.8.2)
-      '@primeicons/angular': 8.0.0(@angular/core@22.1.0(@angular/compiler@22.1.0)(rxjs@7.8.2))
-      '@primeui/license-manager': 1.0.0
-      '@primeuix/motion': 1.0.0
-      '@primeuix/styled': 1.0.0
-      '@primeuix/styles': 3.0.0
-      '@primeuix/utils': 0.8.0
-      rxjs: 7.8.2
-      tslib: 2.8.1
-
   proc-log@7.0.0: {}
 
   proxy-addr@2.0.7:
@@ -6162,10 +6050,10 @@ snapshots:
       jiti: 1.21.7
       sass: 1.101.0
 
-  vitest@4.1.10(jsdom@28.1.0(@noble/hashes@2.2.0))(vite@5.4.21(lightningcss@1.33.0)(sass@1.101.0)):
+  vitest@4.1.10(jsdom@28.1.0(@noble/hashes@2.2.0))(vite@8.1.5(esbuild@0.28.1)(jiti@1.21.7)(sass@1.101.0)):
     dependencies:
       '@vitest/expect': 4.1.10
-      '@vitest/mocker': 4.1.10(vite@5.4.21(lightningcss@1.33.0)(sass@1.101.0))
+      '@vitest/mocker': 4.1.10(vite@8.1.5(esbuild@0.28.1)(jiti@1.21.7)(sass@1.101.0))
       '@vitest/pretty-format': 4.1.10
       '@vitest/runner': 4.1.10
       '@vitest/snapshot': 4.1.10
@@ -6182,7 +6070,7 @@ snapshots:
       tinyexec: 1.3.0
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.1
-      vite: 5.4.21(lightningcss@1.33.0)(sass@1.101.0)
+      vite: 8.1.5(esbuild@0.28.1)(jiti@1.21.7)(sass@1.101.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       jsdom: 28.1.0(@noble/hashes@2.2.0)

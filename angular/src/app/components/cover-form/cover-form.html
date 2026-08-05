@@ -2,14 +2,18 @@
   <fieldset class="section">
     <legend>Case</legend>
     <div class="field">
-      <label>Case preset</label>
-      <p-select
-        [options]="presetOptions"
+      <label for="case-preset">Case preset</label>
+      <select
+        id="case-preset"
+        class="native-select"
         [ngModel]="store.case.presetId()"
         (ngModelChange)="store.case.presetId.set($event)"
         [ngModelOptions]="{ standalone: true }"
-        appendTo="body"
-      />
+      >
+        @for (p of presetOptions; track p.value) {
+          <option [ngValue]="p.value">{{ p.label }}</option>
+        }
+      </select>
     </div>
   </fieldset>
 
@@ -17,12 +21,11 @@
     <legend>Images</legend>
     <div class="field">
       <label>Input mode</label>
-      <p-selectbutton
+      <app-segmented
         [options]="kindOptions"
-        [ngModel]="store.mode.kind()"
-        (ngModelChange)="store.mode.kind.set($event)"
-        [ngModelOptions]="{ standalone: true }"
-        [allowEmpty]="false"
+        [value]="store.mode.kind()"
+        (valueChange)="store.mode.kind.set($event)"
+        ariaLabel="Input mode"
       />
     </div>
 
@@ -63,21 +66,26 @@
     <fieldset class="section">
       <legend>Preset</legend>
       <div class="field">
-        <label>Preset</label>
-        <p-select
-          [options]="spinePresetOptions"
+        <label for="spine-preset">Preset</label>
+        <select
+          id="spine-preset"
+          class="native-select"
           [ngModel]="store.spine.preset()"
           (ngModelChange)="store.spine.preset.set($event)"
           [ngModelOptions]="{ standalone: true }"
-          appendTo="body"
-        />
+        >
+          @for (p of spinePresetOptions; track p.value) {
+            <option [ngValue]="p.value" [disabled]="p.disabled">{{ p.label }}</option>
+          }
+        </select>
       </div>
       @if (hasSpineTitle()) {
         <div class="field">
-          <label>Spine title</label>
+          <label for="spine-title">Spine title</label>
           <input
-            pInputText
+            id="spine-title"
             type="text"
+            class="native-input"
             placeholder="e.g. Grand Theft Auto III"
             [ngModel]="store.spine.title()"
             (ngModelChange)="store.spine.title.set($event)"
@@ -88,70 +96,70 @@
       @if (hasFrontImageToggle()) {
         <div class="field">
           <label>Front cover top image</label>
-          <p-selectbutton
+          <app-segmented
             [options]="toggleOptions"
-            [ngModel]="store.spine.showFrontImage()"
-            (ngModelChange)="store.spine.showFrontImage.set($event)"
-            [ngModelOptions]="{ standalone: true }"
-            [allowEmpty]="false"
+            [value]="store.spine.showFrontImage()"
+            (valueChange)="store.spine.showFrontImage.set($event)"
           />
         </div>
       }
       @if (hasFrontImageToggle() && store.spine.showFrontImage()) {
         <div class="field">
-          <label>Top image extra height (px)</label>
-          <p-inputnumber
+          <label for="front-widening">Top image extra height (px)</label>
+          <input
+            id="front-widening"
+            type="number"
+            class="native-input"
+            min="0"
+            max="30"
+            step="1"
             [ngModel]="store.spine.frontImageWidening()"
             (ngModelChange)="store.spine.frontImageWidening.set($event ?? 0)"
             [ngModelOptions]="{ standalone: true }"
-            [min]="0"
-            [max]="30"
-            [step]="1"
-            [showButtons]="true"
           />
         </div>
       }
       @if (hasSeparatorToggle()) {
         <div class="field">
           <label>White separator line</label>
-          <p-selectbutton
+          <app-segmented
             [options]="toggleOptions"
-            [ngModel]="store.spine.showFrontSeparator()"
-            (ngModelChange)="store.spine.showFrontSeparator.set($event)"
-            [ngModelOptions]="{ standalone: true }"
-            [allowEmpty]="false"
+            [value]="store.spine.showFrontSeparator()"
+            (valueChange)="store.spine.showFrontSeparator.set($event)"
           />
         </div>
       }
       @if (hasColorPickers()) {
         <div class="field">
-          <label>Spine background</label>
-          <p-colorpicker
+          <label for="spine-bg">Spine background</label>
+          <input
+            id="spine-bg"
+            type="color"
+            class="native-color"
             [ngModel]="store.spine.background()"
             (ngModelChange)="store.spine.background.set($event)"
             [ngModelOptions]="{ standalone: true }"
-            appendTo="body"
           />
         </div>
       }
       @if (isTextPreset()) {
         <div class="field">
-          <label>Text color</label>
-          <p-colorpicker
+          <label for="text-color">Text color</label>
+          <input
+            id="text-color"
+            type="color"
+            class="native-color"
             [ngModel]="store.spine.textColor()"
             (ngModelChange)="store.spine.textColor.set($event)"
             [ngModelOptions]="{ standalone: true }"
-            appendTo="body"
           />
         </div>
         <div class="field">
           <label>Text alignment</label>
-          <p-selectbutton
+          <app-segmented
             [options]="textAlignOptions"
-            [ngModel]="store.spine.textAlign()"
-            (ngModelChange)="store.spine.textAlign.set($event)"
-            [ngModelOptions]="{ standalone: true }"
-            [allowEmpty]="false"
+            [value]="store.spine.textAlign()"
+            (valueChange)="store.spine.textAlign.set($event)"
           />
         </div>
       }
@@ -162,23 +170,23 @@
     <legend>Layout</legend>
     <div class="field">
       <label>Fit mode</label>
-      <p-selectbutton
+      <app-segmented
         [options]="fitOptions"
-        [ngModel]="store.mode.fit()"
-        (ngModelChange)="store.mode.fit.set($event)"
-        [ngModelOptions]="{ standalone: true }"
-        [allowEmpty]="false"
+        [value]="store.mode.fit()"
+        (valueChange)="store.mode.fit.set($event)"
       />
     </div>
     @if (store.mode.fit() === 'fit') {
       <div class="field">
-        <label>Fit background</label>
+        <label for="fit-bg">Fit background</label>
         <div class="field__row">
-          <p-colorpicker
+          <input
+            id="fit-bg"
+            type="color"
+            class="native-color"
             [ngModel]="store.mode.fitBackground()"
             (ngModelChange)="store.mode.fitBackground.set($event)"
             [ngModelOptions]="{ standalone: true }"
-            appendTo="body"
           />
           <span class="field__hint">
             Fills empty space around images when they don't cover the section.
@@ -192,49 +200,52 @@
     <legend>Borders</legend>
     <div class="field">
       <label>Border mode</label>
-      <p-selectbutton
+      <app-segmented
         [options]="borderOptions"
-        [ngModel]="store.borders.mode()"
-        (ngModelChange)="store.borders.mode.set($event)"
-        [ngModelOptions]="{ standalone: true }"
-        [allowEmpty]="false"
+        [value]="store.borders.mode()"
+        (valueChange)="store.borders.mode.set($event)"
       />
     </div>
     @if (store.borders.mode() !== 'none') {
       <div class="field__grid">
         <div class="field">
-          <label>Thickness (px)</label>
-          <p-inputnumber
+          <label for="border-thickness">Thickness (px)</label>
+          <input
+            id="border-thickness"
+            type="number"
+            class="native-input"
+            min="0"
+            max="30"
+            step="1"
             [ngModel]="store.borders.thicknessPx()"
             (ngModelChange)="store.borders.thicknessPx.set($event ?? 0)"
             [ngModelOptions]="{ standalone: true }"
-            [min]="0"
-            [max]="30"
-            [step]="1"
-            [showButtons]="true"
           />
         </div>
         <div class="field">
-          <label>Color</label>
-          <p-colorpicker
+          <label for="border-color">Color</label>
+          <input
+            id="border-color"
+            type="color"
+            class="native-color"
             [ngModel]="store.borders.color()"
             (ngModelChange)="store.borders.color.set($event)"
             [ngModelOptions]="{ standalone: true }"
-            appendTo="body"
           />
         </div>
       </div>
     }
   </fieldset>
 
-  <p-button
+  <button
     type="submit"
-    styleClass="cover-form__submit"
+    class="submit-btn"
     [disabled]="store.ui.busy()"
-    [label]="store.ui.busy() ? 'Generating…' : 'Generate PDF'"
-  />
+  >
+    {{ store.ui.busy() ? 'Generating…' : 'Generate PDF' }}
+  </button>
 
   @if (store.ui.error(); as err) {
-    <p-message severity="error" [closable]="false">{{ err }}</p-message>
+    <div class="alert alert--error" role="alert">{{ err }}</div>
   }
 </form>

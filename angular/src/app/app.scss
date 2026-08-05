@@ -1,24 +1,41 @@
 :host {
   display: block;
   height: 100vh;
-  overflow: hidden;
 }
 
 .app-root {
   height: 100vh;
   display: grid;
+  grid-template-columns: 480px 1fr;
   grid-template-rows: auto 1fr;
-  row-gap: 1.5rem;
+  grid-template-areas:
+    'header header'
+    'form   preview';
+  gap: 1.5rem;
   padding: 1.5rem;
   margin: 0 auto;
   max-width: 2300px;
-  overflow: hidden;
 
-  h1 {
-    font-size: 1.875rem;
-    font-weight: 700;
-    margin: 0;
-    color: #0f172a;
+  &__header {
+    grid-area: header;
+
+    h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin: 0;
+      color: #0f172a;
+    }
+  }
+
+  &__form {
+    grid-area: form;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+  }
+
+  &__preview {
+    grid-area: preview;
   }
 
   &__drag-backdrop {
@@ -27,13 +44,6 @@
     background: rgba(0, 0, 0, 0.6);
     pointer-events: none;
     z-index: 40;
-  }
-
-  &__content {
-    display: grid;
-    grid-template-columns: 480px 1fr;
-    column-gap: 1.5rem;
-    min-height: 0;
   }
 }
 
@@ -67,14 +77,20 @@
   .app-root {
     height: auto;
     min-height: 100vh;
-    overflow: visible;
   }
-  .app-root__content {
+  .app-root {
     grid-template-columns: 1fr;
-    row-gap: 1.5rem;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      'header'
+      'form'
+      'preview';
   }
-  .preview-panel__stage {
-    aspect-ratio: var(--cover-aspect);
-    width: 100%;
+  .preview-panel {
+    // Same idea as desktop, just a different fixed dimension:
+    // desktop = fixed height, mobile = fixed width -> derive height from aspect.
+    // Stage gets 100vw minus grid padding (2*1.5rem) minus panel padding (2*1.5rem)
+    // = 100vw - 6rem. Height then = width / aspect + labels/gaps overhead.
+    height: calc((100vw - 6rem) / (var(--cover-aspect)) + 8rem);
   }
 }
