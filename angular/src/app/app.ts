@@ -9,6 +9,7 @@ import {
 import { CoverStore } from './services/cover.store';
 import { DragDropService } from './services/drag-drop.service';
 import { PdfGeneratorService } from './services/pdf-generator.service';
+import { ThemeService } from './services/theme.service';
 import { CoverForm } from './components/cover-form/cover-form';
 import { CoverPreviewSingle } from './components/cover-preview-single/cover-preview-single';
 import { CoverPreviewSeparate } from './components/cover-preview-separate/cover-preview-separate';
@@ -29,6 +30,7 @@ import { CoverPreviewSeparate } from './components/cover-preview-separate/cover-
 export class App {
   readonly store = inject(CoverStore);
   readonly drag = inject(DragDropService);
+  readonly theme = inject(ThemeService);
   private readonly pdf = inject(PdfGeneratorService);
 
   private readonly singleUrl = signal<string | null>(null);

@@ -23,7 +23,7 @@
     grid-template-columns: 1fr 1fr 1fr;
     font-size: 0.75rem;
     font-weight: 500;
-    color: #475569;
+    color: var(--text-muted);
     white-space: nowrap;
   }
   &__left { text-align: left; }
@@ -74,7 +74,7 @@
   left: 0;
   width: 100%;
   user-select: none;
-  background: #ffffff;
+  background: var(--paper);
 }
 
 .preview-divider {

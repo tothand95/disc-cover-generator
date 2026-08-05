@@ -36,9 +36,84 @@
   font-display: swap;
 }
 
+/* -------- Theme tokens -------------------------------------------------- */
+/* Light is the default. Dark overrides come from either the OS preference
+   or an explicit [data-theme="dark"] on <html>. The theme service toggles
+   the attribute, and prefers-color-scheme is honoured when no attribute
+   is set. Keep --paper white in both modes — it represents the printed
+   PDF surface, not app chrome. */
+
 :root {
   color-scheme: light;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --surface-3: #e2e8f0;
+  --border: #cbd5e1;
+  --border-strong: #94a3b8;
+  --text: #0f172a;
+  --text-muted: #334155;
+  --text-subtle: #64748b;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-fg: #ffffff;
+  --accent-ring: rgba(99, 102, 241, 0.25);
+  --danger: #b91c1c;
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+  --overlay: rgba(0, 0, 0, 0.6);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --paper: #ffffff;
+  --select-chevron: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+}
+
+@mixin dark-tokens {
+  color-scheme: dark;
+
+  // Values sourced from Binaryify/OneDark-Pro (OneDark-Pro-darker.json):
+  //   editor.background / activityBar.background = #23272e
+  //   input.background                            = #1d1f23
+  //   list.hoverBackground                        = #2c313a
+  //   focusBorder                                 = #3e4452
+  //   editor.foreground                           = #abb2bf
+  //   activityBar.foreground / list.activeSelectionForeground = #d7dae0
+  //   comments                                    = #7f848e
+  //   editorHoverWidget.highlightForeground       = #61afef
+  //   editorCursor.foreground                     = #528bff
+  //   variables (red)                             = #e06c75
+
+  --bg: #23272e;
+  --surface: #23272e;
+  --surface-2: #1d1f23;
+  --surface-3: #2c313a;
+  --border: #3e4452;
+  --border-strong: #545862;
+  --text: #d7dae0;
+  --text-muted: #abb2bf;
+  --text-subtle: #7f848e;
+  --accent: #61afef;
+  --accent-hover: #528bff;
+  --accent-fg: #ffffff;
+  --accent-ring: rgba(97, 175, 239, 0.35);
+  --danger: #e06c75;
+  --danger-bg: #3a1f22;
+  --danger-border: #5c2a2f;
+  --overlay: rgba(0, 0, 0, 0.75);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --paper: #ffffff;
+  --select-chevron: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23abb2bf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-tokens;
+  }
+}
+
+:root[data-theme='dark'] {
+  @include dark-tokens;
 }
 
 html,
@@ -46,8 +121,8 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: #f8fafc;
-  color: #0f172a;
+  background: var(--bg);
+  color: var(--text);
 }
 
 * {
