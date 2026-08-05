@@ -10,9 +10,11 @@ import { CoverStore } from './services/cover.store';
 import { DragDropService } from './services/drag-drop.service';
 import { PdfGeneratorService } from './services/pdf-generator.service';
 import { ThemeService } from './services/theme.service';
+import { ToastService } from './services/toast.service';
 import { CoverForm } from './components/cover-form/cover-form';
 import { CoverPreviewSingle } from './components/cover-preview-single/cover-preview-single';
 import { CoverPreviewSeparate } from './components/cover-preview-separate/cover-preview-separate';
+import { ToastContainer } from './ui/toast-container/toast-container';
 
 /**
  * App shell: hosts the form, the live preview and the drag-drop backdrop.
@@ -22,7 +24,7 @@ import { CoverPreviewSeparate } from './components/cover-preview-separate/cover-
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CoverForm, CoverPreviewSingle, CoverPreviewSeparate],
+  imports: [CoverForm, CoverPreviewSingle, CoverPreviewSeparate, ToastContainer],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +34,7 @@ export class App {
   readonly drag = inject(DragDropService);
   readonly theme = inject(ThemeService);
   private readonly pdf = inject(PdfGeneratorService);
+  private readonly toasts = inject(ToastService);
 
   private readonly singleUrl = signal<string | null>(null);
   private readonly backUrl = signal<string | null>(null);
@@ -82,7 +85,6 @@ export class App {
   }
 
   async onGenerate(): Promise<void> {
-    this.store.ui.error.set(null);
     const store = this.store;
     try {
       if (store.mode.kind() === 'single') {
@@ -116,8 +118,9 @@ export class App {
                 spinePreset: store.images.spine() ? null : store.spinePresetInput(),
               },
       });
+      this.toasts.success('PDF generated — opened in a new tab.');
     } catch (err) {
-      store.ui.error.set(err instanceof Error ? err.message : String(err));
+      this.toasts.error(err instanceof Error ? err.message : String(err));
     } finally {
       store.ui.busy.set(false);
     }

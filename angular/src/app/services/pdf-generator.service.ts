@@ -7,18 +7,27 @@ import {
 @Injectable({ providedIn: 'root' })
 export class PdfGeneratorService {
   /**
-   * Generates a cover PDF, opens it in a new tab via a blob URL, and revokes
-   * the URL after 60 seconds. Throws if the browser blocks the popup.
+   * Generates a cover PDF and opens it in a new tab via a blob URL.
+   *
+   * The tab is opened synchronously (with a blank placeholder) so the call
+   * still sits inside the user-gesture that triggered generation — browsers
+   * block popups opened after an `await`. Once the bytes are ready we
+   * navigate the same tab to the blob URL, and revoke it after 60 s.
    */
   async generateAndOpen(opts: GenerateBrowserOptions): Promise<void> {
-    const bytes = await generateCoverPdfInBrowser(opts);
-    const blob = new Blob([bytes as BlobPart], { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob);
-    const win = window.open(url, '_blank');
+    const win = window.open('', '_blank');
     if (!win) {
-      URL.revokeObjectURL(url);
       throw new Error('Popup blocked — please allow popups for this site.');
     }
-    setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    try {
+      const bytes = await generateCoverPdfInBrowser(opts);
+      const blob = new Blob([bytes as BlobPart], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      win.location.href = url;
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch (err) {
+      win.close();
+      throw err;
+    }
   }
 }

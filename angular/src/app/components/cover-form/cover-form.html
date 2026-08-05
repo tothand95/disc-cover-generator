@@ -244,8 +244,4 @@
   >
     {{ store.ui.busy() ? 'Generating…' : 'Generate PDF' }}
   </button>
-
-  @if (store.ui.error(); as err) {
-    <div class="alert alert--error" role="alert">{{ err }}</div>
-  }
 </form>

@@ -36,6 +36,10 @@
     &--active {
       background: var(--accent);
       color: var(--accent-fg);
+
+      &:hover:not(:disabled) {
+        background: var(--accent-hover);
+      }
     }
 
     &:disabled {

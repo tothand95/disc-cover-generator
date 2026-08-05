@@ -47,26 +47,36 @@
   color-scheme: light;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --surface-2: #f1f5f9;
-  --surface-3: #e2e8f0;
-  --border: #cbd5e1;
-  --border-strong: #94a3b8;
-  --text: #0f172a;
-  --text-muted: #334155;
-  --text-subtle: #64748b;
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
+  // Light palette follows PrimeNG Noir preset (primary: noir / surface: zinc).
+  // Surface scale = Tailwind zinc; primary = near-black with lighter hover.
+  //   zinc-50  #fafafa   zinc-100 #f4f4f5   zinc-200 #e4e4e7
+  //   zinc-300 #d4d4d8   zinc-400 #a1a1aa   zinc-500 #71717a
+  //   zinc-600 #52525b   zinc-700 #3f3f46   zinc-800 #27272a
+  //   zinc-900 #18181b   zinc-950 #09090b
+  --bg: #fafafa;             // zinc-50
+  --surface: #fafafa;        // zinc-50 (flat — panels distinguished by border)
+  --surface-2: #e4e4e7;      // zinc-200
+  --surface-3: #d4d4d8;      // zinc-300
+  --border: #d4d4d8;         // zinc-300
+  --border-strong: #a1a1aa;  // zinc-400
+  --text: #18181b;           // zinc-900
+  --text-muted: #3f3f46;     // zinc-700
+  --text-subtle: #71717a;    // zinc-500
+  --accent: #18181b;         // Noir — neutral buttons, segmented active (zinc-900)
+  --accent-hover: #27272a;   // zinc-800
   --accent-fg: #ffffff;
-  --accent-ring: rgba(99, 102, 241, 0.25);
+  --accent-ring: rgba(24, 24, 27, 0.2);
+  --primary: #2563eb;        // vibrant — primary CTA (Tailwind blue-600)
+  --primary-hover: #1d4ed8;  // blue-700
+  --primary-fg: #ffffff;
+  --primary-ring: rgba(37, 99, 235, 0.3);
   --danger: #b91c1c;
   --danger-bg: #fef2f2;
   --danger-border: #fecaca;
   --overlay: rgba(0, 0, 0, 0.6);
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   --paper: #ffffff;
-  --select-chevron: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  --select-chevron: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
 }
 
 @mixin dark-tokens {
@@ -93,10 +103,14 @@
   --text: #d7dae0;
   --text-muted: #abb2bf;
   --text-subtle: #7f848e;
-  --accent: #61afef;
-  --accent-hover: #528bff;
-  --accent-fg: #ffffff;
-  --accent-ring: rgba(97, 175, 239, 0.35);
+  --accent: #abb2bf;         // neutral buttons (One Dark editor foreground)
+  --accent-hover: #d7dae0;   // brighter neutral
+  --accent-fg: #23272e;
+  --accent-ring: rgba(171, 178, 191, 0.3);
+  --primary: #61afef;        // vibrant CTA — One Dark blue
+  --primary-hover: #528bff;  // editorCursor.foreground
+  --primary-fg: #ffffff;
+  --primary-ring: rgba(97, 175, 239, 0.35);
   --danger: #e06c75;
   --danger-bg: #3a1f22;
   --danger-border: #5c2a2f;

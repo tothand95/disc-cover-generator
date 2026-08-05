@@ -57,7 +57,6 @@ export class CoverStore {
 
   readonly ui = {
     busy: signal(false),
-    error: signal<string | null>(null),
     isDraggingFile: signal(false),
   };
 
