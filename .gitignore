@@ -1,10 +1,50 @@
+# Node / build output
 node_modules/
 dist/
-*.log
-.DS_Store
+/tmp
+/out-tsc
+/bazel-out
+
+# Angular cache
+/.angular/cache
+
+# Env
 .env
 .env.*
 !.env.example
+
+# Coverage / test artifacts
 coverage/
+.sass-cache/
 .output/
 out/
+
+# Logs
+*.log
+npm-debug.log
+yarn-error.log
+testem.log
+/connect.lock
+/libpeerconnection.log
+
+# IDEs
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.history/*
+
+# VS Code — keep shared config, ignore per-user state
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+
+# OS
+.DS_Store
+Thumbs.db

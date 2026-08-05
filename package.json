@@ -1,31 +1,38 @@
 {
   "name": "disc-cover-generator",
   "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "description": "Client-side, static PDF generator for DVD/Blu-Ray/CD covers.",
-  "packageManager": "pnpm@11.20.0",
+  "description": "Client-side static web app that generates print-ready A4-landscape PDFs for DVD / Blu-Ray / CD case covers.",
   "scripts": {
-    "dev": "vite",
-    "typecheck": "tsc -p web/tsconfig.json --noEmit",
-    "build": "pnpm typecheck && vite build",
-    "preview": "vite preview",
-    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+    "ng": "ng",
+    "dev": "ng serve",
+    "start": "ng serve",
+    "build": "ng build",
+    "build:pages": "ng build --base-href /disc-cover-generator/",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit"
   },
+  "private": true,
+  "packageManager": "pnpm@11.20.0",
   "dependencies": {
-    "lucide-react": "^1.28.0",
-    "pdf-lib": "^1.17.1"
+    "@angular/cdk": "^22.1.0",
+    "@angular/common": "^22.1.0",
+    "@angular/compiler": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0",
+    "@angular/platform-browser": "^22.1.0",
+    "@angular/router": "^22.1.0",
+    "pdf-lib": "^1.17.1",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.3",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.49",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "tailwindcss": "^3.4.15",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.11"
+    "@angular/build": "^22.1.2",
+    "@angular/cli": "^22.1.2",
+    "@angular/compiler-cli": "^22.1.0",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2",
+    "vitest": "^4.0.8"
   }
 }

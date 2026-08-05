@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, init]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -31,19 +31,17 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Build
-        env:
-          GITHUB_PAGES: "1"
-        run: pnpm build
+      - name: Build (Angular, GitHub Pages base-href)
+        run: pnpm run build:pages
 
       - name: Add SPA-friendly 404
-        run: cp dist/index.html dist/404.html
+        run: cp dist/disc-cover-generator-app/browser/index.html dist/disc-cover-generator-app/browser/404.html
 
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: dist/disc-cover-generator-app/browser
 
   deploy:
     needs: build

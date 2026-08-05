@@ -1,6 +1,3 @@
-packages:
-  - "angular"
-
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true

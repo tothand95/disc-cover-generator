@@ -1,46 +1,52 @@
 # disc-cover-generator
 
-Generate print-ready PDF covers for DVD, Blu-Ray, and CD cases.
+Generate print-ready PDF covers for DVD, Blu-Ray, and CD cases — 100% in
+the browser, no backend, no upload. Ships as a static Angular app.
 
 ## Features
 
 - Predefined case sizes: DVD Normal, DVD Slim, Blu-Ray, CD Jewel, CD Jewel (folded front)
-- Single-image mode: one image stretched/filled/fitted across the whole cover
-- 3-image mode: back + front + optional spine
-- Auto-generated spine styles (PS2 first; XBOX, XBOX360 planned)
+- Single-image mode: one image stretched / filled / fitted across the whole cover
+- 3-image mode: back + front + optional spine image
+- Auto-generated spine styles (PS2, XBOX, XBOX360 — configurable title / colors / alignment)
 - Fit modes: `stretch` | `fill` (cover) | `fit` (contain)
 - Border modes: `none` | `outer` | `sections`
 - Input formats: PNG, JPEG, WebP
+- Live preview with drag-and-drop image slots
+- Light / dark theme (One Dark Pro Darker in dark, PrimeNG Noir + Zinc in light)
 
-## Layout
+## Tech stack
 
-- `core/`   — image + PDF generation (framework-agnostic)
-- `cli/`    — command-line interface
-- `server/` — Fastify HTTP wrapper around `core` + static SPA hosting
-- `web/`    — Vite + React + Tailwind UI
+- Angular 22 (standalone components, signals, `@if` / `@for` control flow)
+- TypeScript 6, SCSS
+- pdf-lib for PDF generation (browser-side)
+- Bundled Hind font family (OFL)
+- No backend, no CLI — everything runs client-side
+
+## Repository layout
+
+```
+src/                 Angular app (standalone components, signals, SCSS).
+core/                Framework-free TypeScript: presets + spine SVG builder.
+                     Consumed via the `@core/*` path alias. Must stay Node-free.
+public/              Static assets served at the origin root.
+public/assets/       Fonts (Hind family, OFL) + preset images (PS2, XBOX...).
+angular.json         Angular workspace config.
+tsconfig*.json       TS config for app + specs.
+```
 
 ## Getting started
 
 ```bash
 pnpm install
-pnpm build            # compiles server (tsc) + web (vite)
-pnpm start            # runs Fastify at http://127.0.0.1:3000
+pnpm dev              # ng serve on http://localhost:4200
+pnpm build            # production build → dist/disc-cover-generator-app/browser
+pnpm build:pages      # production build with GitHub Pages base-href
+pnpm typecheck        # tsc --noEmit on the app
 ```
 
-### Development
+## Deployment
 
-```bash
-pnpm dev              # server on :3000, Vite dev server on :5173 (proxies /api)
-```
-
-Open http://localhost:5173 for the UI with hot reload.
-
-### CLI
-
-```bash
-pnpm cli list-presets
-pnpm cli three --preset dvd-normal --back back.png --front front.png \
-  --spine-preset ps2 --spine-title "Game Title" --border sections -o cover.pdf
-```
-
-
+Push to `main` and the `Deploy to GitHub Pages` workflow builds with
+`--base-href /disc-cover-generator/` and publishes
+`dist/disc-cover-generator-app/browser` to Pages.
