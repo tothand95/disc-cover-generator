@@ -61,10 +61,9 @@ export class CoverPreviewSeparate {
     return px > 0 && this.borderColor() ? `0 0 0 ${px}px ${this.borderColor()}` : 'none';
   });
   protected readonly gridTemplateCols = computed(() => {
-    const { stageWidth, spineWidthPx } = this.layout();
-    const side = Math.round((stageWidth - spineWidthPx) / 2);
-    const spine = Math.round(stageWidth) - side * 2;
-    return `${side}px ${spine}px ${side}px`;
+    const p = this.preset();
+    const side = (p.totalWidthMm - p.spineWidthMm) / 2;
+    return `${side}fr ${p.spineWidthMm}fr ${side}fr`;
   });
 
   protected readonly frontTopImage = computed(() => {
