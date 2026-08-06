@@ -53,9 +53,16 @@
     align-items: center;
     justify-content: center;
     gap: 1.5rem;
-    background: rgba(0, 0, 0, 0.4);
     opacity: 0;
     transition: opacity 0.15s;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--surface-3);
+      opacity: 0.75;
+    }
   }
 
   &:hover &__overlay {
@@ -63,6 +70,7 @@
   }
 
   &__pill {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
