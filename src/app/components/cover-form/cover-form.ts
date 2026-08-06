@@ -94,9 +94,9 @@ export class CoverForm {
 
   protected readonly isTextPreset = computed(() => this.store.spine.preset() === 'text');
 
-  readonly submit = output<void>();
+  readonly generate = output<void>();
 
   onSubmit(): void {
-    this.submit.emit();
+    this.generate.emit();
   }
 }
