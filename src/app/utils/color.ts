@@ -7,7 +7,9 @@ export function parseHex(hex: string): { r: number; g: number; b: number } {
           .map((c) => c + c)
           .join('')
       : h;
-  if (full.length !== 6) throw new Error(`Invalid color: ${hex}`);
+  if (full.length !== 6) {
+    throw new Error(`Invalid color: ${hex}`);
+  }
   return {
     r: parseInt(full.slice(0, 2), 16) / 255,
     g: parseInt(full.slice(2, 4), 16) / 255,

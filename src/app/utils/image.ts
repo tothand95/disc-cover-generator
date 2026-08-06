@@ -28,7 +28,9 @@ async function drawFileToCanvas(opts: RenderImageOptions): Promise<HTMLCanvasEle
     canvas.width = widthPx;
     canvas.height = heightPx;
     const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Failed to acquire 2D canvas context');
+    if (!ctx) {
+      throw new Error('Failed to acquire 2D canvas context');
+    }
 
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
@@ -87,14 +89,20 @@ export async function renderImageToPng(opts: RenderImageOptions): Promise<Uint8A
  */
 export async function renderFrontToPng(opts: RenderFrontOptions): Promise<Uint8Array> {
   const canvas = await drawFileToCanvas(opts);
-  if (!opts.topLayer) return canvasToPng(canvas);
+  if (!opts.topLayer) {
+    return canvasToPng(canvas);
+  }
 
   const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('Failed to acquire 2D canvas context');
+  if (!ctx) {
+    throw new Error('Failed to acquire 2D canvas context');
+  }
 
   const { href, aspectRatio, topPaddingPx = 0, bottomPaddingPx = 0, separator } = opts.topLayer;
   const res = await fetch(href);
-  if (!res.ok) throw new Error(`Failed to load preset top image: ${res.status}`);
+  if (!res.ok) {
+    throw new Error(`Failed to load preset top image: ${res.status}`);
+  }
   const blob = await res.blob();
   const topBitmap = await createImageBitmap(blob);
   try {

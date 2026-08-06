@@ -57,12 +57,16 @@ export class SpinePresetPreview {
       let cancelled = false;
       resolveSpineSvgOptions(spine, w, h)
         .then((opts) => {
-          if (cancelled) return;
+          if (cancelled) {
+            return;
+          }
           const raw = buildSpineSvg(opts);
           this.svg.set(this.sanitizer.bypassSecurityTrustHtml(raw));
         })
         .catch(() => {
-          if (!cancelled) this.svg.set(null);
+          if (!cancelled) {
+            this.svg.set(null);
+          }
         });
       return () => {
         cancelled = true;

@@ -13,7 +13,9 @@ export function drawBorders(
   border: BorderOptions,
   dpi: number,
 ): void {
-  if (border.mode === 'none' || border.thicknessPx <= 0) return;
+  if (border.mode === 'none' || border.thicknessPx <= 0) {
+    return;
+  }
 
   const color = parseHex(border.color);
   const strokeColor = rgb(color.r, color.g, color.b);

@@ -54,7 +54,9 @@ export function computeStageLayout(
 }
 
 export function borderPreviewPx(borderMode: 'none' | 'outer' | 'sections', thicknessPx: number, mmToPx: number, dpi: number): number {
-  if (borderMode === 'none' || thicknessPx <= 0) return 0;
+  if (borderMode === 'none' || thicknessPx <= 0) {
+    return 0;
+  }
   const borderMm = (thicknessPx / dpi) * MM_PER_INCH;
   return Math.max(1, borderMm * mmToPx);
 }

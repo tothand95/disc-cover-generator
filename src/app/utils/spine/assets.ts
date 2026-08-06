@@ -37,10 +37,14 @@ export function getSpinePresetImageAspectRatio(key: SpinePresetImageKey, role: S
 export async function loadSpinePresetImage(key: SpinePresetImageKey, role: SpinePresetImageRole = 'spine'): Promise<SpinePresetImage> {
   const cacheKey = `${key}:${role}`;
   const cached = cache.get(cacheKey);
-  if (cached) return cached;
+  if (cached) {
+    return cached;
+  }
   const spec = SPINE_PRESET_IMAGES[key][role];
   const res = await fetch(spec.url);
-  if (!res.ok) throw new Error(`Failed to load ${key} ${role} preset image: ${res.status}`);
+  if (!res.ok) {
+    throw new Error(`Failed to load ${key} ${role} preset image: ${res.status}`);
+  }
   const blob = await res.blob();
   const dataUrl: string = await new Promise((resolve, reject) => {
     const fr = new FileReader();
@@ -69,7 +73,9 @@ let documentFontsRegistered: Promise<void> | null = null;
 
 async function fetchAsArrayBuffer(url: string): Promise<ArrayBuffer> {
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch ${url}: ${res.status}`);
+  }
   return res.arrayBuffer();
 }
 
@@ -89,7 +95,9 @@ function arrayBufferToDataUrl(buf: ArrayBuffer, mime: string): string {
  * up synchronously instead of racing with async @font-face decoding.
  */
 export function preloadSpineDocumentFonts(): Promise<void> {
-  if (documentFontsRegistered) return documentFontsRegistered;
+  if (documentFontsRegistered) {
+    return documentFontsRegistered;
+  }
   documentFontsRegistered = (async () => {
     const buffers = await Promise.all(
       SPINE_FONT_WEIGHTS.map(async ({ weight, url }) => ({
@@ -119,7 +127,9 @@ export function preloadSpineDocumentFonts(): Promise<void> {
  * inherit page CSS.
  */
 export async function loadSpineFontStyleBlock(): Promise<string> {
-  if (cachedFontBlock) return cachedFontBlock;
+  if (cachedFontBlock) {
+    return cachedFontBlock;
+  }
   const faces = await Promise.all(
     SPINE_FONT_WEIGHTS.map(async ({ weight, url }) => {
       const buffer = await fetchAsArrayBuffer(url);

@@ -56,7 +56,9 @@ export class CoverStore {
 
   /** Convenience: `SpinePresetInput` derived from the spine signals, or null when a spine image is uploaded. */
   readonly spinePresetInput = computed(() => {
-    if (this.images.spine()) return null;
+    if (this.images.spine()) {
+      return null;
+    }
     return {
       preset: this.spine.preset(),
       title: this.spine.title(),

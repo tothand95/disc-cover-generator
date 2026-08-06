@@ -16,7 +16,9 @@ export class ObjectUrlDirective implements OnChanges, OnDestroy {
   readonly url = signal<string | null>(null);
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!changes['file']) return;
+    if (!changes['file']) {
+      return;
+    }
     this.revoke();
     if (this.file) {
       this.currentUrl = URL.createObjectURL(this.file);

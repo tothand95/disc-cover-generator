@@ -37,7 +37,9 @@ export class SectionImage {
   onFileChange(e: Event): void {
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
-    if (file) this.fileChange.emit(file);
+    if (file) {
+      this.fileChange.emit(file);
+    }
     input.value = '';
   }
 

@@ -25,7 +25,9 @@ export class FileInput {
       const el = this.inputRef().nativeElement;
       const file = this.file();
       if (file) {
-        if (el.files && el.files.length === 1 && el.files[0] === file) return;
+        if (el.files && el.files.length === 1 && el.files[0] === file) {
+          return;
+        }
         try {
           const dt = new DataTransfer();
           dt.items.add(file);

@@ -69,7 +69,9 @@ export class App {
         urlSignal.set(null);
       }
       onCleanup(() => {
-        if (currentUrl) URL.revokeObjectURL(currentUrl);
+        if (currentUrl) {
+          URL.revokeObjectURL(currentUrl);
+        }
         currentUrl = null;
       });
     });
@@ -79,9 +81,11 @@ export class App {
     const store = this.store;
     try {
       if (store.mode.kind() === 'single') {
-        if (!store.images.single()) throw new Error('Please choose an image.');
-      } else {
-        if (!store.images.back() || !store.images.front()) throw new Error('Please choose both back and front images.');
+        if (!store.images.single()) {
+          throw new Error('Please choose an image.');
+        }
+      } else if (!store.images.back() || !store.images.front()) {
+        throw new Error('Please choose both back and front images.');
       }
 
       store.ui.busy.set(true);

@@ -14,12 +14,16 @@ export class DragDropService {
   constructor() {
     const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer?.types ?? []).includes('Files');
     const onOver = (e: DragEvent) => {
-      if (!hasFiles(e)) return;
+      if (!hasFiles(e)) {
+        return;
+      }
       e.preventDefault();
       this.isDraggingFile.set(true);
     };
     const onDrop = (e: DragEvent) => {
-      if (hasFiles(e)) e.preventDefault();
+      if (hasFiles(e)) {
+        e.preventDefault();
+      }
       this.isDraggingFile.set(false);
     };
     document.addEventListener('dragover', onOver);

@@ -36,7 +36,9 @@ export async function rasterizeSpineSvg(opts: RasterizeOptions): Promise<Uint8Ar
     canvas.width = widthPx;
     canvas.height = heightPx;
     const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Failed to acquire 2D canvas context');
+    if (!ctx) {
+      throw new Error('Failed to acquire 2D canvas context');
+    }
     ctx.drawImage(img, 0, 0, widthPx, heightPx);
 
     const png: Blob = await new Promise((resolve, reject) => {

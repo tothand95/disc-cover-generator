@@ -12,10 +12,16 @@ export interface Section {
 }
 
 function getFrontPresetImageKey(opts: GenerateBrowserOptions): SpinePresetImageKey | null {
-  if (opts.input.kind !== 'three') return null;
+  if (opts.input.kind !== 'three') {
+    return null;
+  }
   const spine = opts.input.spinePreset;
-  if (!spine || !spine.extras?.showFrontImage) return null;
-  if (spine.preset === 'ps2' || spine.preset === 'xbox') return spine.preset;
+  if (!spine || !spine.extras?.showFrontImage) {
+    return null;
+  }
+  if (spine.preset === 'ps2' || spine.preset === 'xbox') {
+    return spine.preset;
+  }
   return null;
 }
 

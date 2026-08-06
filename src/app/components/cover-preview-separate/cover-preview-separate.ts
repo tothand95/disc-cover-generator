@@ -68,8 +68,12 @@ export class CoverPreviewSeparate {
 
   protected readonly frontTopImage = computed(() => {
     const p = this.spinePreset();
-    if (!this.showFrontPresetImage()) return null;
-    if (p !== 'ps2' && p !== 'xbox') return null;
+    if (!this.showFrontPresetImage()) {
+      return null;
+    }
+    if (p !== 'ps2' && p !== 'xbox') {
+      return null;
+    }
     const key = p as SpinePresetImageKey;
     const layout = this.layout();
     const sideWidthMm = layout.sideWidthMm;
@@ -112,7 +116,9 @@ export class CoverPreviewSeparate {
   onSpineFilePicked(e: Event): void {
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
-    if (file) this.spineSelected.emit(file);
+    if (file) {
+      this.spineSelected.emit(file);
+    }
     input.value = '';
   }
 }

@@ -37,14 +37,18 @@ export class ThemeService {
 
   resolved(): 'light' | 'dark' {
     const m = this.mode();
-    if (m !== 'system') return m;
+    if (m !== 'system') {
+      return m;
+    }
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
   private readInitial(): ThemeMode {
     try {
       const v = localStorage.getItem(STORAGE_KEY);
-      if (v === 'light' || v === 'dark' || v === 'system') return v;
+      if (v === 'light' || v === 'dark' || v === 'system') {
+        return v;
+      }
     } catch {
       /* ignore */
     }

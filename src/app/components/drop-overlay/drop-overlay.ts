@@ -22,7 +22,9 @@ export class DropOverlay {
 
   onDragOver(e: DragEvent): void {
     e.preventDefault();
-    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = 'copy';
+    }
   }
 
   onDragEnter(): void {
@@ -37,6 +39,8 @@ export class DropOverlay {
     e.preventDefault();
     this.isDragging.set(false);
     const file = Array.from(e.dataTransfer?.files ?? []).find((f) => f.type.startsWith('image/'));
-    if (file) this.fileSelected.emit(file);
+    if (file) {
+      this.fileSelected.emit(file);
+    }
   }
 }
