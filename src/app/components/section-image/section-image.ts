@@ -27,7 +27,13 @@ export class SectionImage {
 
   protected readonly objectFit = computed(() => {
     const f = this.fit();
-    return f === 'stretch' ? 'fill' : f === 'fill' ? 'cover' : 'contain';
+    if (f === 'stretch') {
+      return 'fill';
+    }
+    if (f === 'fill') {
+      return 'cover';
+    }
+    return 'contain';
   });
 
   openPicker(): void {

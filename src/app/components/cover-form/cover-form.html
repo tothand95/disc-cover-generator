@@ -16,35 +16,29 @@
       </select>
     </div>
   </fieldset>
-
   <fieldset class="section">
     <legend>Images</legend>
     <div class="field">
-      <label>Input mode</label>
+      <span class="field-label">Input mode</span>
       <app-segmented [options]="kindOptions" [value]="store.mode.kind()" (valueChange)="store.mode.kind.set($event)" ariaLabel="Input mode" />
     </div>
-
     @if (store.mode.kind() === 'single') {
       <div class="field">
-        <label>Image</label>
-        <app-file-input [file]="store.images.single()" (fileChange)="store.images.single.set($event)" />
+        <span class="field-label">Image</span> <app-file-input [file]="store.images.single()" (fileChange)="store.images.single.set($event)" />
       </div>
     } @else {
       <div class="field">
-        <label>Back image</label>
-        <app-file-input [file]="store.images.back()" (fileChange)="store.images.back.set($event)" />
+        <span class="field-label">Back image</span> <app-file-input [file]="store.images.back()" (fileChange)="store.images.back.set($event)" />
       </div>
       <div class="field">
-        <label>Front image</label>
-        <app-file-input [file]="store.images.front()" (fileChange)="store.images.front.set($event)" />
+        <span class="field-label">Front image</span> <app-file-input [file]="store.images.front()" (fileChange)="store.images.front.set($event)" />
       </div>
       <div class="field">
-        <label>Spine image (optional)</label>
+        <span class="field-label">Spine image (optional)</span>
         <app-file-input [file]="store.images.spine()" (fileChange)="store.images.spine.set($event)" />
       </div>
     }
   </fieldset>
-
   @if (showSpineSection()) {
     <fieldset class="section">
       <legend>Preset</legend>
@@ -78,7 +72,7 @@
       }
       @if (hasFrontImageToggle()) {
         <div class="field">
-          <label>Front cover top image</label>
+          <span class="field-label">Front cover top image</span>
           <app-segmented [options]="toggleOptions" [value]="store.spine.showFrontImage()" (valueChange)="store.spine.showFrontImage.set($event)" />
         </div>
       }
@@ -100,7 +94,7 @@
       }
       @if (hasSeparatorToggle()) {
         <div class="field">
-          <label>White separator line</label>
+          <span class="field-label">White separator line</span>
           <app-segmented
             [options]="toggleOptions"
             [value]="store.spine.showFrontSeparator()"
@@ -134,17 +128,16 @@
           />
         </div>
         <div class="field">
-          <label>Text alignment</label>
+          <span class="field-label">Text alignment</span>
           <app-segmented [options]="textAlignOptions" [value]="store.spine.textAlign()" (valueChange)="store.spine.textAlign.set($event)" />
         </div>
       }
     </fieldset>
   }
-
   <fieldset class="section">
     <legend>Layout</legend>
     <div class="field">
-      <label>Fit mode</label>
+      <span class="field-label">Fit mode</span>
       <app-segmented [options]="fitOptions" [value]="store.mode.fit()" (valueChange)="store.mode.fit.set($event)" />
     </div>
     @if (store.mode.fit() === 'fit') {
@@ -164,11 +157,10 @@
       </div>
     }
   </fieldset>
-
   <fieldset class="section">
     <legend>Borders</legend>
     <div class="field">
-      <label>Border mode</label>
+      <span class="field-label">Border mode</span>
       <app-segmented [options]="borderOptions" [value]="store.borders.mode()" (valueChange)="store.borders.mode.set($event)" />
     </div>
     @if (store.borders.mode() !== 'none') {
@@ -201,8 +193,5 @@
       </div>
     }
   </fieldset>
-
-  <button type="submit" class="submit-btn" [disabled]="store.ui.busy()">
-    {{ store.ui.busy() ? 'Generating…' : 'Generate PDF' }}
-  </button>
+  <button type="submit" class="submit-btn" [disabled]="store.ui.busy()">{{ store.ui.busy() ? 'Generating…' : 'Generate PDF' }}</button>
 </form>
