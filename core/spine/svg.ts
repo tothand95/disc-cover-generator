@@ -9,7 +9,7 @@
  */
 export type SpineTextAlign = 'start' | 'center' | 'end';
 
-export const SPINE_FONT_FAMILY = 'SpineFont';
+export const SPINE_FONT_FAMILY = 'app-spine-font';
 export const HIND_CAP_HEIGHT_RATIO = 0.7;
 export const VISUAL_CENTER_RATIO = 0.33;
 /** Gap between the spine preset image and the text below it, as a fraction of the spine width. */
