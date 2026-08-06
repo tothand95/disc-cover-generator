@@ -56,7 +56,7 @@ export async function loadSpinePresetImage(key: SpinePresetImageKey, role: Spine
   return value;
 }
 
-const SPINE_FONT_WEIGHTS: Array<{ weight: number; url: string }> = [
+const SPINE_FONT_WEIGHTS: { weight: number; url: string }[] = [
   { weight: 300, url: 'assets/fonts/Hind-Light.ttf' },
   { weight: 400, url: 'assets/fonts/Hind-Regular.ttf' },
   { weight: 500, url: 'assets/fonts/Hind-Medium.ttf' },

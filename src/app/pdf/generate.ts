@@ -6,14 +6,14 @@ import { drawCropMarks } from './cropMarks';
 import { drawBorders } from './borders';
 import { buildSections } from './sections';
 
-export type SingleInput = { kind: 'single'; image: File };
-export type ThreeInput = {
+export interface SingleInput { kind: 'single'; image: File }
+export interface ThreeInput {
   kind: 'three';
   back: File;
   front: File;
   spineImage: File | null;
   spinePreset: SpinePresetInput | null;
-};
+}
 
 export interface GenerateBrowserOptions {
   presetId: CasePresetId;
