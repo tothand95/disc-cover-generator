@@ -6,7 +6,10 @@ import { drawCropMarks } from './cropMarks';
 import { drawBorders } from './borders';
 import { buildSections } from './sections';
 
-export interface SingleInput { kind: 'single'; image: File }
+export interface SingleInput {
+  kind: 'single';
+  image: File;
+}
 export interface ThreeInput {
   kind: 'three';
   back: File;
