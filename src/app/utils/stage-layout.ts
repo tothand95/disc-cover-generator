@@ -1,5 +1,5 @@
 import type { CasePreset } from '@core/types';
-import { MM_PER_INCH } from '../pdf/layout';
+import { MM_PER_INCH } from './pdf/layout';
 
 export interface StageLayout {
   stageWidth: number;

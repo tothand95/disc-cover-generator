@@ -75,7 +75,7 @@ src/                     Angular app.
                                `spinePresetInput()` live here too.
       drag-drop.service.ts     Global drag detection (document-level dragover/
                                drop listeners). Exposes `isDraggingFile()`.
-      pdf-generator.service.ts Wraps pdf/generate.ts. Opens a placeholder tab
+      pdf-generator.service.ts Wraps utils/pdf/generate.ts. Opens a placeholder tab
                                synchronously inside the click gesture, then
                                navigates it to the blob URL once the PDF is
                                ready — so browsers treat it as user-initiated.
@@ -113,19 +113,19 @@ src/                     Angular app.
                                with stroke="currentColor" so parents tint via
                                CSS color. Add icons by extending the IconName
                                union + PATHS map.
-    pdf/                       PDF generation, split by concern.
-      generate.ts              Orchestrator + public types (GenerateBrowserOptions).
-      layout.ts                mm/pt/A4 constants, mmToPt, mmToPx.
-      cropMarks.ts             Dashed crop marks (grey rgb(0.25, 0.25, 0.25)).
-      borders.ts               Outer + section-divider borders.
-      sections.ts              Renders each section to PNG (uses utils/image
-                               and utils/spine/rasterize).
     utils/
       image.ts                 Canvas-based image fit (stretch/fill/fit) →
                                PNG bytes.
       color.ts                 parseHex.
       stage-layout.ts          Computes the preview stage's px dimensions
                                (contain-style fit inside the container).
+      pdf/                     PDF generation, split by concern.
+        generate.ts            Orchestrator + public types (GenerateBrowserOptions).
+        layout.ts              mm/pt/A4 constants, mmToPt, mmToPx.
+        cropMarks.ts           Dashed crop marks (grey rgb(0.25, 0.25, 0.25)).
+        borders.ts             Outer + section-divider borders.
+        sections.ts            Renders each section to PNG (uses utils/image
+                               and utils/spine/rasterize).
       spine/
         assets.ts              Loads PS2 PNG + Hind fonts as data URIs
                                (browser only).

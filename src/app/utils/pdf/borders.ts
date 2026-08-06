@@ -1,6 +1,6 @@
 import { rgb, type PDFPage } from 'pdf-lib';
 import type { BorderOptions, CasePreset } from '@core/types';
-import { parseHex } from '../utils/color';
+import { parseHex } from '../color';
 import { MM_PER_INCH, mmToPt } from './layout';
 import type { Section } from './sections';
 

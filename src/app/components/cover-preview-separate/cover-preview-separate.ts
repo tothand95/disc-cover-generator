@@ -5,7 +5,7 @@ import { DropOverlay } from '../drop-overlay/drop-overlay';
 import { SpinePresetPreview } from '../spine-preset-preview/spine-preset-preview';
 import { Icon } from '../../shared/icon/icon';
 import { borderPreviewPx, computeStageLayout } from '../../utils/stage-layout';
-import { MM_PER_INCH } from '../../pdf/layout';
+import { MM_PER_INCH } from '../../utils/pdf/layout';
 import { getSpinePresetImageAspectRatio, getSpinePresetImageUrl, type SpinePresetImageKey } from '../../utils/spine/assets';
 
 /**
