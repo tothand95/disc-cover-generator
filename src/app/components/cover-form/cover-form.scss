@@ -41,7 +41,8 @@
 .field {
   display: block;
 
-  .field-label {
+  .field-label,
+  label {
     display: block;
     font-size: 0.875rem;
     font-weight: 500;
