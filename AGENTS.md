@@ -1,42 +1,48 @@
 # Repository guide for future agents & contributors
 
-This file captures the high-level architectural and design decisions we
-converged on. If you're picking up this repo, read this before making
-significant changes.
+This file captures the architectural and design decisions this repo runs on.
+If you're picking up the codebase, read this before making significant changes.
 
 ## What this is
 
 A **100% client-side** static web app that generates print-ready A4-landscape
-PDFs for DVD / Blu-Ray / CD case covers. No backend. No server. Deploy the
-contents of `dist/disc-cover-generator-app/browser/` to any static host
-(GitHub Pages, Netlify, S3, ...).
+PDFs for DVD / Blu-Ray / CD case covers. Deploy the contents of
+`dist/disc-cover-generator-app/browser/` to any static host (GitHub Pages,
+Netlify, S3, …).
 
 - Framework: **Angular 22** (standalone components, signals, `@if` / `@for`)
 - PDF: `pdf-lib` in the browser
-- Runtime deps at the time of writing: **only `pdf-lib`** (plus Angular runtime)
+- Runtime dep set: **`pdf-lib`** + the Angular runtime
 
-## Golden rules
+## Design invariants
 
-1. **Do not reintroduce a server.** Everything must run in the browser.
-   Images never leave the user's machine.
-2. **Do not add a CLI.** We had one, we deleted it. If you want batch
-   generation, run headless Chrome against the static site.
-3. **One SVG builder is the single source of truth for the spine.** The
-   preview and the PDF both consume `buildSpineSvg()` from
-   `core/spine/svg.ts`. If you change spine visuals, change it there and
-   nowhere else. See "Spine rendering" below.
-4. **Do not add fontkit / vector text.** We tried it. It drifted from the
-   preview because pdf-lib's text engine is not Chrome's SVG engine. The
-   only way to guarantee visual parity is to hand pdf-lib pixels.
-5. **`core/` must stay Node-free.** No `fs`, `path`, `node:*` imports.
-   The web build imports directly from `core/**/*.ts` via the `@core/*`
-   TypeScript path alias, so any Node dep there breaks the browser bundle.
-6. **Do not reintroduce PrimeNG (or any dual-license UI kit).** PrimeNG
-   v22 ships under Community/Commercial with registration + annual key
-   renewal. We rebuilt the form on native HTML + SCSS + a custom
-   `<app-segmented>`. Free MIT/OFL only from here on.
-7. **No inline error banners.** All user-facing feedback goes through
-   `ToastService` (bottom-center toasts). Success + error paths both use it.
+These are the constraints the codebase relies on. New work should preserve them.
+
+1. **All functionality runs in the browser.** Images stay on the user's
+   machine. Everything from image decoding to PDF assembly happens
+   client-side.
+2. **The static site is the whole product.** Batch or scripted generation,
+   if ever needed, is done by driving the static site via headless
+   Chrome — not by adding a Node CLI or server.
+3. **`buildSpineSvg()` in `core/spine/svg.ts` is the single source of
+   truth for the spine.** The live preview and the PDF both consume it.
+   Change spine visuals only there — the preview and PDF stay in lockstep
+   because they share the same SVG string.
+4. **The spine reaches the PDF as a rasterized PNG.** The SVG that
+   `buildSpineSvg()` produces is drawn to a canvas and embedded as an
+   image. This is the only way to guarantee the printed spine matches the
+   preview pixel-for-pixel (Chrome's SVG text engine and pdf-lib's text
+   engine disagree on baselines).
+5. **`core/` is browser-safe TypeScript.** It uses no `fs`, `path`, or
+   `node:*` imports. The web build imports directly from `core/**/*.ts`
+   via the `@core/*` TypeScript path alias, so keeping `core/` Node-free
+   keeps the browser bundle buildable.
+6. **UI is built on native HTML + SCSS + local primitives (MIT/OFL only).**
+   Form controls, layout, and iconography are hand-rolled. Ship-in-bundle
+   fonts are Hind (OFL). No dual-licensed UI kits.
+7. **User-facing feedback goes through `ToastService`.** Success and
+   error paths both surface via bottom-center toasts rendered by
+   `<app-toast-container>`. Form inputs stay focused on data entry.
 
 ## Architecture
 
@@ -72,7 +78,7 @@ src/                     Angular app.
       pdf-generator.service.ts Wraps pdf/generate.ts. Opens a placeholder tab
                                synchronously inside the click gesture, then
                                navigates it to the blob URL once the PDF is
-                               ready — otherwise browsers flag it as blocked.
+                               ready — so browsers treat it as user-initiated.
       theme.service.ts         'light' | 'dark' | 'system' signal, persisted
                                to localStorage, syncs to <html data-theme>.
       toast.service.ts         signal-based queue with success()/error()/
@@ -80,21 +86,33 @@ src/                     Angular app.
     components/
       cover-form/              Left-column form. Uses <app-segmented> for
                                kind/fit/borders/textAlign and native
-                               <input>/<select>/<input type="color">.
+                               <input>/<select>/<input type="color">. Emits a
+                               `generate` output (named distinct from the
+                               native `submit` event to avoid collision when
+                               the inner <form>'s submit bubbles up).
       cover-preview-single/    Preview stage for single-image mode.
       cover-preview-separate/  Preview stage for back/spine/front with
                                section-divider borders + PS2 front-top logic.
+                               Owns the spine-cell "Add spine image" pill
+                               overlay so the pure spine renderer stays free
+                               of picker concerns.
       section-image/           Placeholder + <img> + hover overlay pill
-                               (replace/remove) for a single cover section.
+                               (replace/clear) for a single cover section.
       file-input/              Reusable file picker (drop target-friendly).
       drop-overlay/            The "Drop file here" affordance shown per zone
                                during a drag.
       spine-preset-preview/    Inline <svg> preview of buildSpineSvg output,
                                used inside the separate preview's spine cell.
+                               Pure renderer — no input concerns.
     ui/                        Zero-domain UI primitives.
       segmented/               <app-segmented [options] [(model)]>. Used 6+
-                               times in cover-form. Replaces PrimeNG buttons.
+                               times in cover-form.
       toast-container/         Fixed to bottom-center. Renders the toast queue.
+      icon/                    <app-icon [name] [size] [strokeWidth]>. Renders
+                               lucide-style stroked SVGs from a PATHS lookup
+                               with stroke="currentColor" so parents tint via
+                               CSS color. Add icons by extending the IconName
+                               union + PATHS map.
     pdf/                       PDF generation, split by concern.
       generate.ts              Orchestrator + public types (GenerateBrowserOptions).
       layout.ts                mm/pt/A4 constants, mmToPt, mmToPx.
@@ -120,29 +138,22 @@ src/                     Angular app.
       container-size.directive.ts  ResizeObserver → signal wrapper.
 ```
 
-## Spine rendering — read this before you touch spines
+## Spine rendering
 
-The spine has been the source of every subtle bug in this project.
-
-**The pipeline is always: `buildSpineSvg()` → pixels.** Preview draws the
-SVG inline. PDF rasterizes the SVG through a canvas via `spine/rasterize.ts`
-and embeds the PNG. Same string in, same pixels out.
-
-Why not vector text in the PDF? Because Chrome's SVG text baselines and
-pdf-lib's text baselines don't agree. When we used both, preview and PDF
-drifted by a few pixels at every font size. Rasterizing the SVG is the
-only path that guarantees pixel-parity.
+**The pipeline is: `buildSpineSvg()` → pixels.** The preview draws the
+SVG inline. The PDF rasterizes the same SVG through a canvas via
+`spine/rasterize.ts` and embeds the PNG. Same string in, same pixels
+out — this is why the preview and the printed spine match.
 
 ### Centering constant
 
-`VISUAL_CENTER_RATIO` in `core/spine/svg.ts` was tuned empirically for the
-bundled Hind SemiBold. It uses `dominant-baseline="alphabetic"` and shifts
-the baseline down by `fontSize * VISUAL_CENTER_RATIO`. Do **not** switch
-to `dominant-baseline="middle"` or `"central"` — Chrome centers those on
-the em-box, which has more descender space than ascender, so caps land
-too high.
+`VISUAL_CENTER_RATIO` in `core/spine/svg.ts` is tuned empirically for
+the bundled Hind SemiBold. The text uses
+`dominant-baseline="alphabetic"` and the baseline is shifted down by
+`fontSize * VISUAL_CENTER_RATIO`. This makes caps land visually centered
+in the spine strip. Keep alphabetic + this ratio for consistent results.
 
-If you change the spine font, re-run the empirical tuning:
+If the spine font changes, re-run the empirical tuning:
 
 1. Set `y = 0` and try `dominant-baseline="middle"`, record above/below px.
 2. Try `dominant-baseline="alphabetic"` with `y = fontSize * K` for several K.
@@ -156,27 +167,27 @@ If you change the spine font, re-run the empirical tuning:
 - Spine PDF rasterization uses `src/app/spine/assets.ts`, which does
   **two** things:
   1. Fetches all Hind weights and inlines them as data-URI `@font-face`
-     blocks embedded in the SVG. Required because the browser loads the
-     SVG via `<img data:image/svg+xml,...>` in an isolated context that
-     does **not** inherit page CSS.
+     blocks embedded in the SVG. This is required because the browser
+     loads the SVG via `<img data:image/svg+xml,...>` in an isolated
+     context that does not inherit page CSS.
   2. Registers the same weights on `document.fonts` via the `FontFace`
-     API and awaits `document.fonts.ready` before rasterizing. Warms
-     Chrome's font cache so the SVG-in-`<img>` picks them up
-     synchronously and doesn't fall back to sans-serif under a race.
+     API and awaits `document.fonts.ready` before rasterizing. This
+     warms Chrome's font cache so the SVG-in-`<img>` picks the fonts up
+     synchronously.
 - Both preload and font-block calls are memoized after the first PDF
   generation, so subsequent generations are fast.
-- The PDF itself contains **no font data and no text objects** — only
-  the rasterized PNG of the spine. That's why the app has zero
+- The PDF contains **no font data and no text objects** — only the
+  rasterized PNG of the spine. That's why the app ships with zero
   fontkit-related deps.
 
 ## PDF output
 
-- The Generate PDF button opens the result in a **new tab**. To dodge
-  popup blockers, `PdfGeneratorService.generateAndOpen` calls
-  `window.open('', '_blank')` **synchronously inside the click gesture**,
-  then navigates the placeholder tab to the blob URL once bytes are
-  ready. If gen throws we close the placeholder. If the browser blocks
-  the initial open we surface a toast.
+- The Generate PDF button opens the result in a **new tab**.
+  `PdfGeneratorService.generateAndOpen` calls `window.open('', '_blank')`
+  **synchronously inside the click gesture** and later navigates the
+  placeholder tab to the blob URL once bytes are ready. This keeps the
+  popup a direct product of the user click. Generation errors close the
+  placeholder; a browser-blocked open surfaces a toast.
 - Blob URL is revoked 60s after navigation.
 
 ## PDF layout
@@ -206,7 +217,8 @@ preview via CSS `object-fit`:
 ## Theming
 
 - **All colors are CSS custom-property tokens** defined in `src/styles.scss`.
-  Never hardcode a hex in a component SCSS — always use a token.
+  Component SCSS references tokens; the token layer is the only place
+  raw hex values live.
 - Tokens: `--bg`, `--surface`, `--surface-2`, `--surface-3`, `--border`,
   `--border-strong`, `--text`, `--text-muted`, `--text-subtle`,
   `--accent(-hover/-fg/-ring)` (neutral buttons — segmented active,
@@ -220,6 +232,10 @@ preview via CSS `object-fit`:
 - Selection: `ThemeService` writes `data-theme="light" | "dark"` on
   `<html>`; without an attribute the `prefers-color-scheme` media query
   decides. Persisted in `localStorage`.
+- **Hover overlays are unified:** empty-cell placeholder, filled-image
+  overlay, and the spine preset overlay all use `var(--surface-3)`
+  (empty placeholder = solid; overlays = `::before` scrim at opacity
+  0.75 so the pill button on top stays fully opaque).
 
 ## Build / dev / release
 
@@ -231,11 +247,12 @@ pnpm build         # ng build → dist/disc-cover-generator-app/browser/
 pnpm build:pages   # same as build but with --base-href /disc-cover-generator/
 ```
 
-### pnpm gotcha (allowBuilds)
+### pnpm allowBuilds
 
-pnpm 11+ refuses to run any dependency postinstall scripts unless
-allow-listed. `esbuild`, `@parcel/watcher`, `lmdb`, `msgpackr-extract`
-all need theirs. `pnpm-workspace.yaml` at repo root contains:
+pnpm 11+ requires postinstall scripts to be allow-listed. `esbuild`,
+`@parcel/watcher`, `lmdb`, and `msgpackr-extract` all need theirs to
+build native modules for Angular's dev server. Keep this block in
+`pnpm-workspace.yaml`:
 
 ```yaml
 allowBuilds:
@@ -245,8 +262,15 @@ allowBuilds:
   msgpackr-extract: true
 ```
 
-Do not remove this or `pnpm install` will refuse to build native modules
-and Angular's dev server will fail to start.
+### CommonJS allow-list
+
+`pdf-lib` depends on the CommonJS `pako` module. Angular's builder
+would otherwise warn about a CJS optimization bailout. `angular.json`
+lists it under the build options:
+
+```json
+"allowedCommonJsDependencies": ["pako"]
+```
 
 ### Deploy
 
@@ -254,46 +278,41 @@ and Angular's dev server will fail to start.
 to `main`, copies `index.html` → `404.html`, and uploads
 `dist/disc-cover-generator-app/browser` to GitHub Pages.
 
-## What we tried and rejected (do not redo)
+## Notable decisions worth preserving
 
-- **Server + CLI package** (Fastify + Commander + sharp + pdf-lib on the
-  backend). Redundant once the browser could do everything. Deleted.
-- **React + Vite frontend.** Migrated to Angular 22 for signals + first-
-  class dependency injection. Do not undo without a strong reason.
-- **PrimeNG for form controls.** v22 dropped MIT for Community/Commercial
-  with registration + annual key. Replaced with native HTML + custom
-  `<app-segmented>`. Do not reintroduce PrimeNG or any dual-license kit.
-- **PrimeIcons / @primeicons/angular.** Replaced with inline lucide-style
-  SVGs. Keep icons inline — no icon font dep.
-- **Runtime `getBBox()` measurement in the preview.** Solved centering
-  for the preview only. Replaced with a constant tuned once
-  (`VISUAL_CENTER_RATIO`).
-- **`@pdf-lib/fontkit` for vector spine text in the PDF.** Drifted from
-  the preview, added ~600 KB to the bundle, gave up. Removed.
-- **`dominant-baseline="middle"` / `"central"`.** Center on the em-box,
-  which puts caps too high. Rejected in favor of empirical
-  `VISUAL_CENTER_RATIO`.
-- **External CDN fonts inside SVG-in-`<img>`.** Browsers block external
-  resource loads there. Fonts must be embedded as data URIs. Rejected.
-- **Counter-based drag tracking (`dragenter++/dragleave--`).** Bounces
-  every time the mouse crosses a child element. Replaced with document-
-  level `dragover` + `drop`.
-- **`e.stopPropagation()` inside drop handlers.** Combined with the
-  document `drop` listener, this leaves the overlay visible after a
-  drop. Always let drop events bubble.
-- **Inline error banners in the form.** Replaced with `ToastService`
-  bottom-center toasts.
-- **`baseUrl` in tsconfig.** TS 6 flags it as deprecated. Use paths
-  relative to the tsconfig location instead: `"@core/*": ["./core/*"]`.
+- **Single SVG spine pipeline (no vector text in PDF).** Rasterizing the
+  same SVG the preview shows guarantees the printed spine matches the
+  preview. This is why the app has no fontkit dep and no PDF text
+  objects for the spine.
+- **`dominant-baseline="alphabetic"` + `VISUAL_CENTER_RATIO`.** Chrome
+  centers `middle`/`central` on the em-box, which sits caps too high;
+  the alphabetic baseline plus an empirical vertical shift gives visual
+  center.
+- **Fonts embedded as data URIs inside the SVG.** Browsers isolate
+  `<img data:image/svg+xml,…>` from page CSS and block external network
+  loads inside it, so inline data URIs are the reliable path.
+- **Document-level `dragover` + `drop` for drag detection.** Uses the
+  bubbled events instead of counter-based `dragenter++/dragleave--`, so
+  the overlay state doesn't bounce as the mouse crosses child elements.
+- **Drop handlers let events bubble.** The document-level `drop`
+  listener needs to see the event to clear the dragging state, so
+  handlers avoid `stopPropagation()`.
+- **`tsconfig` uses tsconfig-relative paths (no `baseUrl`).** TS 6 flags
+  `baseUrl` as deprecated. The `@core/*` alias resolves to `./core/*`
+  directly.
+- **`cover-form` output is named `generate`.** The inner `<form>`'s
+  native `submit` event bubbles up to the host element, so the output
+  gets a distinct name to keep the parent binding unambiguous.
 
 ## Coding style
 
-- Prefer standalone Angular components with `changeDetection:
-  ChangeDetectionStrategy.OnPush`. Use signals + computeds; avoid RxJS
-  unless needed.
-- Prefer small, pure functions. `core/` is a library the app consumes.
-- No comments explaining what code does. Comments explain **why**, or
-  the rare non-obvious constraint (e.g. why crop marks are drawn first,
-  or why VISUAL_CENTER_RATIO exists).
+- Standalone Angular components with
+  `changeDetection: ChangeDetectionStrategy.OnPush`.
+- Signals + `computed()` for state; RxJS only when a stream shape
+  genuinely fits.
+- Small, pure functions. `core/` is a library the app consumes.
+- Comments explain **why** or capture non-obvious constraints (e.g. why
+  crop marks are drawn first, or why `VISUAL_CENTER_RATIO` exists).
 - All colors go through the theme tokens in `styles.scss`.
-- Icons are inline lucide-style SVGs.
+- Icons render through `<app-icon>` (lucide-style, inline, tinted via
+  `currentColor`).
