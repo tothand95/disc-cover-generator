@@ -11,7 +11,7 @@ import {
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { buildSpineSvg } from '@core/spine/svg';
 import type { SpinePresetId, SpinePresetInput, SpineTextAlign } from '@core/types';
-import { resolveSpineSvgOptions } from '../../spine/buildOptions';
+import { resolveSpineSvgOptions } from '../../utils/spine/buildOptions';
 
 /**
  * Renders a spine preset as inline SVG, going through the same

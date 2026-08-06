@@ -119,20 +119,20 @@ src/                     Angular app.
       cropMarks.ts             Dashed crop marks (grey rgb(0.25, 0.25, 0.25)).
       borders.ts               Outer + section-divider borders.
       sections.ts              Renders each section to PNG (uses utils/image
-                               and spine/rasterize).
-    spine/
-      assets.ts                Loads PS2 PNG + Hind fonts as data URIs
-                               (browser only).
-      buildOptions.ts          Preset → SpineSvgOptions bridge shared by the
-                               preview and PDF.
-      rasterize.ts             buildSpineSvg() → <img data:svg> → canvas
-                               → PNG bytes.
+                               and utils/spine/rasterize).
     utils/
       image.ts                 Canvas-based image fit (stretch/fill/fit) →
                                PNG bytes.
       color.ts                 parseHex.
       stage-layout.ts          Computes the preview stage's px dimensions
                                (contain-style fit inside the container).
+      spine/
+        assets.ts              Loads PS2 PNG + Hind fonts as data URIs
+                               (browser only).
+        buildOptions.ts        Preset → SpineSvgOptions bridge shared by the
+                               preview and PDF.
+        rasterize.ts           buildSpineSvg() → <img data:svg> → canvas
+                               → PNG bytes.
     directives/
       object-url.directive.ts  Manages URL.createObjectURL lifecycles.
       container-size.directive.ts  ResizeObserver → signal wrapper.
@@ -142,7 +142,7 @@ src/                     Angular app.
 
 **The pipeline is: `buildSpineSvg()` → pixels.** The preview draws the
 SVG inline. The PDF rasterizes the same SVG through a canvas via
-`spine/rasterize.ts` and embeds the PNG. Same string in, same pixels
+`utils/spine/rasterize.ts` and embeds the PNG. Same string in, same pixels
 out — this is why the preview and the printed spine match.
 
 ### Centering constant
@@ -164,7 +164,7 @@ If the spine font changes, re-run the empirical tuning:
 - The bundled font is Hind (OFL). All 5 static weights are shipped.
 - Preview uses the fonts via `@font-face` rules in `src/styles.scss`.
   Angular CLI serves `public/assets/fonts/*.ttf` at `/assets/fonts/…`.
-- Spine PDF rasterization uses `src/app/spine/assets.ts`, which does
+- Spine PDF rasterization uses `src/app/utils/spine/assets.ts`, which does
   **two** things:
   1. Fetches all Hind weights and inlines them as data-URI `@font-face`
      blocks embedded in the SVG. This is required because the browser

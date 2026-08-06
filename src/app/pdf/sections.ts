@@ -1,7 +1,7 @@
 import type { CasePreset } from '@core/types';
 import { renderImageToPng, renderFrontToPng } from '../utils/image';
-import { rasterizeSpineSvg } from '../spine/rasterize';
-import { loadSpinePresetImage, type SpinePresetImageKey } from '../spine/assets';
+import { rasterizeSpineSvg } from '../utils/spine/rasterize';
+import { loadSpinePresetImage, type SpinePresetImageKey } from '../utils/spine/assets';
 import { mmToPx } from './layout';
 import type { GenerateBrowserOptions } from './generate';
 

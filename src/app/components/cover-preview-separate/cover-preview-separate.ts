@@ -26,7 +26,7 @@ import {
   getSpinePresetImageAspectRatio,
   getSpinePresetImageUrl,
   type SpinePresetImageKey,
-} from '../../spine/assets';
+} from '../../utils/spine/assets';
 
 /**
  * Three-section preview (back / spine / front). Also overlays the spine
