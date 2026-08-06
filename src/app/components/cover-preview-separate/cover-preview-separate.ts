@@ -142,4 +142,11 @@ export class CoverPreviewSeparate {
       });
     });
   }
+
+  onSpineFilePicked(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    if (file) this.spineSelected.emit(file);
+    input.value = '';
+  }
 }
