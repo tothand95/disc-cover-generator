@@ -1,18 +1,7 @@
 <div class="file-input">
-  <input
-    #nativeInput
-    type="file"
-    accept="image/png,image/jpeg,image/webp"
-    (change)="onChange($event)"
-  />
+  <input #nativeInput type="file" accept="image/png,image/jpeg,image/webp" (change)="onChange($event)" />
   @if (file()) {
-    <button
-      type="button"
-      class="file-input__clear"
-      title="Clear"
-      aria-label="Clear file"
-      (click)="clear()"
-    >
+    <button type="button" class="file-input__clear" title="Clear" aria-label="Clear file" (click)="clear()">
       <app-icon name="trash" [size]="14" />
     </button>
   }

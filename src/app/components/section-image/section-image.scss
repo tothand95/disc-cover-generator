@@ -30,7 +30,9 @@
     font-weight: 500;
     padding: 0.5rem;
     cursor: pointer;
-    transition: background-color 0.15s, color 0.15s;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
 
     i {
       font-size: 1.5rem;

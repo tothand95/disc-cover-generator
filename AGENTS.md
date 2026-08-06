@@ -209,7 +209,7 @@ Implemented once in `src/app/utils/image.ts` via canvas. Mirrored in the
 preview via CSS `object-fit`:
 
 | Fit mode | Canvas / CSS         |
-|----------|----------------------|
+| -------- | -------------------- |
 | stretch  | `fill`               |
 | fill     | `cover`              |
 | fit      | `contain` + bg color |

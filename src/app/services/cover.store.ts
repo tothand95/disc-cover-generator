@@ -1,11 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import type {
-  BorderMode,
-  CasePresetId,
-  FitMode,
-  SpinePresetId,
-  SpineTextAlign,
-} from '@core/types';
+import type { BorderMode, CasePresetId, FitMode, SpinePresetId, SpineTextAlign } from '@core/types';
 import { CASE_PRESETS, getPreset } from '@core/presets';
 
 /**

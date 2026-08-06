@@ -1,10 +1,5 @@
 import { PDFDocument } from 'pdf-lib';
-import type {
-  BorderOptions,
-  CasePresetId,
-  FitMode,
-  SpinePresetInput,
-} from '@core/types';
+import type { BorderOptions, CasePresetId, FitMode, SpinePresetInput } from '@core/types';
 import { getPreset } from '@core/presets';
 import { A4_HEIGHT_MM, A4_WIDTH_MM, mmToPt } from './layout';
 import { drawCropMarks } from './cropMarks';
@@ -29,17 +24,13 @@ export interface GenerateBrowserOptions {
   dpi: number;
 }
 
-export async function generateCoverPdfInBrowser(
-  opts: GenerateBrowserOptions,
-): Promise<Uint8Array> {
+export async function generateCoverPdfInBrowser(opts: GenerateBrowserOptions): Promise<Uint8Array> {
   const preset = getPreset(opts.presetId);
   const bleedMm = preset.defaultBleedMm;
   const wrapWidthMm = preset.totalWidthMm + bleedMm * 2;
   const wrapHeightMm = preset.heightMm + bleedMm * 2;
   if (wrapWidthMm > A4_WIDTH_MM || wrapHeightMm > A4_HEIGHT_MM) {
-    throw new Error(
-      `Cover (${wrapWidthMm.toFixed(1)}x${wrapHeightMm.toFixed(1)}mm incl. bleed) does not fit on A4 landscape.`,
-    );
+    throw new Error(`Cover (${wrapWidthMm.toFixed(1)}x${wrapHeightMm.toFixed(1)}mm incl. bleed) does not fit on A4 landscape.`);
   }
 
   const sections = await buildSections(preset, opts);

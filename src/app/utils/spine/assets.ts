@@ -9,10 +9,7 @@ interface SpinePresetImageSpec {
   naturalHeight: number;
 }
 
-const SPINE_PRESET_IMAGES: Record<
-  SpinePresetImageKey,
-  Record<SpinePresetImageRole, SpinePresetImageSpec>
-> = {
+const SPINE_PRESET_IMAGES: Record<SpinePresetImageKey, Record<SpinePresetImageRole, SpinePresetImageSpec>> = {
   ps2: {
     spine: { url: 'assets/images/ps2-spine.png', naturalWidth: 500, naturalHeight: 1687 },
     front: { url: 'assets/images/ps2-top.jpg', naturalWidth: 1525, naturalHeight: 203 },
@@ -26,27 +23,18 @@ const SPINE_PRESET_IMAGES: Record<
 const cache = new Map<string, SpinePresetImage>();
 
 /** Returns the plain bundled URL for a preset image (useful for preview <img>). */
-export function getSpinePresetImageUrl(
-  key: SpinePresetImageKey,
-  role: SpinePresetImageRole,
-): string {
+export function getSpinePresetImageUrl(key: SpinePresetImageKey, role: SpinePresetImageRole): string {
   return SPINE_PRESET_IMAGES[key][role].url;
 }
 
 /** Returns the aspect ratio (width / height) of a preset image. */
-export function getSpinePresetImageAspectRatio(
-  key: SpinePresetImageKey,
-  role: SpinePresetImageRole,
-): number {
+export function getSpinePresetImageAspectRatio(key: SpinePresetImageKey, role: SpinePresetImageRole): number {
   const spec = SPINE_PRESET_IMAGES[key][role];
   return spec.naturalWidth / spec.naturalHeight;
 }
 
 /** Fetches a bundled preset image and returns it as a self-contained data URI. */
-export async function loadSpinePresetImage(
-  key: SpinePresetImageKey,
-  role: SpinePresetImageRole = 'spine',
-): Promise<SpinePresetImage> {
+export async function loadSpinePresetImage(key: SpinePresetImageKey, role: SpinePresetImageRole = 'spine'): Promise<SpinePresetImage> {
   const cacheKey = `${key}:${role}`;
   const cached = cache.get(cacheKey);
   if (cached) return cached;

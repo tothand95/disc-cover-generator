@@ -2,12 +2,7 @@ import { rgb, LineCapStyle, type PDFPage } from 'pdf-lib';
 import type { CasePreset } from '@core/types';
 import { mmToPt } from './layout';
 
-export function drawCropMarks(
-  page: PDFPage,
-  wrapOriginXmm: number,
-  wrapOriginYmm: number,
-  preset: CasePreset,
-): void {
+export function drawCropMarks(page: PDFPage, wrapOriginXmm: number, wrapOriginYmm: number, preset: CasePreset): void {
   const markLenMm = 6;
   const x0 = mmToPt(wrapOriginXmm);
   const y0 = mmToPt(wrapOriginYmm);

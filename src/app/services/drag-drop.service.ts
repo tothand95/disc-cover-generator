@@ -12,8 +12,7 @@ export class DragDropService {
   readonly isDraggingFile = signal(false);
 
   constructor() {
-    const hasFiles = (e: DragEvent) =>
-      Array.from(e.dataTransfer?.types ?? []).includes('Files');
+    const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer?.types ?? []).includes('Files');
     const onOver = (e: DragEvent) => {
       if (!hasFiles(e)) return;
       e.preventDefault();

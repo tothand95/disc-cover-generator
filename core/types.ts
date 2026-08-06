@@ -1,11 +1,6 @@
 // All dimensions are in millimetres unless otherwise noted.
 
-export type CasePresetId =
-  | "dvd-normal"
-  | "dvd-slim"
-  | "bluray"
-  | "cd-jewel"
-  | "cd-jewel-folded";
+export type CasePresetId = 'dvd-normal' | 'dvd-slim' | 'bluray' | 'cd-jewel' | 'cd-jewel-folded';
 
 export interface CasePreset {
   id: CasePresetId;
@@ -17,9 +12,9 @@ export interface CasePreset {
   defaultBleedMm: number;
 }
 
-export type FitMode = "stretch" | "fill" | "fit";
+export type FitMode = 'stretch' | 'fill' | 'fit';
 
-export type BorderMode = "none" | "outer" | "sections";
+export type BorderMode = 'none' | 'outer' | 'sections';
 
 export interface BorderOptions {
   mode: BorderMode;
@@ -28,9 +23,9 @@ export interface BorderOptions {
   color: string;
 }
 
-export type SpinePresetId = "ps2" | "xbox" | "xbox360" | "blank" | "text";
+export type SpinePresetId = 'ps2' | 'xbox' | 'xbox360' | 'blank' | 'text';
 
-export type SpineTextAlign = "start" | "center" | "end";
+export type SpineTextAlign = 'start' | 'center' | 'end';
 
 export interface SpinePresetInput {
   preset: SpinePresetId;
@@ -49,13 +44,13 @@ export interface SpinePresetInput {
 }
 
 export interface SingleImageInput {
-  kind: "single";
+  kind: 'single';
   imagePath: string;
   fit: FitMode;
 }
 
 export interface ThreePartInput {
-  kind: "three";
+  kind: 'three';
   backImagePath: string;
   frontImagePath: string;
   spineImagePath?: string;

@@ -1,11 +1,5 @@
 import { FormsModule } from '@angular/forms';
-import {
-  Component,
-  ChangeDetectionStrategy,
-  computed,
-  inject,
-  output,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, inject, output } from '@angular/core';
 import { CoverStore } from '../../services/cover.store';
 import { FileInput } from '../file-input/file-input';
 import { Segmented, SegmentedOption } from '../../shared/segmented/segmented';
@@ -69,9 +63,7 @@ export class CoverForm {
     { label: 'On', value: true },
   ];
 
-  protected readonly showSpineSection = computed(
-    () => this.store.mode.kind() === 'three' && !this.store.images.spine(),
-  );
+  protected readonly showSpineSection = computed(() => this.store.mode.kind() === 'three' && !this.store.images.spine());
 
   protected readonly hasSpineTitle = computed(() => {
     const p = this.store.spine.preset();
@@ -83,9 +75,7 @@ export class CoverForm {
     return p === 'ps2' || p === 'xbox';
   });
 
-  protected readonly hasSeparatorToggle = computed(
-    () => this.store.spine.preset() === 'ps2' && this.store.spine.showFrontImage(),
-  );
+  protected readonly hasSeparatorToggle = computed(() => this.store.spine.preset() === 'ps2' && this.store.spine.showFrontImage());
 
   protected readonly hasColorPickers = computed(() => {
     const p = this.store.spine.preset();

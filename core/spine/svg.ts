@@ -7,9 +7,9 @@
  * was tuned empirically for the bundled Hind SemiBold — see the align tests
  * that produced this constant.
  */
-export type SpineTextAlign = "start" | "center" | "end";
+export type SpineTextAlign = 'start' | 'center' | 'end';
 
-export const SPINE_FONT_FAMILY = "SpineFont";
+export const SPINE_FONT_FAMILY = 'SpineFont';
 export const HIND_CAP_HEIGHT_RATIO = 0.7;
 export const VISUAL_CENTER_RATIO = 0.33;
 /** Gap between the spine preset image and the text below it, as a fraction of the spine width. */
@@ -39,12 +39,7 @@ export interface SpineSvgOptions {
 }
 
 function escapeXml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
 export function buildSpineSvg(opts: SpineSvgOptions): string {
@@ -54,7 +49,7 @@ export function buildSpineSvg(opts: SpineSvgOptions): string {
 
   const y = fontSizePx * VISUAL_CENTER_RATIO;
 
-  let textGroup = "";
+  let textGroup = '';
   if (presetImage) {
     const imgHeight = widthPx / presetImage.aspectRatio;
     const rotateOriginY = imgHeight + widthPx * TOP_IMAGE_TEXT_GAP_RATIO;
@@ -62,30 +57,30 @@ export function buildSpineSvg(opts: SpineSvgOptions): string {
     const imageEl = `<image href="${escapedHref}" x="0" y="0" width="${widthPx}" height="${imgHeight}" preserveAspectRatio="xMidYMin meet"/>`;
     const textEl = title
       ? `<g transform="translate(${widthPx / 2} ${rotateOriginY}) rotate(90)"><text x="0" y="${y}" fill="${textColor}" font-family="${SPINE_FONT_FAMILY}" font-weight="600" font-size="${fontSizePx}" text-anchor="start" dominant-baseline="alphabetic">${escapeXml(title)}</text></g>`
-      : "";
+      : '';
     textGroup = imageEl + textEl;
   } else {
     let x: number;
-    let anchor: "start" | "middle" | "end";
-    if (align === "start") {
+    let anchor: 'start' | 'middle' | 'end';
+    if (align === 'start') {
       x = -heightPx / 2 + pad;
-      anchor = "start";
-    } else if (align === "end") {
+      anchor = 'start';
+    } else if (align === 'end') {
       x = heightPx / 2 - pad;
-      anchor = "end";
+      anchor = 'end';
     } else {
       x = 0;
-      anchor = "middle";
+      anchor = 'middle';
     }
     const textElement = title
       ? `<text x="${x}" y="${y}" fill="${textColor}" font-family="${SPINE_FONT_FAMILY}" font-weight="600" font-size="${fontSizePx}" text-anchor="${anchor}" dominant-baseline="alphabetic">${escapeXml(title)}</text>`
-      : "";
+      : '';
     textGroup = `<g transform="translate(${widthPx / 2} ${heightPx / 2}) rotate(90)">${textElement}</g>`;
   }
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${widthPx}" height="${heightPx}" viewBox="0 0 ${widthPx} ${heightPx}">
-  ${fontStyleBlock ?? ""}
+  ${fontStyleBlock ?? ''}
   <rect width="100%" height="100%" fill="${bg}"/>
   ${textGroup}
 </svg>`;

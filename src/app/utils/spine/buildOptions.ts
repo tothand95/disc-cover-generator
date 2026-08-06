@@ -6,11 +6,7 @@ import { loadSpinePresetImage } from './assets';
  * Translate a SpinePresetInput into concrete buildSpineSvg options, resolving
  * any preset-specific assets. Shared by preview and PDF rasterizer.
  */
-export async function resolveSpineSvgOptions(
-  spine: SpinePresetInput,
-  widthPx: number,
-  heightPx: number,
-): Promise<SpineSvgOptions> {
+export async function resolveSpineSvgOptions(spine: SpinePresetInput, widthPx: number, heightPx: number): Promise<SpineSvgOptions> {
   if (spine.preset === 'ps2' || spine.preset === 'xbox') {
     const presetImage = await loadSpinePresetImage(spine.preset);
     return {

@@ -1,11 +1,4 @@
-import {
-  Directive,
-  Input,
-  OnChanges,
-  OnDestroy,
-  SimpleChanges,
-  signal,
-} from '@angular/core';
+import { Directive, Input, OnChanges, OnDestroy, SimpleChanges, signal } from '@angular/core';
 
 /**
  * Signal wrapper around URL.createObjectURL: pass a File (or null) via the

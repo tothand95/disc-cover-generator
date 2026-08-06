@@ -30,12 +30,8 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "allowedCommonJsDependencies": [
-              "pako"
-            ]
+            "styles": ["src/styles.scss"],
+            "allowedCommonJsDependencies": ["pako"]
           },
           "configurations": {
             "production": {

@@ -1,12 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  ElementRef,
-  effect,
-  input,
-  output,
-  viewChild,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ElementRef, effect, input, output, viewChild } from '@angular/core';
 import { Icon } from '../../shared/icon/icon';
 
 /**

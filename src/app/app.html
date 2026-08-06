@@ -1,9 +1,6 @@
-<div
-  class="app-root"
-  [class.is-dragging-file]="drag.isDraggingFile()"
-  [style.--cover-aspect]="coverAspectVar()">
+<div class="app-root" [class.is-dragging-file]="drag.isDraggingFile()" [style.--cover-aspect]="coverAspectVar()">
   @if (drag.isDraggingFile()) {
-  <div class="app-root__drag-backdrop" aria-hidden="true"></div>
+    <div class="app-root__drag-backdrop" aria-hidden="true"></div>
   }
 
   <header class="app-root__header">
@@ -13,11 +10,12 @@
       class="theme-toggle"
       (click)="theme.toggle()"
       [attr.aria-label]="theme.resolved() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
-      [title]="theme.resolved() === 'dark' ? 'Light mode' : 'Dark mode'">
+      [title]="theme.resolved() === 'dark' ? 'Light mode' : 'Dark mode'"
+    >
       @if (theme.resolved() === 'dark') {
-      <app-icon name="sun" [size]="20" />
+        <app-icon name="sun" [size]="20" />
       } @else {
-      <app-icon name="moon" [size]="20" />
+        <app-icon name="moon" [size]="20" />
       }
     </button>
   </header>
@@ -30,39 +28,41 @@
     <h2>Live preview</h2>
     <div class="preview-panel__stage">
       @if (store.mode.kind() === 'single') {
-      <app-cover-preview-single
-        [preset]="store.activePreset()"
-        [fit]="store.mode.fit()"
-        [borderMode]="store.borders.mode()"
-        [borderThicknessPx]="store.borders.thicknessPx()"
-        [borderColor]="store.borders.color()"
-        [fitBackground]="store.mode.fitBackground()"
-        [imageUrl]="singleUrlView()"
-        [isDraggingFile]="drag.isDraggingFile()"
-        (fileSelected)="store.images.single.set($event)" />
+        <app-cover-preview-single
+          [preset]="store.activePreset()"
+          [fit]="store.mode.fit()"
+          [borderMode]="store.borders.mode()"
+          [borderThicknessPx]="store.borders.thicknessPx()"
+          [borderColor]="store.borders.color()"
+          [fitBackground]="store.mode.fitBackground()"
+          [imageUrl]="singleUrlView()"
+          [isDraggingFile]="drag.isDraggingFile()"
+          (fileSelected)="store.images.single.set($event)"
+        />
       } @else {
-      <app-cover-preview-separate
-        [preset]="store.activePreset()"
-        [fit]="store.mode.fit()"
-        [borderMode]="store.borders.mode()"
-        [borderThicknessPx]="store.borders.thicknessPx()"
-        [borderColor]="store.borders.color()"
-        [fitBackground]="store.mode.fitBackground()"
-        [backUrl]="backUrlView()"
-        [frontUrl]="frontUrlView()"
-        [spineUrl]="spineUrlView()"
-        [spinePreset]="store.spine.preset()"
-        [spineTitle]="store.spine.title()"
-        [spineBg]="store.spine.background()"
-        [spineTextColor]="store.spine.textColor()"
-        [spineTextAlign]="store.spine.textAlign()"
-        [showFrontPresetImage]="store.spine.showFrontImage()"
-        [frontImageWidening]="store.spine.frontImageWidening()"
-        [showFrontSeparator]="store.spine.showFrontSeparator()"
-        [isDraggingFile]="drag.isDraggingFile()"
-        (backSelected)="store.images.back.set($event)"
-        (frontSelected)="store.images.front.set($event)"
-        (spineSelected)="store.images.spine.set($event)" />
+        <app-cover-preview-separate
+          [preset]="store.activePreset()"
+          [fit]="store.mode.fit()"
+          [borderMode]="store.borders.mode()"
+          [borderThicknessPx]="store.borders.thicknessPx()"
+          [borderColor]="store.borders.color()"
+          [fitBackground]="store.mode.fitBackground()"
+          [backUrl]="backUrlView()"
+          [frontUrl]="frontUrlView()"
+          [spineUrl]="spineUrlView()"
+          [spinePreset]="store.spine.preset()"
+          [spineTitle]="store.spine.title()"
+          [spineBg]="store.spine.background()"
+          [spineTextColor]="store.spine.textColor()"
+          [spineTextAlign]="store.spine.textAlign()"
+          [showFrontPresetImage]="store.spine.showFrontImage()"
+          [frontImageWidening]="store.spine.frontImageWidening()"
+          [showFrontSeparator]="store.spine.showFrontSeparator()"
+          [isDraggingFile]="drag.isDraggingFile()"
+          (backSelected)="store.images.back.set($event)"
+          (frontSelected)="store.images.front.set($event)"
+          (spineSelected)="store.images.spine.set($event)"
+        />
       }
     </div>
   </main>

@@ -45,7 +45,9 @@
     color: var(--text-subtle);
     border-radius: 0.25rem;
     cursor: pointer;
-    transition: background-color 0.15s, color 0.15s;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
 
     &:hover {
       background: var(--surface-2);

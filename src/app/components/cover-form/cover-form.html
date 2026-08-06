@@ -21,43 +21,26 @@
     <legend>Images</legend>
     <div class="field">
       <label>Input mode</label>
-      <app-segmented
-        [options]="kindOptions"
-        [value]="store.mode.kind()"
-        (valueChange)="store.mode.kind.set($event)"
-        ariaLabel="Input mode"
-      />
+      <app-segmented [options]="kindOptions" [value]="store.mode.kind()" (valueChange)="store.mode.kind.set($event)" ariaLabel="Input mode" />
     </div>
 
     @if (store.mode.kind() === 'single') {
       <div class="field">
         <label>Image</label>
-        <app-file-input
-          [file]="store.images.single()"
-          (fileChange)="store.images.single.set($event)"
-        />
+        <app-file-input [file]="store.images.single()" (fileChange)="store.images.single.set($event)" />
       </div>
     } @else {
       <div class="field">
         <label>Back image</label>
-        <app-file-input
-          [file]="store.images.back()"
-          (fileChange)="store.images.back.set($event)"
-        />
+        <app-file-input [file]="store.images.back()" (fileChange)="store.images.back.set($event)" />
       </div>
       <div class="field">
         <label>Front image</label>
-        <app-file-input
-          [file]="store.images.front()"
-          (fileChange)="store.images.front.set($event)"
-        />
+        <app-file-input [file]="store.images.front()" (fileChange)="store.images.front.set($event)" />
       </div>
       <div class="field">
         <label>Spine image (optional)</label>
-        <app-file-input
-          [file]="store.images.spine()"
-          (fileChange)="store.images.spine.set($event)"
-        />
+        <app-file-input [file]="store.images.spine()" (fileChange)="store.images.spine.set($event)" />
       </div>
     }
   </fieldset>
@@ -96,11 +79,7 @@
       @if (hasFrontImageToggle()) {
         <div class="field">
           <label>Front cover top image</label>
-          <app-segmented
-            [options]="toggleOptions"
-            [value]="store.spine.showFrontImage()"
-            (valueChange)="store.spine.showFrontImage.set($event)"
-          />
+          <app-segmented [options]="toggleOptions" [value]="store.spine.showFrontImage()" (valueChange)="store.spine.showFrontImage.set($event)" />
         </div>
       }
       @if (hasFrontImageToggle() && store.spine.showFrontImage()) {
@@ -156,11 +135,7 @@
         </div>
         <div class="field">
           <label>Text alignment</label>
-          <app-segmented
-            [options]="textAlignOptions"
-            [value]="store.spine.textAlign()"
-            (valueChange)="store.spine.textAlign.set($event)"
-          />
+          <app-segmented [options]="textAlignOptions" [value]="store.spine.textAlign()" (valueChange)="store.spine.textAlign.set($event)" />
         </div>
       }
     </fieldset>
@@ -170,11 +145,7 @@
     <legend>Layout</legend>
     <div class="field">
       <label>Fit mode</label>
-      <app-segmented
-        [options]="fitOptions"
-        [value]="store.mode.fit()"
-        (valueChange)="store.mode.fit.set($event)"
-      />
+      <app-segmented [options]="fitOptions" [value]="store.mode.fit()" (valueChange)="store.mode.fit.set($event)" />
     </div>
     @if (store.mode.fit() === 'fit') {
       <div class="field">
@@ -188,9 +159,7 @@
             (ngModelChange)="store.mode.fitBackground.set($event)"
             [ngModelOptions]="{ standalone: true }"
           />
-          <span class="field__hint">
-            Fills empty space around images when they don't cover the section.
-          </span>
+          <span class="field__hint"> Fills empty space around images when they don't cover the section. </span>
         </div>
       </div>
     }
@@ -200,11 +169,7 @@
     <legend>Borders</legend>
     <div class="field">
       <label>Border mode</label>
-      <app-segmented
-        [options]="borderOptions"
-        [value]="store.borders.mode()"
-        (valueChange)="store.borders.mode.set($event)"
-      />
+      <app-segmented [options]="borderOptions" [value]="store.borders.mode()" (valueChange)="store.borders.mode.set($event)" />
     </div>
     @if (store.borders.mode() !== 'none') {
       <div class="field__grid">
@@ -237,11 +202,7 @@
     }
   </fieldset>
 
-  <button
-    type="submit"
-    class="submit-btn"
-    [disabled]="store.ui.busy()"
-  >
+  <button type="submit" class="submit-btn" [disabled]="store.ui.busy()">
     {{ store.ui.busy() ? 'Generating…' : 'Generate PDF' }}
   </button>
 </form>

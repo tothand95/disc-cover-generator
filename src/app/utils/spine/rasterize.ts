@@ -40,10 +40,7 @@ export async function rasterizeSpineSvg(opts: RasterizeOptions): Promise<Uint8Ar
     ctx.drawImage(img, 0, 0, widthPx, heightPx);
 
     const png: Blob = await new Promise((resolve, reject) => {
-      canvas.toBlob(
-        (b) => (b ? resolve(b) : reject(new Error('canvas.toBlob returned null'))),
-        'image/png',
-      );
+      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('canvas.toBlob returned null'))), 'image/png');
     });
     return new Uint8Array(await png.arrayBuffer());
   } finally {

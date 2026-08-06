@@ -19,10 +19,7 @@ function getFrontPresetImageKey(opts: GenerateBrowserOptions): SpinePresetImageK
   return null;
 }
 
-export async function buildSections(
-  preset: CasePreset,
-  opts: GenerateBrowserOptions,
-): Promise<Section[]> {
+export async function buildSections(preset: CasePreset, opts: GenerateBrowserOptions): Promise<Section[]> {
   const { dpi, fit, fitBackground } = opts;
   const h = preset.heightMm;
   const spineW = preset.spineWidthMm;
@@ -41,15 +38,10 @@ export async function buildSections(
 
   const three = opts.input;
   const frontPresetKey = getFrontPresetImageKey(opts);
-  const frontPresetImage = frontPresetKey
-    ? await loadSpinePresetImage(frontPresetKey, 'front')
-    : null;
+  const frontPresetImage = frontPresetKey ? await loadSpinePresetImage(frontPresetKey, 'front') : null;
   const widening = three.spinePreset?.extras?.frontImageWidening ?? 0;
   const frontWideningPx = widening > 0 ? Math.round((widening * dpi) / 300) : 0;
-  const frontSeparatorPx =
-    frontPresetKey === 'ps2' && three.spinePreset?.extras?.showFrontSeparator
-      ? Math.max(1, Math.round((4 * dpi) / 300))
-      : 0;
+  const frontSeparatorPx = frontPresetKey === 'ps2' && three.spinePreset?.extras?.showFrontSeparator ? Math.max(1, Math.round((4 * dpi) / 300)) : 0;
 
   const sideWpx = mmToPx(sideW, dpi);
   const sideHpx = mmToPx(h, dpi);
@@ -73,10 +65,7 @@ export async function buildSections(
             aspectRatio: frontPresetImage.aspectRatio,
             topPaddingPx: frontWideningPx,
             bottomPaddingPx: frontWideningPx,
-            separator:
-              frontSeparatorPx > 0
-                ? { color: '#ffffff', heightPx: frontSeparatorPx }
-                : undefined,
+            separator: frontSeparatorPx > 0 ? { color: '#ffffff', heightPx: frontSeparatorPx } : undefined,
           }
         : undefined,
     }),
@@ -103,9 +92,5 @@ export async function buildSections(
     throw new Error('Three-image mode requires either a spine image or a spine preset.');
   }
 
-  return [
-    { xMm: 0, widthMm: sideW, png: backPng },
-    spineSection,
-    { xMm: sideW + spineW, widthMm: sideW, png: frontPng },
-  ];
+  return [{ xMm: 0, widthMm: sideW, png: backPng }, spineSection, { xMm: sideW + spineW, widthMm: sideW, png: frontPng }];
 }

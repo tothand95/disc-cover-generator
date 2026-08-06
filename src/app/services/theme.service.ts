@@ -38,9 +38,7 @@ export class ThemeService {
   resolved(): 'light' | 'dark' {
     const m = this.mode();
     if (m !== 'system') return m;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
   private readInitial(): ThemeMode {

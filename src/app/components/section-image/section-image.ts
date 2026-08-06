@@ -1,13 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  input,
-  output,
-  signal,
-  viewChild,
-  ElementRef,
-  computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, signal, viewChild, ElementRef, computed } from '@angular/core';
 import type { FitMode } from '@core/types';
 import { Icon } from '../../shared/icon/icon';
 

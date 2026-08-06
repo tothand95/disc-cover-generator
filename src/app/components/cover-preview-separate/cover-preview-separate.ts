@@ -1,32 +1,12 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  ElementRef,
-  computed,
-  effect,
-  input,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
-import type {
-  BorderMode,
-  CasePreset,
-  FitMode,
-  SpinePresetId,
-  SpineTextAlign,
-} from '@core/types';
+import { Component, ChangeDetectionStrategy, ElementRef, computed, effect, input, output, signal, viewChild } from '@angular/core';
+import type { BorderMode, CasePreset, FitMode, SpinePresetId, SpineTextAlign } from '@core/types';
 import { SectionImage } from '../section-image/section-image';
 import { DropOverlay } from '../drop-overlay/drop-overlay';
 import { SpinePresetPreview } from '../spine-preset-preview/spine-preset-preview';
 import { Icon } from '../../shared/icon/icon';
 import { borderPreviewPx, computeStageLayout } from '../../utils/stage-layout';
 import { MM_PER_INCH } from '../../pdf/layout';
-import {
-  getSpinePresetImageAspectRatio,
-  getSpinePresetImageUrl,
-  type SpinePresetImageKey,
-} from '../../utils/spine/assets';
+import { getSpinePresetImageAspectRatio, getSpinePresetImageUrl, type SpinePresetImageKey } from '../../utils/spine/assets';
 
 /**
  * Three-section preview (back / spine / front). Also overlays the spine
@@ -73,26 +53,12 @@ export class CoverPreviewSeparate {
   private readonly labelsSize = signal({ width: 0, height: 0 });
 
   protected readonly layout = computed(() =>
-    computeStageLayout(
-      this.preset(),
-      this.containerSize().width,
-      this.containerSize().height,
-      this.labelsSize().height,
-    ),
+    computeStageLayout(this.preset(), this.containerSize().width, this.containerSize().height, this.labelsSize().height),
   );
-  protected readonly borderPx = computed(() =>
-    borderPreviewPx(
-      this.borderMode(),
-      this.borderThicknessPx(),
-      this.layout().mmToPx,
-      this.dpi(),
-    ),
-  );
+  protected readonly borderPx = computed(() => borderPreviewPx(this.borderMode(), this.borderThicknessPx(), this.layout().mmToPx, this.dpi()));
   protected readonly outerShadow = computed(() => {
     const px = this.borderPx();
-    return px > 0 && this.borderColor()
-      ? `0 0 0 ${px}px ${this.borderColor()}`
-      : 'none';
+    return px > 0 && this.borderColor() ? `0 0 0 ${px}px ${this.borderColor()}` : 'none';
   });
   protected readonly gridTemplateCols = computed(() => {
     const p = this.preset();
@@ -111,8 +77,7 @@ export class CoverPreviewSeparate {
     const ar = getSpinePresetImageAspectRatio(key, 'front');
     const scale = sideWidthPx / ((sideWidthMm * this.dpi()) / MM_PER_INCH);
     const wideningPx = this.frontImageWidening() > 0 ? this.frontImageWidening() * scale : 0;
-    const separatorPx =
-      key === 'ps2' && this.showFrontSeparator() ? Math.max(1, 4 * scale) : 0;
+    const separatorPx = key === 'ps2' && this.showFrontSeparator() ? Math.max(1, 4 * scale) : 0;
     const imgHeightPx = sideWidthPx / ar;
     const blockHeightPx = imgHeightPx + wideningPx * 2;
     return {

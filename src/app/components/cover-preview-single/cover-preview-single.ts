@@ -1,15 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  ElementRef,
-  computed,
-  effect,
-  inject,
-  input,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ElementRef, computed, effect, inject, input, output, signal, viewChild } from '@angular/core';
 import type { BorderMode, CasePreset, FitMode } from '@core/types';
 import { SectionImage } from '../section-image/section-image';
 import { DropOverlay } from '../drop-overlay/drop-overlay';
@@ -47,26 +36,12 @@ export class CoverPreviewSingle {
   private labelsObserver: ResizeObserver | null = null;
 
   protected readonly layout = computed(() =>
-    computeStageLayout(
-      this.preset(),
-      this.containerSize().width,
-      this.containerSize().height,
-      this.labelsSize().height,
-    ),
+    computeStageLayout(this.preset(), this.containerSize().width, this.containerSize().height, this.labelsSize().height),
   );
-  protected readonly borderPx = computed(() =>
-    borderPreviewPx(
-      this.borderMode(),
-      this.borderThicknessPx(),
-      this.layout().mmToPx,
-      this.dpi(),
-    ),
-  );
+  protected readonly borderPx = computed(() => borderPreviewPx(this.borderMode(), this.borderThicknessPx(), this.layout().mmToPx, this.dpi()));
   protected readonly outerShadow = computed(() => {
     const px = this.borderPx();
-    return px > 0 && this.borderColor()
-      ? `0 0 0 ${px}px ${this.borderColor()}`
-      : 'none';
+    return px > 0 && this.borderColor() ? `0 0 0 ${px}px ${this.borderColor()}` : 'none';
   });
 
   constructor() {

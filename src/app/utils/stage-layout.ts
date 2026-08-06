@@ -25,10 +25,7 @@ export function computeStageLayout(
   labelsGap = 32,
 ): StageLayout {
   const availableW = Math.max(0, containerWidth - padding * 2);
-  const availableH = Math.max(
-    0,
-    containerHeight - padding * 2 - labelsHeight - labelsGap,
-  );
+  const availableH = Math.max(0, containerHeight - padding * 2 - labelsHeight - labelsGap);
   const ratio = preset.totalWidthMm / preset.heightMm;
 
   let stageWidth = 0;
@@ -56,12 +53,7 @@ export function computeStageLayout(
   };
 }
 
-export function borderPreviewPx(
-  borderMode: 'none' | 'outer' | 'sections',
-  thicknessPx: number,
-  mmToPx: number,
-  dpi: number,
-): number {
+export function borderPreviewPx(borderMode: 'none' | 'outer' | 'sections', thicknessPx: number, mmToPx: number, dpi: number): number {
   if (borderMode === 'none' || thicknessPx <= 0) return 0;
   const borderMm = (thicknessPx / dpi) * MM_PER_INCH;
   return Math.max(1, borderMm * mmToPx);

@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  generateCoverPdfInBrowser,
-  type GenerateBrowserOptions,
-} from '../pdf/generate';
+import { generateCoverPdfInBrowser, type GenerateBrowserOptions } from '../pdf/generate';
 
 @Injectable({ providedIn: 'root' })
 export class PdfGeneratorService {

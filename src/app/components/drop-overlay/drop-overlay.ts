@@ -1,10 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, signal } from '@angular/core';
 
 /**
  * Full-cover drop target that appears whenever the app-level drag state is
@@ -42,9 +36,7 @@ export class DropOverlay {
   onDrop(e: DragEvent): void {
     e.preventDefault();
     this.isDragging.set(false);
-    const file = Array.from(e.dataTransfer?.files ?? []).find((f) =>
-      f.type.startsWith('image/'),
-    );
+    const file = Array.from(e.dataTransfer?.files ?? []).find((f) => f.type.startsWith('image/'));
     if (file) this.fileSelected.emit(file);
   }
 }

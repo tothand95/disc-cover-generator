@@ -1,6 +1,12 @@
 export function parseHex(hex: string): { r: number; g: number; b: number } {
   const h = hex.replace(/^#/, '');
-  const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
+  const full =
+    h.length === 3
+      ? h
+          .split('')
+          .map((c) => c + c)
+          .join('')
+      : h;
   if (full.length !== 6) throw new Error(`Invalid color: ${hex}`);
   return {
     r: parseInt(full.slice(0, 2), 16) / 255,

@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { CoverStore } from './services/cover.store';
 import { DragDropService } from './services/drag-drop.service';
 import { PdfGeneratorService } from './services/pdf-generator.service';
@@ -61,10 +54,7 @@ export class App {
     this.wireObjectUrl(() => this.store.images.spine(), this.spineUrl);
   }
 
-  private wireObjectUrl(
-    fileGetter: () => File | null,
-    urlSignal: ReturnType<typeof signal<string | null>>,
-  ): void {
+  private wireObjectUrl(fileGetter: () => File | null, urlSignal: ReturnType<typeof signal<string | null>>): void {
     let currentUrl: string | null = null;
     effect((onCleanup) => {
       const file = fileGetter();
@@ -91,8 +81,7 @@ export class App {
       if (store.mode.kind() === 'single') {
         if (!store.images.single()) throw new Error('Please choose an image.');
       } else {
-        if (!store.images.back() || !store.images.front())
-          throw new Error('Please choose both back and front images.');
+        if (!store.images.back() || !store.images.front()) throw new Error('Please choose both back and front images.');
       }
 
       store.ui.busy.set(true);

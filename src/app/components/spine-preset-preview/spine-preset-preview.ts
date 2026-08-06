@@ -1,13 +1,5 @@
 import { UpperCasePipe } from '@angular/common';
-import {
-  Component,
-  ChangeDetectionStrategy,
-  Injector,
-  effect,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, Injector, effect, inject, input, signal } from '@angular/core';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { buildSpineSvg } from '@core/spine/svg';
 import type { SpinePresetId, SpinePresetInput, SpineTextAlign } from '@core/types';

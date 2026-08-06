@@ -1,11 +1,4 @@
-import {
-  Directive,
-  ElementRef,
-  OnDestroy,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { Directive, ElementRef, OnDestroy, computed, inject, signal } from '@angular/core';
 
 export interface ContainerSize {
   width: number;
@@ -31,8 +24,7 @@ export class ContainerSizeDirective implements OnDestroy {
 
   constructor() {
     const el = this.host.nativeElement;
-    const update = () =>
-      this._size.set({ width: el.clientWidth, height: el.clientHeight });
+    const update = () => this._size.set({ width: el.clientWidth, height: el.clientHeight });
     this.ro = new ResizeObserver(update);
     this.ro.observe(el);
     queueMicrotask(update);

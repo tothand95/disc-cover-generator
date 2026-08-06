@@ -26,9 +26,15 @@
     color: var(--text-muted);
     white-space: nowrap;
   }
-  &__left { text-align: left; }
-  &__center { text-align: center; }
-  &__right { text-align: right; }
+  &__left {
+    text-align: left;
+  }
+  &__center {
+    text-align: center;
+  }
+  &__right {
+    text-align: right;
+  }
 }
 
 .preview-stage {

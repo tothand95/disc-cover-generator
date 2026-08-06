@@ -20,9 +20,7 @@ export interface RenderFrontOptions extends RenderImageOptions {
   topLayer?: FrontTopLayer;
 }
 
-async function drawFileToCanvas(
-  opts: RenderImageOptions,
-): Promise<HTMLCanvasElement> {
+async function drawFileToCanvas(opts: RenderImageOptions): Promise<HTMLCanvasElement> {
   const { file, widthPx, heightPx, fit, fitBackground } = opts;
   const bitmap = await createImageBitmap(file);
   try {
@@ -50,7 +48,7 @@ async function drawFileToCanvas(
       const dstRatio = widthPx / heightPx;
       let dw: number;
       let dh: number;
-      if ((fit === 'fill') === (srcRatio > dstRatio)) {
+      if ((fit === 'fill') === srcRatio > dstRatio) {
         dh = heightPx;
         dw = dh * srcRatio;
       } else {
@@ -69,10 +67,7 @@ async function drawFileToCanvas(
 
 async function canvasToPng(canvas: HTMLCanvasElement): Promise<Uint8Array> {
   const blob: Blob = await new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (b) => (b ? resolve(b) : reject(new Error('canvas.toBlob returned null'))),
-      'image/png',
-    );
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('canvas.toBlob returned null'))), 'image/png');
   });
   return new Uint8Array(await blob.arrayBuffer());
 }
