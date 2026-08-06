@@ -19,7 +19,7 @@ import type {
 import { SectionImage } from '../section-image/section-image';
 import { DropOverlay } from '../drop-overlay/drop-overlay';
 import { SpinePresetPreview } from '../spine-preset-preview/spine-preset-preview';
-import { Icon } from '../../ui/icon/icon';
+import { Icon } from '../../shared/icon/icon';
 import { borderPreviewPx, computeStageLayout } from '../../utils/stage-layout';
 import { MM_PER_INCH } from '../../pdf/layout';
 import {

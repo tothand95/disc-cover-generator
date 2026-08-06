@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { CoverStore } from '../../services/cover.store';
 import { FileInput } from '../file-input/file-input';
-import { Segmented, SegmentedOption } from '../../ui/segmented/segmented';
+import { Segmented, SegmentedOption } from '../../shared/segmented/segmented';
 import type { FitMode, BorderMode, SpineTextAlign } from '@core/types';
 
 type CoverKind = 'single' | 'three';

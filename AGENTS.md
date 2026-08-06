@@ -104,7 +104,7 @@ src/                     Angular app.
       spine-preset-preview/    Inline <svg> preview of buildSpineSvg output,
                                used inside the separate preview's spine cell.
                                Pure renderer — no input concerns.
-    ui/                        Zero-domain UI primitives.
+    shared/                    Zero-domain UI primitives.
       segmented/               <app-segmented [options] [(model)]>. Used 6+
                                times in cover-form.
       toast-container/         Fixed to bottom-center. Renders the toast queue.

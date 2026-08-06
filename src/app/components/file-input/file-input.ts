@@ -7,7 +7,7 @@ import {
   output,
   viewChild,
 } from '@angular/core';
-import { Icon } from '../../ui/icon/icon';
+import { Icon } from '../../shared/icon/icon';
 
 /**
  * Native file picker with a "clear" button. Syncs the native input's file

@@ -14,8 +14,8 @@ import { ToastService } from './services/toast.service';
 import { CoverForm } from './components/cover-form/cover-form';
 import { CoverPreviewSingle } from './components/cover-preview-single/cover-preview-single';
 import { CoverPreviewSeparate } from './components/cover-preview-separate/cover-preview-separate';
-import { ToastContainer } from './ui/toast-container/toast-container';
-import { Icon } from './ui/icon/icon';
+import { ToastContainer } from './shared/toast-container/toast-container';
+import { Icon } from './shared/icon/icon';
 
 /**
  * App shell: hosts the form, the live preview and the drag-drop backdrop.
