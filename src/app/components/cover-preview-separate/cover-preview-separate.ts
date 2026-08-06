@@ -19,6 +19,7 @@ import type {
 import { SectionImage } from '../section-image/section-image';
 import { DropOverlay } from '../drop-overlay/drop-overlay';
 import { SpinePresetPreview } from '../spine-preset-preview/spine-preset-preview';
+import { Icon } from '../../ui/icon/icon';
 import { borderPreviewPx, computeStageLayout } from '../../utils/stage-layout';
 import { MM_PER_INCH } from '../../pdf/layout';
 import {
@@ -35,7 +36,7 @@ import {
 @Component({
   selector: 'app-cover-preview-separate',
   standalone: true,
-  imports: [SectionImage, DropOverlay, SpinePresetPreview],
+  imports: [SectionImage, DropOverlay, SpinePresetPreview, Icon],
   templateUrl: './cover-preview-separate.html',
   styleUrl: './cover-preview-separate.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

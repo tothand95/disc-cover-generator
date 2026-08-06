@@ -15,6 +15,7 @@ import { CoverForm } from './components/cover-form/cover-form';
 import { CoverPreviewSingle } from './components/cover-preview-single/cover-preview-single';
 import { CoverPreviewSeparate } from './components/cover-preview-separate/cover-preview-separate';
 import { ToastContainer } from './ui/toast-container/toast-container';
+import { Icon } from './ui/icon/icon';
 
 /**
  * App shell: hosts the form, the live preview and the drag-drop backdrop.
@@ -24,7 +25,7 @@ import { ToastContainer } from './ui/toast-container/toast-container';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CoverForm, CoverPreviewSingle, CoverPreviewSeparate, ToastContainer],
+  imports: [CoverForm, CoverPreviewSingle, CoverPreviewSeparate, ToastContainer, Icon],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

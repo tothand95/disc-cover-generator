@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ToastService } from '../../services/toast.service';
+import { Icon } from '../icon/icon';
 
 /**
  * Renders active toasts fixed to the bottom-center of the viewport.
@@ -8,6 +9,7 @@ import { ToastService } from '../../services/toast.service';
 @Component({
   selector: 'app-toast-container',
   standalone: true,
+  imports: [Icon],
   templateUrl: './toast-container.html',
   styleUrl: './toast-container.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

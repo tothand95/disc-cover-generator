@@ -7,6 +7,7 @@ import {
   output,
   viewChild,
 } from '@angular/core';
+import { Icon } from '../../ui/icon/icon';
 
 /**
  * Native file picker with a "clear" button. Syncs the native input's file
@@ -16,6 +17,7 @@ import {
 @Component({
   selector: 'app-file-input',
   standalone: true,
+  imports: [Icon],
   templateUrl: './file-input.html',
   styleUrl: './file-input.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

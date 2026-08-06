@@ -9,6 +9,7 @@ import {
   computed,
 } from '@angular/core';
 import type { FitMode } from '@core/types';
+import { Icon } from '../../ui/icon/icon';
 
 /**
  * A single cover section's image slot. Renders a placeholder button when
@@ -18,6 +19,7 @@ import type { FitMode } from '@core/types';
 @Component({
   selector: 'app-section-image',
   standalone: true,
+  imports: [Icon],
   templateUrl: './section-image.html',
   styleUrl: './section-image.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
