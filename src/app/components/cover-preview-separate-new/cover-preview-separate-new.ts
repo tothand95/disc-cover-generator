@@ -1,27 +1,43 @@
-import { Component, ChangeDetectionStrategy, ElementRef, computed, effect, input, output, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, input, output, signal, viewChild } from '@angular/core';
 import type { BorderMode, CasePreset, FitMode, SpinePresetId, SpineTextAlign } from '@core/types';
-import { SectionImage } from '../section-image/section-image';
-import { DropOverlay } from '../drop-overlay/drop-overlay';
-import { SpinePresetPreview } from '../spine-preset-preview/spine-preset-preview';
 import { Icon } from '../../shared/icon/icon';
-import { borderPreviewPx, computeStageLayout } from '../../utils/stage-layout';
 import { MM_PER_INCH } from '../../utils/pdf/layout';
-import { getSpinePresetImageAspectRatio, getSpinePresetImageUrl, type SpinePresetImageKey } from '../../utils/spine/assets';
+import { getSpinePresetImageAspectRatio, getSpinePresetImageUrl, SpinePresetImageKey } from '../../utils/spine/assets';
+import { borderPreviewPx, computeStageLayout } from '../../utils/stage-layout';
+import { DropOverlay } from '../drop-overlay/drop-overlay';
+import { SectionImage } from '../section-image/section-image';
+import { SpinePresetPreview } from '../spine-preset-preview/spine-preset-preview';
 
 /**
- * Three-section preview (back / spine / front). Also overlays the spine
- * preset's front-cover top image when applicable (ps2/xbox), including
- * the widening padding and PS2 white separator.
+ * Experimental separate preview: pure CSS grid + aspect-ratio.
+ * No JS-computed stage size, no mm→px math for the grid itself.
+ * The stage sizes itself via `aspect-ratio` inside a flex parent, and
+ * the three columns are `fr` shares of the total cover width.
  */
 @Component({
-  selector: 'app-cover-preview-separate',
+  selector: 'app-cover-preview-separate-new',
   standalone: true,
   imports: [SectionImage, DropOverlay, SpinePresetPreview, Icon],
-  templateUrl: './cover-preview-separate.html',
-  styleUrl: './cover-preview-separate.scss',
+  templateUrl: './cover-preview-separate-new.html',
+  styleUrl: './cover-preview-separate-new.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CoverPreviewSeparate {
+export class CoverPreviewSeparateNew {
+  // readonly preset = input.required<CasePreset>();
+
+  // protected readonly aspect = computed(() => {
+  //   const p = this.preset();
+  //   return `${p.totalWidthMm} / ${p.heightMm}`;
+  // });
+
+  // protected readonly gridCols = computed(() => {
+  //   const p = this.preset();
+  //   const side = (p.totalWidthMm - p.spineWidthMm) / 2;
+  //   return `${side}fr ${p.spineWidthMm}fr ${side}fr`;
+  // });
+
+  // protected readonly sideMm = computed(() => (this.preset().totalWidthMm - this.preset().spineWidthMm) / 2);
+
   readonly preset = input.required<CasePreset>();
   readonly fit = input.required<FitMode>();
   readonly borderMode = input<BorderMode>('none');

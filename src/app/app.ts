@@ -7,6 +7,7 @@ import { ToastService } from './services/toast.service';
 import { CoverForm } from './components/cover-form/cover-form';
 import { CoverPreviewSingle } from './components/cover-preview-single/cover-preview-single';
 import { CoverPreviewSeparate } from './components/cover-preview-separate/cover-preview-separate';
+import { CoverPreviewSeparateNew } from './components/cover-preview-separate-new/cover-preview-separate-new';
 import { ToastContainer } from './shared/toast-container/toast-container';
 import { Icon } from './shared/icon/icon';
 
@@ -18,7 +19,7 @@ import { Icon } from './shared/icon/icon';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CoverForm, CoverPreviewSingle, CoverPreviewSeparate, ToastContainer, Icon],
+  imports: [CoverForm, CoverPreviewSingle, CoverPreviewSeparate, CoverPreviewSeparateNew, ToastContainer, Icon],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

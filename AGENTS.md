@@ -122,7 +122,6 @@ src/                     Angular app.
       pdf/                     PDF generation, split by concern.
         generate.ts            Orchestrator + public types (GenerateBrowserOptions).
         layout.ts              mm/pt/A4 constants, mmToPt, mmToPx.
-        cropMarks.ts           Dashed crop marks (grey rgb(0.25, 0.25, 0.25)).
         borders.ts             Outer + section-divider borders.
         sections.ts            Renders each section to PNG (uses utils/image
                                and utils/spine/rasterize).
@@ -194,9 +193,6 @@ If the spine font changes, re-run the empirical tuning:
 
 - Page: A4 landscape, hardcoded (`297 × 210 mm`).
 - Cover is centered on the page. Every preset fits with default bleed.
-- Crop marks are drawn **first** (dotted grey `rgb(0.25, 0.25, 0.25)`,
-  6 mm long, from all four corners plus the two spine folds), so images
-  and borders sit on top.
 - Outer border is grown by `thickness/2` so its centered stroke sits
   fully outside the cover — the cover's visible area equals the preset
   dimensions.
@@ -312,7 +308,7 @@ to `main`, copies `index.html` → `404.html`, and uploads
   genuinely fits.
 - Small, pure functions. `core/` is a library the app consumes.
 - Comments explain **why** or capture non-obvious constraints (e.g. why
-  crop marks are drawn first, or why `VISUAL_CENTER_RATIO` exists).
+  `VISUAL_CENTER_RATIO` exists).
 - All colors go through the theme tokens in `styles.scss`.
 - Icons render through `<app-icon>` (lucide-style, inline, tinted via
   `currentColor`).

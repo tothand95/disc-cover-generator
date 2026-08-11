@@ -2,7 +2,6 @@ import { PDFDocument } from 'pdf-lib';
 import type { BorderOptions, CasePresetId, FitMode, SpinePresetInput } from '@core/types';
 import { getPreset } from '@core/presets';
 import { A4_HEIGHT_MM, A4_WIDTH_MM, mmToPt } from './layout';
-import { drawCropMarks } from './cropMarks';
 import { drawBorders } from './borders';
 import { buildSections } from './sections';
 
@@ -43,8 +42,6 @@ export async function generateCoverPdfInBrowser(opts: GenerateBrowserOptions): P
 
   const pdf = await PDFDocument.create();
   const page = pdf.addPage([mmToPt(A4_WIDTH_MM), mmToPt(A4_HEIGHT_MM)]);
-
-  drawCropMarks(page, offsetXmm, offsetYmm, preset);
 
   for (const section of sections) {
     const img = await pdf.embedPng(section.png);

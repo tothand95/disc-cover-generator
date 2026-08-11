@@ -40,6 +40,8 @@ export function computeStageLayout(
     }
   }
 
+  stageWidth = Math.floor(stageWidth);
+  stageHeight = Math.floor(stageHeight);
   const mmToPx = stageWidth / preset.totalWidthMm || 0;
   const sideWidthMm = (preset.totalWidthMm - preset.spineWidthMm) / 2;
   return {
