@@ -27,8 +27,6 @@
   <main class="preview-panel">
     <h2>Live preview</h2>
     <div class="preview-panel--cover">
-      <app-cover-preview-separate-new [preset]="store.activePreset()" />
-      <!-- 
       @if (store.mode.kind() === 'single') {
         <app-cover-preview-single
           [preset]="store.activePreset()"
@@ -42,8 +40,30 @@
           (fileSelected)="store.images.single.set($event)"
         />
       } @else {
-        <app-cover-preview-separate-new [preset]="store.activePreset()" />
-      } -->
+        <app-cover-preview-separate-new
+          [preset]="store.activePreset()"
+          [fit]="store.mode.fit()"
+          [borderMode]="store.borders.mode()"
+          [borderThicknessPx]="store.borders.thicknessPx()"
+          [borderColor]="store.borders.color()"
+          [fitBackground]="store.mode.fitBackground()"
+          [backUrl]="backUrlView()"
+          [frontUrl]="frontUrlView()"
+          [spineUrl]="spineUrlView()"
+          [spinePreset]="store.spine.preset()"
+          [spineTitle]="store.spine.title()"
+          [spineBg]="store.spine.background()"
+          [spineTextColor]="store.spine.textColor()"
+          [spineTextAlign]="store.spine.textAlign()"
+          [showFrontPresetImage]="store.spine.showFrontImage()"
+          [frontImageWidening]="store.spine.frontImageWidening()"
+          [showFrontSeparator]="store.spine.showFrontSeparator()"
+          [isDraggingFile]="drag.isDraggingFile()"
+          (backSelected)="store.images.back.set($event)"
+          (frontSelected)="store.images.front.set($event)"
+          (spineSelected)="store.images.spine.set($event)"
+        />
+      }
     </div>
   </main>
 </div>

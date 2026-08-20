@@ -2,9 +2,7 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
-
   height: 100%;
-  padding: 1rem;
 }
 
 .labels {
@@ -24,43 +22,105 @@
 
 .stage-container {
   position: relative;
+}
 
-  .stage {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    max-width: 100%;
-    max-height: 100%;
-    margin: auto;
-
-    display: grid;
-    grid-template-rows: 1fr;
-
-    // TS code will attach the aspect-ratio and grid-template-columns for this element
-    // according to the selected cover type
-  }
+.stage {
+  position: absolute;
+  inset: 0;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  display: grid;
+  grid-template-rows: 1fr;
+  background: var(--paper);
 }
 
 .cell {
+  position: relative;
+  min-height: 0;
+  min-width: 0;
+
+  &--spine:hover {
+    z-index: 10;
+  }
+}
+
+.spine-overlay {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 0;
-  min-width: 0;
-  font-weight: 600;
-  color: var(--text-subtle);
-  outline: 1px dashed var(--border);
-  outline-offset: -1px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
 
-  &--back {
-    background: color-mix(in srgb, tomato 15%, transparent);
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--surface-3);
+    opacity: 0.75;
   }
-  &--spine {
-    background: color-mix(in srgb, dodgerblue 20%, transparent);
+
+  .cell--spine:hover & {
+    opacity: 1;
+    pointer-events: auto;
   }
-  &--front {
-    background: color-mix(in srgb, mediumseagreen 15%, transparent);
+
+  &__pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--surface);
+    color: var(--text-muted);
+    border: none;
+    border-radius: 9999px;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    white-space: nowrap;
+    transition: background-color 0.15s;
+
+    &:hover {
+      background: var(--surface-2);
+    }
   }
+}
+
+.front-top {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  user-select: none;
+
+  img {
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    user-select: none;
+  }
+}
+
+.front-separator {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  user-select: none;
+  background: var(--paper);
+}
+
+.divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 20;
 }

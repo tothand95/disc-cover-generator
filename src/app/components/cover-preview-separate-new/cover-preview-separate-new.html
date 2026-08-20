@@ -5,9 +5,75 @@
 </div>
 
 <div class="stage-container">
-  <div class="stage" [style.aspect-ratio]="aspect()" [style.grid-template-columns]="gridCols()">
-    <div class="cell cell--back">Back</div>
-    <div class="cell cell--spine">Spine</div>
-    <div class="cell cell--front">Front</div>
+  <div
+    #stage
+    class="stage"
+    [style.aspect-ratio]="aspect()"
+    [style.grid-template-columns]="gridCols()"
+    [style.box-shadow]="outerShadow()"
+    [style.background]="fit() === 'fit' ? fitBackground() : 'var(--paper)'"
+  >
+    <!-- Back cell -->
+    <div class="cell">
+      <app-section-image [url]="backUrl()" [fit]="fit()" placeholder="back cover" (fileChange)="backSelected.emit($event)" />
+      <app-drop-overlay [visible]="isDraggingFile()" label="back cover" (fileSelected)="backSelected.emit($event)" />
+    </div>
+
+    <!-- Spine cell -->
+    <div class="cell cell--spine">
+      @if (spineUrl()) {
+        <app-section-image [url]="spineUrl()" [fit]="fit()" placeholder="spine image" (fileChange)="spineSelected.emit($event)" />
+      } @else {
+        <app-spine-preset-preview
+          [preset]="spinePreset()"
+          [title]="spineTitle()"
+          [widthPx]="spineWidthPx()"
+          [heightPx]="stageHeightPx()"
+          [background]="spineBg()"
+          [textColor]="spineTextColor()"
+          [textAlign]="spineTextAlign()"
+        />
+        <div class="spine-overlay">
+          <button type="button" class="spine-overlay__pill" (click)="spineFileInput.click()">
+            <app-icon name="image" [size]="14" />
+            <span>Add spine image</span>
+          </button>
+          <input #spineFileInput type="file" accept="image/png,image/jpeg,image/webp" hidden (change)="onSpineFilePicked($event)" />
+        </div>
+      }
+      <app-drop-overlay [visible]="isDraggingFile()" label="spine" (fileSelected)="spineSelected.emit($event)" />
+    </div>
+
+    <!-- Front cell -->
+    <div class="cell">
+      <app-section-image [url]="frontUrl()" [fit]="fit()" placeholder="front cover" (fileChange)="frontSelected.emit($event)" />
+      @if (frontTopImage(); as ft) {
+        <div class="front-top" [style.height.px]="ft.blockHeightPx" [style.background]="ft.wideningPx > 0 ? '#000000' : 'transparent'">
+          <img [src]="ft.url" alt="" draggable="false" [style.top.px]="ft.wideningPx" [style.height.px]="ft.imgHeightPx" />
+        </div>
+        @if (ft.separatorPx > 0) {
+          <div class="front-separator" [style.top.px]="ft.blockHeightPx" [style.height.px]="ft.separatorPx"></div>
+        }
+      }
+      <app-drop-overlay [visible]="isDraggingFile()" label="front cover" (fileSelected)="frontSelected.emit($event)" />
+    </div>
+
+    <!-- Section dividers -->
+    @if (borderMode() === 'sections' && borderPx() > 0) {
+      <div
+        class="divider"
+        [style.left.px]="sideWidthPx()"
+        [style.width.px]="borderPx()"
+        [style.transform]="'translateX(-' + borderPx() / 2 + 'px)'"
+        [style.background]="borderColor()"
+      ></div>
+      <div
+        class="divider"
+        [style.left.px]="sideWidthPx() + spineWidthPx()"
+        [style.width.px]="borderPx()"
+        [style.transform]="'translateX(-' + borderPx() / 2 + 'px)'"
+        [style.background]="borderColor()"
+      ></div>
+    }
   </div>
 </div>
