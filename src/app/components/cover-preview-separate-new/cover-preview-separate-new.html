@@ -1,70 +1,11 @@
-<div #wrap class="preview-wrap" [style.padding.px]="layout().padding">
-  <div #labels class="preview-labels" [style.width.px]="layout().stageWidth > 0 ? layout().stageWidth : null">
-    <div class="preview-labels__row">
-      <span class="preview-labels__left"> Back · {{ layout().sideWidthMm.toFixed(1) }} × {{ preset().heightMm }} mm </span>
-      <span class="preview-labels__center"> Spine · {{ preset().spineWidthMm }} mm </span>
-      <span class="preview-labels__right"> Front · {{ layout().sideWidthMm.toFixed(1) }} × {{ preset().heightMm }} mm </span>
-    </div>
-  </div>
+<div class="labels">
+  <span>Back · {{ sideMm().toFixed(1) }} × {{ preset().heightMm }} mm</span>
+  <span>Spine · {{ preset().spineWidthMm }} mm</span>
+  <span>Front · {{ sideMm().toFixed(1) }} × {{ preset().heightMm }} mm</span>
+</div>
 
-  <div class="preview-stage" [style.box-shadow]="outerShadow()" [style.background]="fit() === 'fit' ? fitBackground() : 'unset'">
-    <div class="preview-stage__grid" [style.grid-template-columns]="gridTemplateCols()">
-      <div class="preview-stage__cell">
-        <app-section-image [url]="backUrl()" [fit]="fit()" placeholder="back cover" (fileChange)="backSelected.emit($event)" />
-        <app-drop-overlay [visible]="isDraggingFile()" label="back cover" (fileSelected)="backSelected.emit($event)" />
-      </div>
-      <div class="preview-stage__cell preview-stage__cell--spine">
-        @if (spineUrl()) {
-          <app-section-image [url]="spineUrl()" [fit]="fit()" placeholder="spine image" (fileChange)="spineSelected.emit($event)" />
-        } @else {
-          <app-spine-preset-preview
-            [preset]="spinePreset()"
-            [title]="spineTitle()"
-            [widthPx]="layout().spineWidthPx"
-            [heightPx]="layout().stageHeight"
-            [background]="spineBg()"
-            [textColor]="spineTextColor()"
-            [textAlign]="spineTextAlign()"
-          />
-          <div class="preview-spine-overlay">
-            <button type="button" class="preview-spine-overlay__pill" (click)="spineFileInput.click()">
-              <app-icon name="image" [size]="14" />
-              <span>Add spine image</span>
-            </button>
-            <input #spineFileInput type="file" accept="image/png,image/jpeg,image/webp" hidden (change)="onSpineFilePicked($event)" />
-          </div>
-        }
-        <app-drop-overlay [visible]="isDraggingFile()" label="spine" (fileSelected)="spineSelected.emit($event)" />
-      </div>
-      <div class="preview-stage__cell">
-        <app-section-image [url]="frontUrl()" [fit]="fit()" placeholder="front cover" (fileChange)="frontSelected.emit($event)" />
-        @if (frontTopImage(); as ft) {
-          <div class="preview-front-top" [style.height.px]="ft.blockHeightPx" [style.background]="ft.wideningPx > 0 ? '#000000' : 'transparent'">
-            <img [src]="ft.url" alt="" draggable="false" [style.top.px]="ft.wideningPx" [style.height.px]="ft.imgHeightPx" />
-          </div>
-          @if (ft.separatorPx > 0) {
-            <div class="preview-front-separator" [style.top.px]="ft.blockHeightPx" [style.height.px]="ft.separatorPx"></div>
-          }
-        }
-        <app-drop-overlay [visible]="isDraggingFile()" label="front cover" (fileSelected)="frontSelected.emit($event)" />
-      </div>
-    </div>
-
-    @if (borderMode() === 'sections' && borderPx() > 0) {
-      <div
-        class="preview-divider"
-        [style.left.px]="layout().sideWidthPx"
-        [style.width.px]="borderPx()"
-        [style.transform]="'translateX(-' + borderPx() / 2 + 'px)'"
-        [style.background]="borderColor()"
-      ></div>
-      <div
-        class="preview-divider"
-        [style.left.px]="layout().sideWidthPx + layout().spineWidthPx"
-        [style.width.px]="borderPx()"
-        [style.transform]="'translateX(-' + borderPx() / 2 + 'px)'"
-        [style.background]="borderColor()"
-      ></div>
-    }
-  </div>
+<div class="stage" [style.aspect-ratio]="aspect()" [style.grid-template-columns]="gridCols()">
+  <div class="cell cell--back">Back</div>
+  <div class="cell cell--spine">Spine</div>
+  <div class="cell cell--front">Front</div>
 </div>

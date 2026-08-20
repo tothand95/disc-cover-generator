@@ -3,7 +3,7 @@
     <div class="app-root__drag-backdrop" aria-hidden="true"></div>
   }
 
-  <header class="app-root__header">
+  <header class="global-header">
     <h1>Disc Cover Generator</h1>
     <button
       type="button"
@@ -20,16 +20,13 @@
     </button>
   </header>
 
-  <aside class="app-root__form">
+  <aside class="form-panel">
     <app-cover-form (generate)="onGenerate()" />
   </aside>
 
-  <main class="app-root__preview preview-panel">
+  <main class="preview-panel">
     <h2>Live preview</h2>
-    <div class="preview-panel__stage">
-      <app-cover-preview-separate-new [spinePreset]="store.spine.preset()" [preset]="store.activePreset()" [fit]="store.mode.fit()" />
-    </div>
-    <!-- <div class="preview-panel__stage">
+    <div class="preview-panel--cover">
       @if (store.mode.kind() === 'single') {
         <app-cover-preview-single
           [preset]="store.activePreset()"
@@ -43,31 +40,9 @@
           (fileSelected)="store.images.single.set($event)"
         />
       } @else {
-        <app-cover-preview-separate
-          [preset]="store.activePreset()"
-          [fit]="store.mode.fit()"
-          [borderMode]="store.borders.mode()"
-          [borderThicknessPx]="store.borders.thicknessPx()"
-          [borderColor]="store.borders.color()"
-          [fitBackground]="store.mode.fitBackground()"
-          [backUrl]="backUrlView()"
-          [frontUrl]="frontUrlView()"
-          [spineUrl]="spineUrlView()"
-          [spinePreset]="store.spine.preset()"
-          [spineTitle]="store.spine.title()"
-          [spineBg]="store.spine.background()"
-          [spineTextColor]="store.spine.textColor()"
-          [spineTextAlign]="store.spine.textAlign()"
-          [showFrontPresetImage]="store.spine.showFrontImage()"
-          [frontImageWidening]="store.spine.frontImageWidening()"
-          [showFrontSeparator]="store.spine.showFrontSeparator()"
-          [isDraggingFile]="drag.isDraggingFile()"
-          (backSelected)="store.images.back.set($event)"
-          (frontSelected)="store.images.front.set($event)"
-          (spineSelected)="store.images.spine.set($event)"
-        />
+        <app-cover-preview-separate-new [preset]="store.activePreset()" />
       }
-    </div> -->
+    </div>
   </main>
 </div>
 

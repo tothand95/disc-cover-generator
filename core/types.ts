@@ -9,7 +9,6 @@ export interface CasePreset {
   heightMm: number;
   spineWidthMm: number;
   frontFoldMm?: number;
-  defaultBleedMm: number;
 }
 
 export type FitMode = 'stretch' | 'fill' | 'fit';

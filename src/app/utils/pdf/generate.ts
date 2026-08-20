@@ -1,7 +1,7 @@
 import { PDFDocument } from 'pdf-lib';
 import type { BorderOptions, CasePresetId, FitMode, SpinePresetInput } from '@core/types';
 import { getPreset } from '@core/presets';
-import { A4_HEIGHT_MM, A4_WIDTH_MM, mmToPt } from './layout';
+import { A4_HEIGHT_MM, A4_WIDTH_MM, BLEED_MM, mmToPt } from './layout';
 import { drawBorders } from './borders';
 import { buildSections } from './sections';
 
@@ -28,17 +28,16 @@ export interface GenerateBrowserOptions {
 
 export async function generateCoverPdfInBrowser(opts: GenerateBrowserOptions): Promise<Uint8Array> {
   const preset = getPreset(opts.presetId);
-  const bleedMm = preset.defaultBleedMm;
-  const wrapWidthMm = preset.totalWidthMm + bleedMm * 2;
-  const wrapHeightMm = preset.heightMm + bleedMm * 2;
+  const wrapWidthMm = preset.totalWidthMm + BLEED_MM * 2;
+  const wrapHeightMm = preset.heightMm + BLEED_MM * 2;
   if (wrapWidthMm > A4_WIDTH_MM || wrapHeightMm > A4_HEIGHT_MM) {
     throw new Error(`Cover (${wrapWidthMm.toFixed(1)}x${wrapHeightMm.toFixed(1)}mm incl. bleed) does not fit on A4 landscape.`);
   }
 
   const sections = await buildSections(preset, opts);
 
-  const offsetXmm = (A4_WIDTH_MM - wrapWidthMm) / 2 + bleedMm;
-  const offsetYmm = (A4_HEIGHT_MM - wrapHeightMm) / 2 + bleedMm;
+  const offsetXmm = (A4_WIDTH_MM - wrapWidthMm) / 2 + BLEED_MM;
+  const offsetYmm = (A4_HEIGHT_MM - wrapHeightMm) / 2 + BLEED_MM;
 
   const pdf = await PDFDocument.create();
   const page = pdf.addPage([mmToPt(A4_WIDTH_MM), mmToPt(A4_HEIGHT_MM)]);

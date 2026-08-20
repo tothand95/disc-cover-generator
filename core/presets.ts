@@ -7,7 +7,6 @@ export const CASE_PRESETS: Record<CasePresetId, CasePreset> = {
     totalWidthMm: 273,
     heightMm: 183,
     spineWidthMm: 14,
-    defaultBleedMm: 3,
   },
   'dvd-slim': {
     id: 'dvd-slim',
@@ -15,7 +14,6 @@ export const CASE_PRESETS: Record<CasePresetId, CasePreset> = {
     totalWidthMm: 266,
     heightMm: 183,
     spineWidthMm: 7,
-    defaultBleedMm: 3,
   },
   bluray: {
     id: 'bluray',
@@ -23,7 +21,6 @@ export const CASE_PRESETS: Record<CasePresetId, CasePreset> = {
     totalWidthMm: 271,
     heightMm: 172,
     spineWidthMm: 11,
-    defaultBleedMm: 3,
   },
   'cd-jewel': {
     id: 'cd-jewel',
@@ -31,7 +28,6 @@ export const CASE_PRESETS: Record<CasePresetId, CasePreset> = {
     totalWidthMm: 271,
     heightMm: 120,
     spineWidthMm: 7,
-    defaultBleedMm: 3,
   },
   'cd-jewel-folded': {
     id: 'cd-jewel-folded',
@@ -40,13 +36,14 @@ export const CASE_PRESETS: Record<CasePresetId, CasePreset> = {
     heightMm: 120,
     spineWidthMm: 7,
     frontFoldMm: 6,
-    defaultBleedMm: 3,
   },
 };
 
 export function getPreset(id: CasePresetId): CasePreset {
   const p = CASE_PRESETS[id];
-  if (!p) throw new Error(`Unknown case preset: ${id}`);
+  if (!p) {
+    throw new Error(`Unknown case preset: ${id}`);
+  }
   return p;
 }
 

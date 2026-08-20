@@ -4,7 +4,6 @@
   "description": "Client-side static web app that generates print-ready A4-landscape PDFs for DVD / Blu-Ray / CD case covers.",
   "scripts": {
     "ng": "ng",
-    "dev": "ng serve",
     "start": "ng serve",
     "build": "ng build",
     "build:pages": "ng build --base-href /disc-cover-generator/",
