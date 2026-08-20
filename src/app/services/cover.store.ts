@@ -1,6 +1,6 @@
-import { Injectable, computed, signal } from '@angular/core';
-import type { BorderMode, CasePresetId, FitMode, SpinePresetId, SpineTextAlign } from '@core/types';
+import { Injectable, computed, effect, signal } from '@angular/core';
 import { CASE_PRESETS, getPreset } from '@core/presets';
+import type { BorderMode, CasePresetId, FitMode, SpinePresetId, SpineTextAlign } from '@core/types';
 
 /**
  * Single source of truth for all cover-generator state.
@@ -30,6 +30,14 @@ export class CoverStore {
     back: signal<File | null>(null),
     front: signal<File | null>(null),
     spine: signal<File | null>(null),
+  };
+
+  /** Object URLs derived from image files. Automatically created/revoked. */
+  readonly imageUrls = {
+    single: signal<string | null>(null),
+    back: signal<string | null>(null),
+    front: signal<string | null>(null),
+    spine: signal<string | null>(null),
   };
 
   readonly spine = {
@@ -72,4 +80,34 @@ export class CoverStore {
       },
     };
   });
+
+  constructor() {
+    this.wireObjectUrl(() => this.images.single(), this.imageUrls.single);
+    this.wireObjectUrl(() => this.images.back(), this.imageUrls.back);
+    this.wireObjectUrl(() => this.images.front(), this.imageUrls.front);
+    this.wireObjectUrl(() => this.images.spine(), this.imageUrls.spine);
+  }
+
+  private wireObjectUrl(fileGetter: () => File | null, urlSignal: ReturnType<typeof signal<string | null>>): void {
+    let currentUrl: string | null = null;
+    effect((onCleanup) => {
+      const file = fileGetter();
+      if (currentUrl) {
+        URL.revokeObjectURL(currentUrl);
+        currentUrl = null;
+      }
+      if (file) {
+        currentUrl = URL.createObjectURL(file);
+        urlSignal.set(currentUrl);
+      } else {
+        urlSignal.set(null);
+      }
+      onCleanup(() => {
+        if (currentUrl) {
+          URL.revokeObjectURL(currentUrl);
+        }
+        currentUrl = null;
+      });
+    });
+  }
 }

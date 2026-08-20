@@ -1,13 +1,9 @@
-import { Component, ChangeDetectionStrategy, ElementRef, computed, effect, inject, input, output, signal, viewChild } from '@angular/core';
-import type { BorderMode, CasePreset, FitMode } from '@core/types';
+import { Component, ChangeDetectionStrategy, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { CoverStore } from '../../services/cover.store';
+import { DragDropService } from '../../services/drag-drop.service';
 import { SectionImage } from '../section-image/section-image';
 import { DropOverlay } from '../drop-overlay/drop-overlay';
-import { borderPreviewPx, computeStageLayout } from '../../utils/stage-layout';
 
-/**
- * Single-image preview. Renders one section for the whole cover, with
- * optional outer border shadow. Fit background is shown when fit='fit'.
- */
 @Component({
   selector: 'app-cover-preview-single',
   standalone: true,
@@ -17,51 +13,45 @@ import { borderPreviewPx, computeStageLayout } from '../../utils/stage-layout';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CoverPreviewSingle {
-  readonly preset = input.required<CasePreset>();
-  readonly fit = input.required<FitMode>();
-  readonly borderMode = input<BorderMode>('none');
-  readonly borderThicknessPx = input<number>(0);
-  readonly borderColor = input<string>('#000000');
-  readonly fitBackground = input<string>('#000000');
-  readonly dpi = input<number>(300);
-  readonly imageUrl = input<string | null>(null);
-  readonly isDraggingFile = input<boolean>(false);
-  readonly fileSelected = output<File | null>();
+  readonly store = inject(CoverStore);
+  readonly drag = inject(DragDropService);
 
-  private readonly wrapRef = viewChild.required<ElementRef<HTMLDivElement>>('wrap');
-  private readonly labelsRef = viewChild.required<ElementRef<HTMLDivElement>>('labels');
-  private readonly containerSize = signal({ width: 0, height: 0 });
-  private readonly labelsSize = signal({ width: 0, height: 0 });
-  private wrapObserver: ResizeObserver | null = null;
-  private labelsObserver: ResizeObserver | null = null;
+  private readonly stageRef = viewChild.required<ElementRef<HTMLDivElement>>('stage');
+  private readonly stageWidth = signal(0);
 
-  protected readonly layout = computed(() =>
-    computeStageLayout(this.preset(), this.containerSize().width, this.containerSize().height, this.labelsSize().height),
-  );
-  protected readonly borderPx = computed(() => borderPreviewPx(this.borderMode(), this.borderThicknessPx(), this.layout().mmToPx, this.dpi()));
+  protected readonly preset = this.store.activePreset;
+
+  protected readonly aspect = computed(() => {
+    const p = this.preset();
+    return `${p.totalWidthMm} / ${p.heightMm}`;
+  });
+
+  protected readonly mmToPx = computed(() => {
+    const w = this.stageWidth();
+    return w > 0 ? w / this.preset().totalWidthMm : 0;
+  });
+
+  protected readonly borderPx = computed(() => {
+    const mode = this.store.borders.mode();
+    if (mode === 'none' || this.store.borders.thicknessPx() <= 0) return 0;
+    const borderMm = (this.store.borders.thicknessPx() / 300) * 25.4;
+    return Math.max(1, borderMm * this.mmToPx());
+  });
+
   protected readonly outerShadow = computed(() => {
     const px = this.borderPx();
-    return px > 0 && this.borderColor() ? `0 0 0 ${px}px ${this.borderColor()}` : 'none';
+    const color = this.store.borders.color();
+    return px > 0 && color ? `0 0 0 ${px}px ${color}` : 'none';
   });
 
   constructor() {
-    inject(ElementRef);
     effect((onCleanup) => {
-      const wrap = this.wrapRef().nativeElement;
-      const labels = this.labelsRef().nativeElement;
-      const update = () => {
-        this.containerSize.set({ width: wrap.clientWidth, height: wrap.clientHeight });
-        this.labelsSize.set({ width: labels.clientWidth, height: labels.clientHeight });
-      };
+      const el = this.stageRef().nativeElement;
+      const update = () => this.stageWidth.set(el.clientWidth);
       update();
-      this.wrapObserver = new ResizeObserver(update);
-      this.labelsObserver = new ResizeObserver(update);
-      this.wrapObserver.observe(wrap);
-      this.labelsObserver.observe(labels);
-      onCleanup(() => {
-        this.wrapObserver?.disconnect();
-        this.labelsObserver?.disconnect();
-      });
+      const ro = new ResizeObserver(update);
+      ro.observe(el);
+      onCleanup(() => ro.disconnect());
     });
   }
 }

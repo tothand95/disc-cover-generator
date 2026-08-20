@@ -1,18 +1,18 @@
-<div #wrap class="preview-wrap" [style.padding.px]="layout().padding">
-  <div #labels class="preview-labels" [style.width.px]="layout().stageWidth > 0 ? layout().stageWidth : null">
-    {{ preset().totalWidthMm }} × {{ preset().heightMm }} mm
-  </div>
+<div class="labels">
+  {{ preset().totalWidthMm }} × {{ preset().heightMm }} mm
+</div>
 
+<div class="stage-container">
   <div
-    class="preview-stage"
-    [style.width.px]="layout().stageWidth"
-    [style.height.px]="layout().stageHeight"
+    #stage
+    class="stage"
+    [style.aspect-ratio]="aspect()"
     [style.box-shadow]="outerShadow()"
-    [style.background]="fit() === 'fit' ? fitBackground() : '#ffffff'"
+    [style.background]="store.mode.fit() === 'fit' ? store.mode.fitBackground() : 'var(--paper)'"
   >
-    <div class="preview-stage__cell">
-      <app-section-image [url]="imageUrl()" [fit]="fit()" placeholder="cover image" (fileChange)="fileSelected.emit($event)" />
-      <app-drop-overlay [visible]="isDraggingFile()" label="cover" (fileSelected)="fileSelected.emit($event)" />
+    <div class="cell">
+      <app-section-image [url]="store.imageUrls.single()" [fit]="store.mode.fit()" placeholder="cover image" (fileChange)="store.images.single.set($event)" />
+      <app-drop-overlay [visible]="drag.isDraggingFile()" label="cover" (fileSelected)="store.images.single.set($event)" />
     </div>
   </div>
 </div>

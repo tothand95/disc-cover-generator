@@ -1,33 +1,33 @@
 :host {
-  display: block;
-  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
   height: 100%;
+  padding: 1rem;
 }
 
-.preview-wrap {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
-  min-width: 0;
-}
-
-.preview-labels {
-  margin-bottom: 2rem;
+.labels {
   text-align: center;
   font-size: 0.75rem;
   font-weight: 500;
   color: var(--text-muted);
+  margin-bottom: 1rem;
 }
 
-.preview-stage {
+.stage-container {
   position: relative;
+}
 
-  &__cell {
-    position: absolute;
-    inset: 0;
-  }
+.stage {
+  position: absolute;
+  inset: 0;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  background: var(--paper);
+}
+
+.cell {
+  position: absolute;
+  inset: 0;
 }

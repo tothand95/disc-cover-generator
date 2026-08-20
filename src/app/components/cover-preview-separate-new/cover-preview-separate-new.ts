@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, input, output, signal, viewChild } from '@angular/core';
-import type { BorderMode, CasePreset, FitMode, SpinePresetId, SpineTextAlign } from '@core/types';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { CoverStore } from '../../services/cover.store';
+import { DragDropService } from '../../services/drag-drop.service';
 import { Icon } from '../../shared/icon/icon';
 import { getSpinePresetImageAspectRatio, getSpinePresetImageUrl, type SpinePresetImageKey } from '../../utils/spine/assets';
 import { DropOverlay } from '../drop-overlay/drop-overlay';
@@ -15,33 +16,13 @@ import { SpinePresetPreview } from '../spine-preset-preview/spine-preset-preview
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CoverPreviewSeparateNew {
-  readonly preset = input.required<CasePreset>();
-  readonly fit = input.required<FitMode>();
-  readonly borderMode = input<BorderMode>('none');
-  readonly borderThicknessPx = input<number>(0);
-  readonly borderColor = input<string>('#000000');
-  readonly fitBackground = input<string>('#000000');
-  readonly dpi = input<number>(300);
-
-  readonly backUrl = input<string | null>(null);
-  readonly frontUrl = input<string | null>(null);
-  readonly spineUrl = input<string | null>(null);
-  readonly spinePreset = input.required<SpinePresetId>();
-  readonly spineTitle = input<string>('');
-  readonly spineBg = input<string>('#ffffff');
-  readonly spineTextColor = input<string>('#000000');
-  readonly spineTextAlign = input<SpineTextAlign>('center');
-  readonly showFrontPresetImage = input<boolean>(true);
-  readonly frontImageWidening = input<number>(0);
-  readonly showFrontSeparator = input<boolean>(true);
-  readonly isDraggingFile = input<boolean>(false);
-
-  readonly backSelected = output<File | null>();
-  readonly frontSelected = output<File | null>();
-  readonly spineSelected = output<File | null>();
+  readonly store = inject(CoverStore);
+  readonly drag = inject(DragDropService);
 
   private readonly stageRef = viewChild.required<ElementRef<HTMLDivElement>>('stage');
   private readonly stageWidth = signal(0);
+
+  protected readonly preset = this.store.activePreset;
 
   protected readonly aspect = computed(() => {
     const p = this.preset();
@@ -66,22 +47,23 @@ export class CoverPreviewSeparateNew {
   protected readonly sideWidthPx = computed(() => this.sideMm() * this.mmToPx());
 
   protected readonly borderPx = computed(() => {
-    const mode = this.borderMode();
-    if (mode === 'none' || this.borderThicknessPx() <= 0) {
+    const mode = this.store.borders.mode();
+    if (mode === 'none' || this.store.borders.thicknessPx() <= 0) {
       return 0;
     }
-    const borderMm = (this.borderThicknessPx() / this.dpi()) * 25.4;
+    const borderMm = (this.store.borders.thicknessPx() / 300) * 25.4;
     return Math.max(1, borderMm * this.mmToPx());
   });
 
   protected readonly outerShadow = computed(() => {
     const px = this.borderPx();
-    return px > 0 && this.borderColor() ? `0 0 0 ${px}px ${this.borderColor()}` : 'none';
+    const color = this.store.borders.color();
+    return px > 0 && color ? `0 0 0 ${px}px ${color}` : 'none';
   });
 
   protected readonly frontTopImage = computed(() => {
-    const p = this.spinePreset();
-    if (!this.showFrontPresetImage()) {
+    const p = this.store.spine.preset();
+    if (!this.store.spine.showFrontImage()) {
       return null;
     }
     if (p !== 'ps2' && p !== 'xbox') {
@@ -91,9 +73,9 @@ export class CoverPreviewSeparateNew {
     const sideWidthPx = this.sideWidthPx();
     const sideWidthMm = this.sideMm();
     const ar = getSpinePresetImageAspectRatio(key, 'front');
-    const scale = sideWidthPx / ((sideWidthMm * this.dpi()) / 25.4);
-    const wideningPx = this.frontImageWidening() > 0 ? this.frontImageWidening() * scale : 0;
-    const separatorPx = key === 'ps2' && this.showFrontSeparator() ? Math.max(1, 4 * scale) : 0;
+    const scale = sideWidthPx / ((sideWidthMm * 300) / 25.4);
+    const wideningPx = this.store.spine.frontImageWidening() > 0 ? this.store.spine.frontImageWidening() * scale : 0;
+    const separatorPx = key === 'ps2' && this.store.spine.showFrontSeparator() ? Math.max(1, 4 * scale) : 0;
     const imgHeightPx = sideWidthPx / ar;
     const blockHeightPx = imgHeightPx + wideningPx * 2;
     return {
@@ -120,7 +102,7 @@ export class CoverPreviewSeparateNew {
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     if (file) {
-      this.spineSelected.emit(file);
+      this.store.images.spine.set(file);
     }
     input.value = '';
   }
