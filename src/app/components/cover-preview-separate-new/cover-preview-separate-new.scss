@@ -1,6 +1,8 @@
 :host {
-  display: block;
-  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+
   height: 100%;
   padding: 1rem;
 }
@@ -20,9 +22,25 @@
   }
 }
 
-.stage {
-  display: grid;
-  grid-template-rows: 1fr;
+.stage-container {
+  position: relative;
+
+  .stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+
+    display: grid;
+    grid-template-rows: 1fr;
+
+    // TS code will attach the aspect-ratio and grid-template-columns for this element
+    // according to the selected cover type
+  }
 }
 
 .cell {

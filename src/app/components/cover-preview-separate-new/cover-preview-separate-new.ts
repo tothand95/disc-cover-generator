@@ -28,7 +28,5 @@ export class CoverPreviewSeparateNew {
     return `${side}fr ${p.spineWidthMm}fr ${side}fr`;
   });
 
-  protected readonly sideMm = computed(
-    () => (this.preset().totalWidthMm - this.preset().spineWidthMm) / 2,
-  );
+  protected readonly sideMm = computed(() => (this.preset().totalWidthMm - this.preset().spineWidthMm) / 2);
 }

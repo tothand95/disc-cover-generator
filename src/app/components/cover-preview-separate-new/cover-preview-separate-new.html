@@ -4,8 +4,10 @@
   <span>Front · {{ sideMm().toFixed(1) }} × {{ preset().heightMm }} mm</span>
 </div>
 
-<div class="stage" [style.aspect-ratio]="aspect()" [style.grid-template-columns]="gridCols()">
-  <div class="cell cell--back">Back</div>
-  <div class="cell cell--spine">Spine</div>
-  <div class="cell cell--front">Front</div>
+<div class="stage-container">
+  <div class="stage" [style.aspect-ratio]="aspect()" [style.grid-template-columns]="gridCols()">
+    <div class="cell cell--back">Back</div>
+    <div class="cell cell--spine">Spine</div>
+    <div class="cell cell--front">Front</div>
+  </div>
 </div>

@@ -27,6 +27,8 @@
   <main class="preview-panel">
     <h2>Live preview</h2>
     <div class="preview-panel--cover">
+      <app-cover-preview-separate-new [preset]="store.activePreset()" />
+      <!-- 
       @if (store.mode.kind() === 'single') {
         <app-cover-preview-single
           [preset]="store.activePreset()"
@@ -41,7 +43,7 @@
         />
       } @else {
         <app-cover-preview-separate-new [preset]="store.activePreset()" />
-      }
+      } -->
     </div>
   </main>
 </div>
