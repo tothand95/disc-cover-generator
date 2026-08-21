@@ -1,6 +1,8 @@
 import { FormsModule } from '@angular/forms';
-import { Component, ChangeDetectionStrategy, computed, inject, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { CoverStore } from '../../services/cover.store';
+import { PdfGeneratorService } from '../../services/pdf-generator.service';
+import { ToastService } from '../../services/toast.service';
 import { FileInput } from '../../shared/file-input/file-input';
 import { Segmented, SegmentedOption } from '../../shared/segmented/segmented';
 import { CASE_PRESETS } from '@core/presets';
@@ -22,6 +24,8 @@ type CoverKind = 'single' | 'three';
 })
 export class CoverForm {
   readonly store = inject(CoverStore);
+  private readonly pdf = inject(PdfGeneratorService);
+  private readonly toasts = inject(ToastService);
 
   readonly presetOptions = Object.values(CASE_PRESETS).map((p) => ({
     label: `${p.label} (${p.totalWidthMm}×${p.heightMm}mm, spine ${p.spineWidthMm}mm)`,
@@ -85,9 +89,24 @@ export class CoverForm {
 
   protected readonly isTextPreset = computed(() => this.store.spine.preset() === 'text');
 
-  readonly generate = output<void>();
+  async onSubmit(): Promise<void> {
+    const store = this.store;
+    try {
+      if (store.images.kind() === 'single') {
+        if (!store.images.singleFile()) {
+          throw new Error('Please choose an image.');
+        }
+      } else if (!store.images.backFile() || !store.images.frontFile()) {
+        throw new Error('Please choose both back and front images.');
+      }
 
-  onSubmit(): void {
-    this.generate.emit();
+      store.ui.busy.set(true);
+      await this.pdf.generateAndOpen();
+      this.toasts.success('PDF generated — opened in a new tab.');
+    } catch (err) {
+      this.toasts.error(err instanceof Error ? err.message : String(err));
+    } finally {
+      store.ui.busy.set(false);
+    }
   }
 }

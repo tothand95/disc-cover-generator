@@ -49,7 +49,7 @@ export function buildSpineSvg(options: SpineSvgOptions): string {
 
   const y = fontSizePx * VISUAL_CENTER_RATIO;
 
-  let textGroup = '';
+  let textGroup: string;
   if (presetImage) {
     const imageHeight = widthPx / presetImage.aspectRatio;
     const rotateOriginY = imageHeight + widthPx * TOP_IMAGE_TEXT_GAP_RATIO;
