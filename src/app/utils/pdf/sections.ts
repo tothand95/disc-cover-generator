@@ -3,7 +3,7 @@ import { renderImageToPng, renderFrontToPng } from '../image';
 import { rasterizeSpineSvg } from '../spine/rasterize';
 import { loadSpinePresetImage, type SpinePresetImageKey } from '../spine/assets';
 import { mmToPx } from './layout';
-import type { GenerateBrowserOptions } from './generate';
+import type { GenerateOptions } from './generate';
 
 export interface Section {
   xMm: number;
@@ -11,7 +11,7 @@ export interface Section {
   png: Uint8Array;
 }
 
-function getFrontPresetImageKey(options: GenerateBrowserOptions): SpinePresetImageKey | null {
+function getFrontPresetImageKey(options: GenerateOptions): SpinePresetImageKey | null {
   if (options.input.kind !== 'three') {
     return null;
   }
@@ -25,7 +25,7 @@ function getFrontPresetImageKey(options: GenerateBrowserOptions): SpinePresetIma
   return null;
 }
 
-export async function buildSections(preset: CasePreset, options: GenerateBrowserOptions): Promise<Section[]> {
+export async function buildSections(preset: CasePreset, options: GenerateOptions): Promise<Section[]> {
   const { dpi, fit, fitBackground } = options;
   const heightMm = preset.heightMm;
   const spineWidthMm = preset.spineWidthMm;

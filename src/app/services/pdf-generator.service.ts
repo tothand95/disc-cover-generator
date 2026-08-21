@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { generateCoverPdfInBrowser, type GenerateBrowserOptions } from '../utils/pdf/generate';
+import { generateCoverPdf, type GenerateOptions } from '../utils/pdf/generate';
 
 @Injectable({ providedIn: 'root' })
 export class PdfGeneratorService {
@@ -11,13 +11,13 @@ export class PdfGeneratorService {
    * block popups opened after an `await`. Once the bytes are ready we
    * navigate the same tab to the blob URL, and revoke it after 60 s.
    */
-  async generateAndOpen(options: GenerateBrowserOptions): Promise<void> {
+  async generateAndOpen(options: GenerateOptions): Promise<void> {
     const win = window.open('', '_blank');
     if (!win) {
       throw new Error('Popup blocked — please allow popups for this site.');
     }
     try {
-      const bytes = await generateCoverPdfInBrowser(options);
+      const bytes = await generateCoverPdf(options);
       const blob = new Blob([bytes as BlobPart], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       win.location.href = url;

@@ -24,14 +24,17 @@
     </div>
     @if (store.images.kind() === 'single') {
       <div class="field">
-        <span class="field-label">Image</span> <app-file-input [file]="store.images.singleFile()" (fileChange)="store.images.singleFile.set($event)" />
+        <span class="field-label">Image</span>
+        <app-file-input [file]="store.images.singleFile()" (fileChange)="store.images.singleFile.set($event)" />
       </div>
     } @else {
       <div class="field">
-        <span class="field-label">Back image</span> <app-file-input [file]="store.images.backFile()" (fileChange)="store.images.backFile.set($event)" />
+        <span class="field-label">Back image</span>
+        <app-file-input [file]="store.images.backFile()" (fileChange)="store.images.backFile.set($event)" />
       </div>
       <div class="field">
-        <span class="field-label">Front image</span> <app-file-input [file]="store.images.frontFile()" (fileChange)="store.images.frontFile.set($event)" />
+        <span class="field-label">Front image</span>
+        <app-file-input [file]="store.images.frontFile()" (fileChange)="store.images.frontFile.set($event)" />
       </div>
       <div class="field">
         <span class="field-label">Spine image (optional)</span>
@@ -193,5 +196,7 @@
       </div>
     }
   </fieldset>
-  <button type="submit" class="btn btn-primary submit-btn" [disabled]="store.ui.busy()">{{ store.ui.busy() ? 'Generating…' : 'Generate PDF' }}</button>
+  <button type="submit" class="btn btn-primary btn-submit" [disabled]="store.ui.busy()">
+    {{ store.ui.busy() ? 'Generating…' : 'Generate PDF' }}
+  </button>
 </form>

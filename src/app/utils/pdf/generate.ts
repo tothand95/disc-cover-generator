@@ -17,7 +17,7 @@ export interface ThreeInput {
   spinePreset: SpinePresetInput | null;
 }
 
-export interface GenerateBrowserOptions {
+export interface GenerateOptions {
   presetId: CasePresetId;
   input: SingleInput | ThreeInput;
   fit: FitMode;
@@ -26,7 +26,7 @@ export interface GenerateBrowserOptions {
   dpi: number;
 }
 
-export async function generateCoverPdfInBrowser(options: GenerateBrowserOptions): Promise<Uint8Array> {
+export async function generateCoverPdf(options: GenerateOptions): Promise<Uint8Array> {
   const preset = getPreset(options.presetId);
   const wrapWidthMm = preset.totalWidthMm + BLEED_MM * 2;
   const wrapHeightMm = preset.heightMm + BLEED_MM * 2;
