@@ -33,7 +33,9 @@ export class CoverPreviewSingle {
 
   protected readonly borderPx = computed(() => {
     const mode = this.store.borders.mode();
-    if (mode === 'none' || this.store.borders.thicknessPx() <= 0) return 0;
+    if (mode === 'none' || this.store.borders.thicknessPx() <= 0) {
+      return 0;
+    }
     const borderMm = (this.store.borders.thicknessPx() / 300) * 25.4;
     return Math.max(1, borderMm * this.mmToPx());
   });

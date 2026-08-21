@@ -1,5 +1,5 @@
 import { Injectable, computed, effect, signal } from '@angular/core';
-import { CASE_PRESETS, getPreset } from '@core/presets';
+import { getPreset } from '@core/presets';
 import type { BorderMode, CasePresetId, FitMode, SpinePresetId, SpineTextAlign } from '@core/types';
 
 /**
@@ -7,41 +7,32 @@ import type { BorderMode, CasePresetId, FitMode, SpinePresetId, SpineTextAlign }
  *
  * Groups signals semantically (case, mode, images, spine, borders, ui) so
  * templates and services can read `store.spine.title()` without a huge
- * prop bag. Computed helpers (`activePreset`, `spinePresetInput`) live here
+ * prop bag. Computed helper `activePreset` lives here
  * too so both the preview and the PDF pipeline read the same derived values.
  */
 @Injectable({ providedIn: 'root' })
 export class CoverStore {
-  readonly presets = Object.values(CASE_PRESETS);
-
   readonly case = {
     presetId: signal<CasePresetId>('dvd-normal'),
   };
   readonly activePreset = computed(() => getPreset(this.case.presetId()));
 
-  readonly mode = {
+  readonly images = {
     kind: signal<'single' | 'three'>('three'),
     fit: signal<FitMode>('stretch'),
     fitBackground: signal('#000000'),
-  };
-
-  readonly images = {
-    single: signal<File | null>(null),
-    back: signal<File | null>(null),
-    front: signal<File | null>(null),
-    spine: signal<File | null>(null),
-  };
-
-  /** Object URLs derived from image files. Automatically created/revoked. */
-  readonly imageUrls = {
-    single: signal<string | null>(null),
-    back: signal<string | null>(null),
-    front: signal<string | null>(null),
-    spine: signal<string | null>(null),
+    singleFile: signal<File | null>(null),
+    singleUrl: signal<string | null>(null),
+    backFile: signal<File | null>(null),
+    backUrl: signal<string | null>(null),
+    frontFile: signal<File | null>(null),
+    frontUrl: signal<string | null>(null),
+    spineFile: signal<File | null>(null),
+    spineUrl: signal<string | null>(null),
   };
 
   readonly spine = {
-    preset: signal<SpinePresetId>('ps2'),
+    preset: signal<SpinePresetId>('blank'),
     title: signal(''),
     background: signal('#ffffff'),
     textColor: signal('#000000'),
@@ -62,30 +53,11 @@ export class CoverStore {
     isDraggingFile: signal(false),
   };
 
-  /** Convenience: `SpinePresetInput` derived from the spine signals, or null when a spine image is uploaded. */
-  readonly spinePresetInput = computed(() => {
-    if (this.images.spine()) {
-      return null;
-    }
-    return {
-      preset: this.spine.preset(),
-      title: this.spine.title(),
-      extras: {
-        backgroundColor: this.spine.background(),
-        textColor: this.spine.textColor(),
-        textAlign: this.spine.textAlign(),
-        showFrontImage: this.spine.showFrontImage(),
-        frontImageWidening: this.spine.frontImageWidening(),
-        showFrontSeparator: this.spine.showFrontSeparator(),
-      },
-    };
-  });
-
   constructor() {
-    this.wireObjectUrl(() => this.images.single(), this.imageUrls.single);
-    this.wireObjectUrl(() => this.images.back(), this.imageUrls.back);
-    this.wireObjectUrl(() => this.images.front(), this.imageUrls.front);
-    this.wireObjectUrl(() => this.images.spine(), this.imageUrls.spine);
+    this.wireObjectUrl(() => this.images.singleFile(), this.images.singleUrl);
+    this.wireObjectUrl(() => this.images.backFile(), this.images.backUrl);
+    this.wireObjectUrl(() => this.images.frontFile(), this.images.frontUrl);
+    this.wireObjectUrl(() => this.images.spineFile(), this.images.spineUrl);
   }
 
   private wireObjectUrl(fileGetter: () => File | null, urlSignal: ReturnType<typeof signal<string | null>>): void {

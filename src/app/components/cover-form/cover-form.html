@@ -20,22 +20,22 @@
     <legend>Images</legend>
     <div class="field">
       <span class="field-label">Input mode</span>
-      <app-segmented [options]="kindOptions" [value]="store.mode.kind()" (valueChange)="store.mode.kind.set($event)" ariaLabel="Input mode" />
+      <app-segmented [options]="kindOptions" [value]="store.images.kind()" (valueChange)="store.images.kind.set($event)" ariaLabel="Input mode" />
     </div>
-    @if (store.mode.kind() === 'single') {
+    @if (store.images.kind() === 'single') {
       <div class="field">
-        <span class="field-label">Image</span> <app-file-input [file]="store.images.single()" (fileChange)="store.images.single.set($event)" />
+        <span class="field-label">Image</span> <app-file-input [file]="store.images.singleFile()" (fileChange)="store.images.singleFile.set($event)" />
       </div>
     } @else {
       <div class="field">
-        <span class="field-label">Back image</span> <app-file-input [file]="store.images.back()" (fileChange)="store.images.back.set($event)" />
+        <span class="field-label">Back image</span> <app-file-input [file]="store.images.backFile()" (fileChange)="store.images.backFile.set($event)" />
       </div>
       <div class="field">
-        <span class="field-label">Front image</span> <app-file-input [file]="store.images.front()" (fileChange)="store.images.front.set($event)" />
+        <span class="field-label">Front image</span> <app-file-input [file]="store.images.frontFile()" (fileChange)="store.images.frontFile.set($event)" />
       </div>
       <div class="field">
         <span class="field-label">Spine image (optional)</span>
-        <app-file-input [file]="store.images.spine()" (fileChange)="store.images.spine.set($event)" />
+        <app-file-input [file]="store.images.spineFile()" (fileChange)="store.images.spineFile.set($event)" />
       </div>
     }
   </fieldset>
@@ -138,9 +138,9 @@
     <legend>Layout</legend>
     <div class="field">
       <span class="field-label">Fit mode</span>
-      <app-segmented [options]="fitOptions" [value]="store.mode.fit()" (valueChange)="store.mode.fit.set($event)" />
+      <app-segmented [options]="fitOptions" [value]="store.images.fit()" (valueChange)="store.images.fit.set($event)" />
     </div>
-    @if (store.mode.fit() === 'fit') {
+    @if (store.images.fit() === 'fit') {
       <div class="field">
         <label for="fit-bg">Fit background</label>
         <div class="field__row">
@@ -148,8 +148,8 @@
             id="fit-bg"
             type="color"
             class="native-color"
-            [ngModel]="store.mode.fitBackground()"
-            (ngModelChange)="store.mode.fitBackground.set($event)"
+            [ngModel]="store.images.fitBackground()"
+            (ngModelChange)="store.images.fitBackground.set($event)"
             [ngModelOptions]="{ standalone: true }"
           />
           <span class="field__hint"> Fills empty space around images when they don't cover the section. </span>

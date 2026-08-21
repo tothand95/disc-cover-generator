@@ -11,18 +11,18 @@
     [style.aspect-ratio]="aspect()"
     [style.grid-template-columns]="gridCols()"
     [style.box-shadow]="outerShadow()"
-    [style.background]="store.mode.fit() === 'fit' ? store.mode.fitBackground() : 'var(--paper)'"
+    [style.background]="store.images.fit() === 'fit' ? store.images.fitBackground() : 'var(--paper)'"
   >
     <!-- Back cell -->
     <div class="cell">
-      <app-section-image [url]="store.imageUrls.back()" [fit]="store.mode.fit()" placeholder="back cover" (fileChange)="store.images.back.set($event)" />
-      <app-drop-overlay [visible]="drag.isDraggingFile()" label="back cover" (fileSelected)="store.images.back.set($event)" />
+      <app-section-image [url]="store.images.backUrl()" [fit]="store.images.fit()" placeholder="back cover" (fileChange)="store.images.backFile.set($event)" />
+      <app-drop-overlay [visible]="drag.isDraggingFile()" label="back cover" (fileSelected)="store.images.backFile.set($event)" />
     </div>
 
     <!-- Spine cell -->
     <div class="cell cell--spine">
-      @if (store.imageUrls.spine()) {
-        <app-section-image [url]="store.imageUrls.spine()" [fit]="store.mode.fit()" placeholder="spine image" (fileChange)="store.images.spine.set($event)" />
+      @if (store.images.spineUrl()) {
+        <app-section-image [url]="store.images.spineUrl()" [fit]="store.images.fit()" placeholder="spine image" (fileChange)="store.images.spineFile.set($event)" />
       } @else {
         <app-spine-preset-preview
           [preset]="store.spine.preset()"
@@ -41,12 +41,12 @@
           <input #spineFileInput type="file" accept="image/png,image/jpeg,image/webp" hidden (change)="onSpineFilePicked($event)" />
         </div>
       }
-      <app-drop-overlay [visible]="drag.isDraggingFile()" label="spine" (fileSelected)="store.images.spine.set($event)" />
+      <app-drop-overlay [visible]="drag.isDraggingFile()" label="spine" (fileSelected)="store.images.spineFile.set($event)" />
     </div>
 
     <!-- Front cell -->
     <div class="cell">
-      <app-section-image [url]="store.imageUrls.front()" [fit]="store.mode.fit()" placeholder="front cover" (fileChange)="store.images.front.set($event)" />
+      <app-section-image [url]="store.images.frontUrl()" [fit]="store.images.fit()" placeholder="front cover" (fileChange)="store.images.frontFile.set($event)" />
       @if (frontTopImage(); as ft) {
         <div class="front-top" [style.height.px]="ft.blockHeightPx" [style.background]="ft.wideningPx > 0 ? '#000000' : 'transparent'">
           <img [src]="ft.url" alt="" draggable="false" [style.top.px]="ft.wideningPx" [style.height.px]="ft.imgHeightPx" />
@@ -55,7 +55,7 @@
           <div class="front-separator" [style.top.px]="ft.blockHeightPx" [style.height.px]="ft.separatorPx"></div>
         }
       }
-      <app-drop-overlay [visible]="drag.isDraggingFile()" label="front cover" (fileSelected)="store.images.front.set($event)" />
+      <app-drop-overlay [visible]="drag.isDraggingFile()" label="front cover" (fileSelected)="store.images.frontFile.set($event)" />
     </div>
 
     <!-- Section dividers -->

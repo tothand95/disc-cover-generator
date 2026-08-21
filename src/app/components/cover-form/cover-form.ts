@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, computed, inject, output } from '@a
 import { CoverStore } from '../../services/cover.store';
 import { FileInput } from '../file-input/file-input';
 import { Segmented, SegmentedOption } from '../../shared/segmented/segmented';
+import { CASE_PRESETS } from '@core/presets';
 import type { FitMode, BorderMode, SpineTextAlign } from '@core/types';
 
 type CoverKind = 'single' | 'three';
@@ -22,7 +23,7 @@ type CoverKind = 'single' | 'three';
 export class CoverForm {
   readonly store = inject(CoverStore);
 
-  readonly presetOptions = this.store.presets.map((p) => ({
+  readonly presetOptions = Object.values(CASE_PRESETS).map((p) => ({
     label: `${p.label} (${p.totalWidthMm}×${p.heightMm}mm, spine ${p.spineWidthMm}mm)`,
     value: p.id,
   }));
@@ -63,7 +64,7 @@ export class CoverForm {
     { label: 'On', value: true },
   ];
 
-  protected readonly showSpineSection = computed(() => this.store.mode.kind() === 'three' && !this.store.images.spine());
+  protected readonly showSpineSection = computed(() => this.store.images.kind() === 'three' && !this.store.images.spineFile());
 
   protected readonly hasSpineTitle = computed(() => {
     const p = this.store.spine.preset();

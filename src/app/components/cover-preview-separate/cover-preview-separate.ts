@@ -8,11 +8,11 @@ import { SectionImage } from '../section-image/section-image';
 import { SpinePresetPreview } from '../spine-preset-preview/spine-preset-preview';
 
 @Component({
-  selector: 'app-cover-preview-separate-new',
+  selector: 'app-cover-preview-separate',
   standalone: true,
   imports: [SectionImage, DropOverlay, SpinePresetPreview, Icon],
-  templateUrl: './cover-preview-separate-new.html',
-  styleUrl: './cover-preview-separate-new.scss',
+  templateUrl: './cover-preview-separate.html',
+  styleUrl: './cover-preview-separate.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CoverPreviewSeparateNew {
@@ -102,7 +102,7 @@ export class CoverPreviewSeparateNew {
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     if (file) {
-      this.store.images.spine.set(file);
+      this.store.images.spineFile.set(file);
     }
     input.value = '';
   }

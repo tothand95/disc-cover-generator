@@ -8,11 +8,11 @@
     class="stage"
     [style.aspect-ratio]="aspect()"
     [style.box-shadow]="outerShadow()"
-    [style.background]="store.mode.fit() === 'fit' ? store.mode.fitBackground() : 'var(--paper)'"
+    [style.background]="store.images.fit() === 'fit' ? store.images.fitBackground() : 'var(--paper)'"
   >
     <div class="cell">
-      <app-section-image [url]="store.imageUrls.single()" [fit]="store.mode.fit()" placeholder="cover image" (fileChange)="store.images.single.set($event)" />
-      <app-drop-overlay [visible]="drag.isDraggingFile()" label="cover" (fileSelected)="store.images.single.set($event)" />
+      <app-section-image [url]="store.images.singleUrl()" [fit]="store.images.fit()" placeholder="cover image" (fileChange)="store.images.singleFile.set($event)" />
+      <app-drop-overlay [visible]="drag.isDraggingFile()" label="cover" (fileSelected)="store.images.singleFile.set($event)" />
     </div>
   </div>
 </div>

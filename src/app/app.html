@@ -3,22 +3,7 @@
     <div class="app-root__drag-backdrop" aria-hidden="true"></div>
   }
 
-  <header class="global-header">
-    <h1>Disc Cover Generator</h1>
-    <button
-      type="button"
-      class="theme-toggle"
-      (click)="theme.toggle()"
-      [attr.aria-label]="theme.resolved() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
-      [title]="theme.resolved() === 'dark' ? 'Light mode' : 'Dark mode'"
-    >
-      @if (theme.resolved() === 'dark') {
-        <app-icon name="sun" [size]="20" />
-      } @else {
-        <app-icon name="moon" [size]="20" />
-      }
-    </button>
-  </header>
+  <app-header class="global-header" />
 
   <aside class="form-panel">
     <app-cover-form (generate)="onGenerate()" />
@@ -27,10 +12,10 @@
   <main class="preview-panel">
     <h2>Live preview</h2>
     <div class="preview-panel--cover">
-      @if (store.mode.kind() === 'single') {
+      @if (store.images.kind() === 'single') {
         <app-cover-preview-single />
       } @else {
-        <app-cover-preview-separate-new />
+        <app-cover-preview-separate />
       }
     </div>
   </main>

@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { AppHeader } from './components/app-header/app-header';
 import { CoverForm } from './components/cover-form/cover-form';
-import { CoverPreviewSeparateNew } from './components/cover-preview-separate-new/cover-preview-separate-new';
+import { CoverPreviewSeparateNew } from './components/cover-preview-separate/cover-preview-separate';
 import { CoverPreviewSingle } from './components/cover-preview-single/cover-preview-single';
 import { CoverStore } from './services/cover.store';
 import { DragDropService } from './services/drag-drop.service';
 import { PdfGeneratorService } from './services/pdf-generator.service';
-import { ThemeService } from './services/theme.service';
 import { ToastService } from './services/toast.service';
-import { Icon } from './shared/icon/icon';
 import { ToastContainer } from './shared/toast-container/toast-container';
 
 /**
@@ -17,7 +16,7 @@ import { ToastContainer } from './shared/toast-container/toast-container';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CoverForm, CoverPreviewSingle, CoverPreviewSeparateNew, ToastContainer, Icon],
+  imports: [AppHeader, CoverForm, CoverPreviewSingle, CoverPreviewSeparateNew, ToastContainer],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,7 +24,6 @@ import { ToastContainer } from './shared/toast-container/toast-container';
 export class App {
   readonly store = inject(CoverStore);
   readonly drag = inject(DragDropService);
-  readonly theme = inject(ThemeService);
   private readonly pdf = inject(PdfGeneratorService);
   private readonly toasts = inject(ToastService);
 
@@ -36,36 +34,49 @@ export class App {
   async onGenerate(): Promise<void> {
     const store = this.store;
     try {
-      if (store.mode.kind() === 'single') {
-        if (!store.images.single()) {
+      if (store.images.kind() === 'single') {
+        if (!store.images.singleFile()) {
           throw new Error('Please choose an image.');
         }
-      } else if (!store.images.back() || !store.images.front()) {
+      } else if (!store.images.backFile() || !store.images.frontFile()) {
         throw new Error('Please choose both back and front images.');
       }
 
       store.ui.busy.set(true);
 
-      const kind = store.mode.kind();
+      const kind = store.images.kind();
       await this.pdf.generateAndOpen({
         presetId: store.case.presetId(),
-        fit: store.mode.fit(),
+        fit: store.images.fit(),
         border: {
           mode: store.borders.mode(),
           thicknessPx: store.borders.thicknessPx(),
           color: store.borders.color(),
         },
-        fitBackground: store.mode.fitBackground(),
+        fitBackground: store.images.fitBackground(),
         dpi: 300,
         input:
           kind === 'single'
-            ? { kind: 'single', image: store.images.single()! }
+            ? { kind: 'single', image: store.images.singleFile()! }
             : {
                 kind: 'three',
-                back: store.images.back()!,
-                front: store.images.front()!,
-                spineImage: store.images.spine(),
-                spinePreset: store.images.spine() ? null : store.spinePresetInput(),
+                back: store.images.backFile()!,
+                front: store.images.frontFile()!,
+                spineImage: store.images.spineFile(),
+                spinePreset: store.images.spineFile()
+                  ? null
+                  : {
+                      preset: store.spine.preset(),
+                      title: store.spine.title(),
+                      extras: {
+                        backgroundColor: store.spine.background(),
+                        textColor: store.spine.textColor(),
+                        textAlign: store.spine.textAlign(),
+                        showFrontImage: store.spine.showFrontImage(),
+                        frontImageWidening: store.spine.frontImageWidening(),
+                        showFrontSeparator: store.spine.showFrontSeparator(),
+                      },
+                    },
               },
       });
       this.toasts.success('PDF generated — opened in a new tab.');
