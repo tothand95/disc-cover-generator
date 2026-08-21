@@ -41,16 +41,16 @@ export async function loadSpinePresetImage(key: SpinePresetImageKey, role: Spine
     return cached;
   }
   const spec = SPINE_PRESET_IMAGES[key][role];
-  const res = await fetch(spec.url);
-  if (!res.ok) {
-    throw new Error(`Failed to load ${key} ${role} preset image: ${res.status}`);
+  const response = await fetch(spec.url);
+  if (!response.ok) {
+    throw new Error(`Failed to load ${key} ${role} preset image: ${response.status}`);
   }
-  const blob = await res.blob();
+  const blob = await response.blob();
   const dataUrl: string = await new Promise((resolve, reject) => {
-    const fr = new FileReader();
-    fr.onload = () => resolve(fr.result as string);
-    fr.onerror = () => reject(fr.error);
-    fr.readAsDataURL(blob);
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
   });
   const value: SpinePresetImage = {
     href: dataUrl,
@@ -72,15 +72,15 @@ let cachedFontBlock: string | null = null;
 let documentFontsRegistered: Promise<void> | null = null;
 
 async function fetchAsArrayBuffer(url: string): Promise<ArrayBuffer> {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch ${url}: ${res.status}`);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${url}: ${response.status}`);
   }
-  return res.arrayBuffer();
+  return response.arrayBuffer();
 }
 
-function arrayBufferToDataUrl(buf: ArrayBuffer, mime: string): string {
-  const bytes = new Uint8Array(buf);
+function arrayBufferToDataUrl(buffer: ArrayBuffer, mime: string): string {
+  const bytes = new Uint8Array(buffer);
   let binary = '';
   const chunk = 0x8000;
   for (let i = 0; i < bytes.length; i += chunk) {

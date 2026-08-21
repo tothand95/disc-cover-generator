@@ -11,11 +11,11 @@ export interface Section {
   png: Uint8Array;
 }
 
-function getFrontPresetImageKey(opts: GenerateBrowserOptions): SpinePresetImageKey | null {
-  if (opts.input.kind !== 'three') {
+function getFrontPresetImageKey(options: GenerateBrowserOptions): SpinePresetImageKey | null {
+  if (options.input.kind !== 'three') {
     return null;
   }
-  const spine = opts.input.spinePreset;
+  const spine = options.input.spinePreset;
   if (!spine || !spine.extras?.showFrontImage) {
     return null;
   }
@@ -25,44 +25,44 @@ function getFrontPresetImageKey(opts: GenerateBrowserOptions): SpinePresetImageK
   return null;
 }
 
-export async function buildSections(preset: CasePreset, opts: GenerateBrowserOptions): Promise<Section[]> {
-  const { dpi, fit, fitBackground } = opts;
-  const h = preset.heightMm;
-  const spineW = preset.spineWidthMm;
-  const sideW = (preset.totalWidthMm - spineW) / 2;
+export async function buildSections(preset: CasePreset, options: GenerateBrowserOptions): Promise<Section[]> {
+  const { dpi, fit, fitBackground } = options;
+  const heightMm = preset.heightMm;
+  const spineWidthMm = preset.spineWidthMm;
+  const sideWidthMm = (preset.totalWidthMm - spineWidthMm) / 2;
 
-  if (opts.input.kind === 'single') {
+  if (options.input.kind === 'single') {
     const png = await renderImageToPng({
-      file: opts.input.image,
+      file: options.input.image,
       widthPx: mmToPx(preset.totalWidthMm, dpi),
-      heightPx: mmToPx(h, dpi),
+      heightPx: mmToPx(heightMm, dpi),
       fit,
       fitBackground,
     });
     return [{ xMm: 0, widthMm: preset.totalWidthMm, png }];
   }
 
-  const three = opts.input;
-  const frontPresetKey = getFrontPresetImageKey(opts);
+  const three = options.input;
+  const frontPresetKey = getFrontPresetImageKey(options);
   const frontPresetImage = frontPresetKey ? await loadSpinePresetImage(frontPresetKey, 'front') : null;
   const widening = three.spinePreset?.extras?.frontImageWidening ?? 0;
   const frontWideningPx = widening > 0 ? Math.round((widening * dpi) / 300) : 0;
   const frontSeparatorPx = frontPresetKey === 'ps2' && three.spinePreset?.extras?.showFrontSeparator ? Math.max(1, Math.round((4 * dpi) / 300)) : 0;
 
-  const sideWpx = mmToPx(sideW, dpi);
-  const sideHpx = mmToPx(h, dpi);
+  const sideWidthPx = mmToPx(sideWidthMm, dpi);
+  const sideHeightPx = mmToPx(heightMm, dpi);
   const [backPng, frontPng] = await Promise.all([
     renderImageToPng({
       file: three.back,
-      widthPx: sideWpx,
-      heightPx: sideHpx,
+      widthPx: sideWidthPx,
+      heightPx: sideHeightPx,
       fit,
       fitBackground,
     }),
     renderFrontToPng({
       file: three.front,
-      widthPx: sideWpx,
-      heightPx: sideHpx,
+      widthPx: sideWidthPx,
+      heightPx: sideHeightPx,
       fit,
       fitBackground,
       topLayer: frontPresetImage
@@ -81,22 +81,22 @@ export async function buildSections(preset: CasePreset, opts: GenerateBrowserOpt
   if (three.spineImage) {
     const spinePng = await renderImageToPng({
       file: three.spineImage,
-      widthPx: mmToPx(spineW, dpi),
-      heightPx: mmToPx(h, dpi),
+      widthPx: mmToPx(spineWidthMm, dpi),
+      heightPx: mmToPx(heightMm, dpi),
       fit,
       fitBackground,
     });
-    spineSection = { xMm: sideW, widthMm: spineW, png: spinePng };
+    spineSection = { xMm: sideWidthMm, widthMm: spineWidthMm, png: spinePng };
   } else if (three.spinePreset) {
     const spinePng = await rasterizeSpineSvg({
       spine: three.spinePreset,
-      widthPx: mmToPx(spineW, dpi),
-      heightPx: mmToPx(h, dpi),
+      widthPx: mmToPx(spineWidthMm, dpi),
+      heightPx: mmToPx(heightMm, dpi),
     });
-    spineSection = { xMm: sideW, widthMm: spineW, png: spinePng };
+    spineSection = { xMm: sideWidthMm, widthMm: spineWidthMm, png: spinePng };
   } else {
     throw new Error('Three-image mode requires either a spine image or a spine preset.');
   }
 
-  return [{ xMm: 0, widthMm: sideW, png: backPng }, spineSection, { xMm: sideW + spineW, widthMm: sideW, png: frontPng }];
+  return [{ xMm: 0, widthMm: sideWidthMm, png: backPng }, spineSection, { xMm: sideWidthMm + spineWidthMm, widthMm: sideWidthMm, png: frontPng }];
 }

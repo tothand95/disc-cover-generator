@@ -11,13 +11,13 @@ export class PdfGeneratorService {
    * block popups opened after an `await`. Once the bytes are ready we
    * navigate the same tab to the blob URL, and revoke it after 60 s.
    */
-  async generateAndOpen(opts: GenerateBrowserOptions): Promise<void> {
+  async generateAndOpen(options: GenerateBrowserOptions): Promise<void> {
     const win = window.open('', '_blank');
     if (!win) {
       throw new Error('Popup blocked — please allow popups for this site.');
     }
     try {
-      const bytes = await generateCoverPdfInBrowser(opts);
+      const bytes = await generateCoverPdfInBrowser(options);
       const blob = new Blob([bytes as BlobPart], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       win.location.href = url;

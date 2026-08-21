@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { AppHeader } from './components/app-header/app-header';
 import { CoverForm } from './components/cover-form/cover-form';
-import { CoverPreviewSeparateNew } from './components/cover-preview-separate/cover-preview-separate';
-import { CoverPreviewSingle } from './components/cover-preview-single/cover-preview-single';
+import { CoverPreviewSeparateNew } from './components/cover-preview/cover-preview-separate/cover-preview-separate';
+import { CoverPreviewSingle } from './components/cover-preview/cover-preview-single/cover-preview-single';
 import { CoverStore } from './services/cover.store';
 import { DragDropService } from './services/drag-drop.service';
 import { PdfGeneratorService } from './services/pdf-generator.service';

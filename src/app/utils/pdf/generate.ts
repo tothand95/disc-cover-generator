@@ -26,15 +26,15 @@ export interface GenerateBrowserOptions {
   dpi: number;
 }
 
-export async function generateCoverPdfInBrowser(opts: GenerateBrowserOptions): Promise<Uint8Array> {
-  const preset = getPreset(opts.presetId);
+export async function generateCoverPdfInBrowser(options: GenerateBrowserOptions): Promise<Uint8Array> {
+  const preset = getPreset(options.presetId);
   const wrapWidthMm = preset.totalWidthMm + BLEED_MM * 2;
   const wrapHeightMm = preset.heightMm + BLEED_MM * 2;
   if (wrapWidthMm > A4_WIDTH_MM || wrapHeightMm > A4_HEIGHT_MM) {
     throw new Error(`Cover (${wrapWidthMm.toFixed(1)}x${wrapHeightMm.toFixed(1)}mm incl. bleed) does not fit on A4 landscape.`);
   }
 
-  const sections = await buildSections(preset, opts);
+  const sections = await buildSections(preset, options);
 
   const offsetXmm = (A4_WIDTH_MM - wrapWidthMm) / 2 + BLEED_MM;
   const offsetYmm = (A4_HEIGHT_MM - wrapHeightMm) / 2 + BLEED_MM;
@@ -43,8 +43,8 @@ export async function generateCoverPdfInBrowser(opts: GenerateBrowserOptions): P
   const page = pdf.addPage([mmToPt(A4_WIDTH_MM), mmToPt(A4_HEIGHT_MM)]);
 
   for (const section of sections) {
-    const img = await pdf.embedPng(section.png);
-    page.drawImage(img, {
+    const image = await pdf.embedPng(section.png);
+    page.drawImage(image, {
       x: mmToPt(offsetXmm + section.xMm),
       y: mmToPt(offsetYmm),
       width: mmToPt(section.widthMm),
@@ -52,7 +52,7 @@ export async function generateCoverPdfInBrowser(opts: GenerateBrowserOptions): P
     });
   }
 
-  drawBorders(page, sections, preset, offsetXmm, offsetYmm, opts.border, opts.dpi);
+  drawBorders(page, sections, preset, offsetXmm, offsetYmm, options.border, options.dpi);
 
   return pdf.save();
 }

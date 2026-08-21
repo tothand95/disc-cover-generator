@@ -1,0 +1,7 @@
+@if (isBlank()) {
+  <div class="spine-preset-preview__blank" [style.background]="store.spine.background()"></div>
+} @else if (isKnown() && svg()) {
+  <div class="spine-preset-preview__svg-host" [innerHTML]="svg()"></div>
+} @else {
+  <div class="spine-preset-preview__placeholder">{{ store.spine.preset() | uppercase }} preset<br />coming soon</div>
+}

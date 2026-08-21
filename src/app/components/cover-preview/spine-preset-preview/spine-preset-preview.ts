@@ -1,9 +1,10 @@
 import { UpperCasePipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, Injector, effect, inject, input, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, effect, inject, input, signal } from '@angular/core';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { buildSpineSvg } from '@core/spine/svg';
-import type { SpinePresetId, SpinePresetInput, SpineTextAlign } from '@core/types';
-import { resolveSpineSvgOptions } from '../../utils/spine/buildOptions';
+import type { SpinePresetInput } from '@core/types';
+import { CoverStore } from '../../../services/cover.store';
+import { resolveSpineSvgOptions } from '../../../utils/spine/buildOptions';
 
 /**
  * Renders a spine preset as inline SVG, going through the same
@@ -20,21 +21,16 @@ import { resolveSpineSvgOptions } from '../../utils/spine/buildOptions';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpinePresetPreview {
-  readonly preset = input.required<SpinePresetId>();
-  readonly title = input<string>('');
   readonly widthPx = input.required<number>();
   readonly heightPx = input.required<number>();
-  readonly background = input<string>('#ffffff');
-  readonly textColor = input<string>('#000000');
-  readonly textAlign = input<SpineTextAlign>('center');
 
+  readonly store = inject(CoverStore);
   private readonly sanitizer = inject(DomSanitizer);
-  private readonly injector = inject(Injector);
   protected readonly svg = signal<SafeHtml | null>(null);
 
   constructor() {
     effect(() => {
-      const preset = this.preset();
+      const preset = this.store.spine.preset();
       const w = this.widthPx();
       const h = this.heightPx();
       if (w <= 0 || h <= 0) {
@@ -47,20 +43,20 @@ export class SpinePresetPreview {
       }
       const spine: SpinePresetInput = {
         preset,
-        title: this.title(),
+        title: this.store.spine.title(),
         extras: {
-          backgroundColor: this.background(),
-          textColor: this.textColor(),
-          textAlign: this.textAlign(),
+          backgroundColor: this.store.spine.background(),
+          textColor: this.store.spine.textColor(),
+          textAlign: this.store.spine.textAlign(),
         },
       };
       let cancelled = false;
       resolveSpineSvgOptions(spine, w, h)
-        .then((opts) => {
+        .then((options) => {
           if (cancelled) {
             return;
           }
-          const raw = buildSpineSvg(opts);
+          const raw = buildSpineSvg(options);
           this.svg.set(this.sanitizer.bypassSecurityTrustHtml(raw));
         })
         .catch(() => {
@@ -75,11 +71,11 @@ export class SpinePresetPreview {
   }
 
   protected isBlank(): boolean {
-    return this.preset() === 'blank';
+    return this.store.spine.preset() === 'blank';
   }
 
   protected isKnown(): boolean {
-    const p = this.preset();
+    const p = this.store.spine.preset();
     return p === 'ps2' || p === 'xbox' || p === 'text';
   }
 }

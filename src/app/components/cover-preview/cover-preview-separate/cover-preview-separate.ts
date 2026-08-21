@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { CoverStore } from '../../services/cover.store';
-import { DragDropService } from '../../services/drag-drop.service';
-import { Icon } from '../../shared/icon/icon';
-import { getSpinePresetImageAspectRatio, getSpinePresetImageUrl, type SpinePresetImageKey } from '../../utils/spine/assets';
+import { CoverStore } from '../../../services/cover.store';
+import { DragDropService } from '../../../services/drag-drop.service';
+import { Icon } from '../../../shared/icon/icon';
+import { getSpinePresetImageAspectRatio, getSpinePresetImageUrl, type SpinePresetImageKey } from '../../../utils/spine/assets';
 import { DropOverlay } from '../drop-overlay/drop-overlay';
 import { SectionImage } from '../section-image/section-image';
 import { SpinePresetPreview } from '../spine-preset-preview/spine-preset-preview';
@@ -25,14 +25,14 @@ export class CoverPreviewSeparateNew {
   protected readonly preset = this.store.activePreset;
 
   protected readonly aspect = computed(() => {
-    const p = this.preset();
-    return `${p.totalWidthMm} / ${p.heightMm}`;
+    const preset = this.preset();
+    return `${preset.totalWidthMm} / ${preset.heightMm}`;
   });
 
   protected readonly gridCols = computed(() => {
-    const p = this.preset();
-    const side = (p.totalWidthMm - p.spineWidthMm) / 2;
-    return `${side}fr ${p.spineWidthMm}fr ${side}fr`;
+    const preset = this.preset();
+    const side = (preset.totalWidthMm - preset.spineWidthMm) / 2;
+    return `${side}fr ${preset.spineWidthMm}fr ${side}fr`;
   });
 
   protected readonly sideMm = computed(() => (this.preset().totalWidthMm - this.preset().spineWidthMm) / 2);
@@ -62,21 +62,21 @@ export class CoverPreviewSeparateNew {
   });
 
   protected readonly frontTopImage = computed(() => {
-    const p = this.store.spine.preset();
+    const presetId = this.store.spine.preset();
     if (!this.store.spine.showFrontImage()) {
       return null;
     }
-    if (p !== 'ps2' && p !== 'xbox') {
+    if (presetId !== 'ps2' && presetId !== 'xbox') {
       return null;
     }
-    const key = p as SpinePresetImageKey;
+    const key = presetId as SpinePresetImageKey;
     const sideWidthPx = this.sideWidthPx();
     const sideWidthMm = this.sideMm();
-    const ar = getSpinePresetImageAspectRatio(key, 'front');
+    const aspectRatio = getSpinePresetImageAspectRatio(key, 'front');
     const scale = sideWidthPx / ((sideWidthMm * 300) / 25.4);
     const wideningPx = this.store.spine.frontImageWidening() > 0 ? this.store.spine.frontImageWidening() * scale : 0;
     const separatorPx = key === 'ps2' && this.store.spine.showFrontSeparator() ? Math.max(1, 4 * scale) : 0;
-    const imgHeightPx = sideWidthPx / ar;
+    const imgHeightPx = sideWidthPx / aspectRatio;
     const blockHeightPx = imgHeightPx + wideningPx * 2;
     return {
       url: getSpinePresetImageUrl(key, 'front'),
@@ -89,17 +89,17 @@ export class CoverPreviewSeparateNew {
 
   constructor() {
     effect((onCleanup) => {
-      const el = this.stageRef().nativeElement;
-      const update = () => this.stageWidth.set(el.clientWidth);
+      const element = this.stageRef().nativeElement;
+      const update = () => this.stageWidth.set(element.clientWidth);
       update();
-      const ro = new ResizeObserver(update);
-      ro.observe(el);
-      onCleanup(() => ro.disconnect());
+      const resizeObserver = new ResizeObserver(update);
+      resizeObserver.observe(element);
+      onCleanup(() => resizeObserver.disconnect());
     });
   }
 
-  onSpineFilePicked(e: Event): void {
-    const input = e.target as HTMLInputElement;
+  onSpineFilePicked(event: Event): void {
+    const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     if (file) {
       this.store.images.spineFile.set(file);

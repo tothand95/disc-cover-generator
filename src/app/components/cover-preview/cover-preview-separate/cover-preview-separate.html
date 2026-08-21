@@ -25,13 +25,8 @@
         <app-section-image [url]="store.images.spineUrl()" [fit]="store.images.fit()" placeholder="spine image" (fileChange)="store.images.spineFile.set($event)" />
       } @else {
         <app-spine-preset-preview
-          [preset]="store.spine.preset()"
-          [title]="store.spine.title()"
           [widthPx]="spineWidthPx()"
           [heightPx]="stageHeightPx()"
-          [background]="store.spine.background()"
-          [textColor]="store.spine.textColor()"
-          [textAlign]="store.spine.textAlign()"
         />
         <div class="spine-overlay">
           <button type="button" class="spine-overlay__pill" (click)="spineFileInput.click()">

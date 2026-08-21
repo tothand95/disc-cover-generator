@@ -13,23 +13,23 @@ interface RasterizeOptions {
  * Render a spine SVG through the browser rasterizer so both preview and PDF
  * consume the exact same pixels.
  */
-export async function rasterizeSpineSvg(opts: RasterizeOptions): Promise<Uint8Array> {
-  const { spine, widthPx, heightPx } = opts;
-  const [options, fontStyleBlock] = await Promise.all([
+export async function rasterizeSpineSvg(options: RasterizeOptions): Promise<Uint8Array> {
+  const { spine, widthPx, heightPx } = options;
+  const [svgOptions, fontStyleBlock] = await Promise.all([
     resolveSpineSvgOptions(spine, widthPx, heightPx),
     loadSpineFontStyleBlock(),
     preloadSpineDocumentFonts(),
   ]);
-  const svg = buildSpineSvg({ ...options, fontStyleBlock });
+  const svg = buildSpineSvg({ ...svgOptions, fontStyleBlock });
 
   const blob = new Blob([svg], { type: 'image/svg+xml' });
   const url = URL.createObjectURL(blob);
   try {
-    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-      const el = new Image();
-      el.onload = () => resolve(el);
-      el.onerror = () => reject(new Error('Failed to load spine SVG'));
-      el.src = url;
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const element = new Image();
+      element.onload = () => resolve(element);
+      element.onerror = () => reject(new Error('Failed to load spine SVG'));
+      element.src = url;
     });
 
     const canvas = document.createElement('canvas');
@@ -39,7 +39,7 @@ export async function rasterizeSpineSvg(opts: RasterizeOptions): Promise<Uint8Ar
     if (!ctx) {
       throw new Error('Failed to acquire 2D canvas context');
     }
-    ctx.drawImage(img, 0, 0, widthPx, heightPx);
+    ctx.drawImage(image, 0, 0, widthPx, heightPx);
 
     const png: Blob = await new Promise((resolve, reject) => {
       canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('canvas.toBlob returned null'))), 'image/png');

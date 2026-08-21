@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
-import { CoverStore } from '../../services/cover.store';
-import { DragDropService } from '../../services/drag-drop.service';
+import { CoverStore } from '../../../services/cover.store';
+import { DragDropService } from '../../../services/drag-drop.service';
 import { SectionImage } from '../section-image/section-image';
 import { DropOverlay } from '../drop-overlay/drop-overlay';
 
@@ -22,8 +22,8 @@ export class CoverPreviewSingle {
   protected readonly preset = this.store.activePreset;
 
   protected readonly aspect = computed(() => {
-    const p = this.preset();
-    return `${p.totalWidthMm} / ${p.heightMm}`;
+    const preset = this.preset();
+    return `${preset.totalWidthMm} / ${preset.heightMm}`;
   });
 
   protected readonly mmToPx = computed(() => {
@@ -48,12 +48,12 @@ export class CoverPreviewSingle {
 
   constructor() {
     effect((onCleanup) => {
-      const el = this.stageRef().nativeElement;
-      const update = () => this.stageWidth.set(el.clientWidth);
+      const element = this.stageRef().nativeElement;
+      const update = () => this.stageWidth.set(element.clientWidth);
       update();
-      const ro = new ResizeObserver(update);
-      ro.observe(el);
-      onCleanup(() => ro.disconnect());
+      const resizeObserver = new ResizeObserver(update);
+      resizeObserver.observe(element);
+      onCleanup(() => resizeObserver.disconnect());
     });
   }
 }

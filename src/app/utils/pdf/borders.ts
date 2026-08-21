@@ -22,14 +22,14 @@ export function drawBorders(
   const thicknessMm = (border.thicknessPx / dpi) * MM_PER_INCH;
   const thicknessPt = mmToPt(thicknessMm);
   const half = thicknessMm / 2;
-  const wrapW = preset.totalWidthMm;
-  const wrapH = preset.heightMm;
+  const wrapWidth = preset.totalWidthMm;
+  const wrapHeight = preset.heightMm;
 
   page.drawRectangle({
     x: mmToPt(wrapOriginXmm - half),
     y: mmToPt(wrapOriginYmm - half),
-    width: mmToPt(wrapW + thicknessMm),
-    height: mmToPt(wrapH + thicknessMm),
+    width: mmToPt(wrapWidth + thicknessMm),
+    height: mmToPt(wrapHeight + thicknessMm),
     borderColor: strokeColor,
     borderWidth: thicknessPt,
   });
@@ -39,7 +39,7 @@ export function drawBorders(
       const xMm = wrapOriginXmm + sections[i]!.xMm;
       page.drawLine({
         start: { x: mmToPt(xMm), y: mmToPt(wrapOriginYmm) },
-        end: { x: mmToPt(xMm), y: mmToPt(wrapOriginYmm + wrapH) },
+        end: { x: mmToPt(xMm), y: mmToPt(wrapOriginYmm + wrapHeight) },
         color: strokeColor,
         thickness: thicknessPt,
       });

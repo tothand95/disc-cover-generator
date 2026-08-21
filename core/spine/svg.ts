@@ -26,7 +26,7 @@ export interface SpineSvgOptions {
   title: string;
   widthPx: number;
   heightPx: number;
-  bg: string;
+  background: string;
   textColor: string;
   align: SpineTextAlign;
   fontStyleBlock?: string;
@@ -38,35 +38,35 @@ export interface SpineSvgOptions {
   presetImage?: SpinePresetImage;
 }
 
-function escapeXml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+function escapeXml(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
-export function buildSpineSvg(opts: SpineSvgOptions): string {
-  const { title, widthPx, heightPx, bg, textColor, align, fontStyleBlock, presetImage } = opts;
+export function buildSpineSvg(options: SpineSvgOptions): string {
+  const { title, widthPx, heightPx, background, textColor, align, fontStyleBlock, presetImage } = options;
   const fontSizePx = Math.max(6, Math.floor(widthPx * 0.55));
-  const pad = fontSizePx;
+  const padding = fontSizePx;
 
   const y = fontSizePx * VISUAL_CENTER_RATIO;
 
   let textGroup = '';
   if (presetImage) {
-    const imgHeight = widthPx / presetImage.aspectRatio;
-    const rotateOriginY = imgHeight + widthPx * TOP_IMAGE_TEXT_GAP_RATIO;
+    const imageHeight = widthPx / presetImage.aspectRatio;
+    const rotateOriginY = imageHeight + widthPx * TOP_IMAGE_TEXT_GAP_RATIO;
     const escapedHref = escapeXml(presetImage.href);
-    const imageEl = `<image href="${escapedHref}" x="0" y="0" width="${widthPx}" height="${imgHeight}" preserveAspectRatio="xMidYMin meet"/>`;
-    const textEl = title
+    const imageElement = `<image href="${escapedHref}" x="0" y="0" width="${widthPx}" height="${imageHeight}" preserveAspectRatio="xMidYMin meet"/>`;
+    const textElement = title
       ? `<g transform="translate(${widthPx / 2} ${rotateOriginY}) rotate(90)"><text x="0" y="${y}" fill="${textColor}" font-family="${SPINE_FONT_FAMILY}" font-weight="600" font-size="${fontSizePx}" text-anchor="start" dominant-baseline="alphabetic">${escapeXml(title)}</text></g>`
       : '';
-    textGroup = imageEl + textEl;
+    textGroup = imageElement + textElement;
   } else {
     let x: number;
     let anchor: 'start' | 'middle' | 'end';
     if (align === 'start') {
-      x = -heightPx / 2 + pad;
+      x = -heightPx / 2 + padding;
       anchor = 'start';
     } else if (align === 'end') {
-      x = heightPx / 2 - pad;
+      x = heightPx / 2 - padding;
       anchor = 'end';
     } else {
       x = 0;
@@ -81,7 +81,7 @@ export function buildSpineSvg(opts: SpineSvgOptions): string {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${widthPx}" height="${heightPx}" viewBox="0 0 ${widthPx} ${heightPx}">
   ${fontStyleBlock ?? ''}
-  <rect width="100%" height="100%" fill="${bg}"/>
+  <rect width="100%" height="100%" fill="${background}"/>
   ${textGroup}
 </svg>`;
 }

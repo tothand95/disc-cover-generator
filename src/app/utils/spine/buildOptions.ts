@@ -13,7 +13,7 @@ export async function resolveSpineSvgOptions(spine: SpinePresetInput, widthPx: n
       title: spine.title || '',
       widthPx,
       heightPx,
-      bg: '#ffffff',
+      background: '#ffffff',
       textColor: '#000000',
       align: 'start',
       presetImage,
@@ -25,7 +25,7 @@ export async function resolveSpineSvgOptions(spine: SpinePresetInput, widthPx: n
     title: spine.preset === 'blank' ? '' : spine.title || '',
     widthPx,
     heightPx,
-    bg: spine.extras?.backgroundColor || '#ffffff',
+    background: spine.extras?.backgroundColor || '#ffffff',
     textColor: spine.extras?.textColor || '#000000',
     align,
   };

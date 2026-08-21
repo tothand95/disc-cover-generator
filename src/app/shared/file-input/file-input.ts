@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, ElementRef, effect, input, output, viewChild } from '@angular/core';
-import { Icon } from '../../shared/icon/icon';
+import { Icon } from '../icon/icon';
 
 /**
  * Native file picker with a "clear" button. Syncs the native input's file
@@ -22,28 +22,28 @@ export class FileInput {
 
   constructor() {
     effect(() => {
-      const el = this.inputRef().nativeElement;
+      const element = this.inputRef().nativeElement;
       const file = this.file();
       if (file) {
-        if (el.files && el.files.length === 1 && el.files[0] === file) {
+        if (element.files && element.files.length === 1 && element.files[0] === file) {
           return;
         }
         try {
-          const dt = new DataTransfer();
-          dt.items.add(file);
-          el.files = dt.files;
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          element.files = dataTransfer.files;
         } catch {
           // Older browsers may block; ignore.
         }
-      } else if (el.value) {
-        el.value = '';
+      } else if (element.value) {
+        element.value = '';
       }
     });
   }
 
-  onChange(e: Event): void {
-    const el = e.target as HTMLInputElement;
-    this.fileChange.emit(el.files?.[0] ?? null);
+  onChange(event: Event): void {
+    const element = event.target as HTMLInputElement;
+    this.fileChange.emit(element.files?.[0] ?? null);
   }
 
   clear(): void {

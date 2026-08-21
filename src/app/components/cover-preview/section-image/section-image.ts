@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output, signal, viewChild, ElementRef, computed } from '@angular/core';
 import type { FitMode } from '@core/types';
-import { Icon } from '../../shared/icon/icon';
+import { Icon } from '../../../shared/icon/icon';
 
 /**
  * A single cover section's image slot. Renders a placeholder button when

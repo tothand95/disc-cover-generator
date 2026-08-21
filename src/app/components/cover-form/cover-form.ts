@@ -1,7 +1,7 @@
 import { FormsModule } from '@angular/forms';
 import { Component, ChangeDetectionStrategy, computed, inject, output } from '@angular/core';
 import { CoverStore } from '../../services/cover.store';
-import { FileInput } from '../file-input/file-input';
+import { FileInput } from '../../shared/file-input/file-input';
 import { Segmented, SegmentedOption } from '../../shared/segmented/segmented';
 import { CASE_PRESETS } from '@core/presets';
 import type { FitMode, BorderMode, SpineTextAlign } from '@core/types';

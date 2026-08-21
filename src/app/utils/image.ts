@@ -20,8 +20,8 @@ export interface RenderFrontOptions extends RenderImageOptions {
   topLayer?: FrontTopLayer;
 }
 
-async function drawFileToCanvas(opts: RenderImageOptions): Promise<HTMLCanvasElement> {
-  const { file, widthPx, heightPx, fit, fitBackground } = opts;
+async function drawFileToCanvas(options: RenderImageOptions): Promise<HTMLCanvasElement> {
+  const { file, widthPx, heightPx, fit, fitBackground } = options;
   const bitmap = await createImageBitmap(file);
   try {
     const canvas = document.createElement('canvas');
@@ -40,26 +40,26 @@ async function drawFileToCanvas(opts: RenderImageOptions): Promise<HTMLCanvasEle
       ctx.fillRect(0, 0, widthPx, heightPx);
     }
 
-    const srcW = bitmap.width;
-    const srcH = bitmap.height;
+    const sourceWidth = bitmap.width;
+    const sourceHeight = bitmap.height;
 
     if (fit === 'stretch') {
       ctx.drawImage(bitmap, 0, 0, widthPx, heightPx);
     } else {
-      const srcRatio = srcW / srcH;
-      const dstRatio = widthPx / heightPx;
-      let dw: number;
-      let dh: number;
-      if ((fit === 'fill') === srcRatio > dstRatio) {
-        dh = heightPx;
-        dw = dh * srcRatio;
+      const sourceRatio = sourceWidth / sourceHeight;
+      const destRatio = widthPx / heightPx;
+      let drawWidth: number;
+      let drawHeight: number;
+      if ((fit === 'fill') === sourceRatio > destRatio) {
+        drawHeight = heightPx;
+        drawWidth = drawHeight * sourceRatio;
       } else {
-        dw = widthPx;
-        dh = dw / srcRatio;
+        drawWidth = widthPx;
+        drawHeight = drawWidth / sourceRatio;
       }
-      const dx = (widthPx - dw) / 2;
-      const dy = (heightPx - dh) / 2;
-      ctx.drawImage(bitmap, dx, dy, dw, dh);
+      const drawX = (widthPx - drawWidth) / 2;
+      const drawY = (heightPx - drawHeight) / 2;
+      ctx.drawImage(bitmap, drawX, drawY, drawWidth, drawHeight);
     }
     return canvas;
   } finally {
@@ -75,8 +75,8 @@ async function canvasToPng(canvas: HTMLCanvasElement): Promise<Uint8Array> {
 }
 
 /** Draw an image file into a canvas at the target pixel size using the fit mode. */
-export async function renderImageToPng(opts: RenderImageOptions): Promise<Uint8Array> {
-  const canvas = await drawFileToCanvas(opts);
+export async function renderImageToPng(options: RenderImageOptions): Promise<Uint8Array> {
+  const canvas = await drawFileToCanvas(options);
   return canvasToPng(canvas);
 }
 
@@ -87,9 +87,9 @@ export async function renderImageToPng(opts: RenderImageOptions): Promise<Uint8A
  * the cover — never bleeds up). Optional separator draws a colored line
  * immediately below the extended block.
  */
-export async function renderFrontToPng(opts: RenderFrontOptions): Promise<Uint8Array> {
-  const canvas = await drawFileToCanvas(opts);
-  if (!opts.topLayer) {
+export async function renderFrontToPng(options: RenderFrontOptions): Promise<Uint8Array> {
+  const canvas = await drawFileToCanvas(options);
+  if (!options.topLayer) {
     return canvasToPng(canvas);
   }
 
@@ -98,24 +98,24 @@ export async function renderFrontToPng(opts: RenderFrontOptions): Promise<Uint8A
     throw new Error('Failed to acquire 2D canvas context');
   }
 
-  const { href, aspectRatio, topPaddingPx = 0, bottomPaddingPx = 0, separator } = opts.topLayer;
-  const res = await fetch(href);
-  if (!res.ok) {
-    throw new Error(`Failed to load preset top image: ${res.status}`);
+  const { href, aspectRatio, topPaddingPx = 0, bottomPaddingPx = 0, separator } = options.topLayer;
+  const response = await fetch(href);
+  if (!response.ok) {
+    throw new Error(`Failed to load preset top image: ${response.status}`);
   }
-  const blob = await res.blob();
+  const blob = await response.blob();
   const topBitmap = await createImageBitmap(blob);
   try {
-    const topHeightPx = opts.widthPx / aspectRatio;
+    const topHeightPx = options.widthPx / aspectRatio;
     const totalHeight = topHeightPx + topPaddingPx + bottomPaddingPx;
     if (topPaddingPx > 0 || bottomPaddingPx > 0) {
       ctx.fillStyle = '#000000';
-      ctx.fillRect(0, 0, opts.widthPx, totalHeight);
+      ctx.fillRect(0, 0, options.widthPx, totalHeight);
     }
-    ctx.drawImage(topBitmap, 0, topPaddingPx, opts.widthPx, topHeightPx);
+    ctx.drawImage(topBitmap, 0, topPaddingPx, options.widthPx, topHeightPx);
     if (separator && separator.heightPx > 0) {
       ctx.fillStyle = separator.color;
-      ctx.fillRect(0, totalHeight, opts.widthPx, separator.heightPx);
+      ctx.fillRect(0, totalHeight, options.widthPx, separator.heightPx);
     }
   } finally {
     topBitmap.close();
