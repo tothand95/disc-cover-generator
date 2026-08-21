@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { CoverStore } from '../../../services/cover.store';
 import { DragDropService } from '../../../services/drag-drop.service';
+import { DropOverlay } from '../../../shared/drop-overlay/drop-overlay';
 import { Icon } from '../../../shared/icon/icon';
 import { getSpinePresetImageAspectRatio, getSpinePresetImageUrl, type SpinePresetImageKey } from '../../../utils/spine/assets';
-import { DropOverlay } from '../drop-overlay/drop-overlay';
 import { SectionImage } from '../section-image/section-image';
-import { SpinePresetPreview } from '../spine-preset-preview/spine-preset-preview';
+import { SpinePreset } from '../spine-preset/spine-preset';
 
 @Component({
   selector: 'app-cover-preview-separate',
   standalone: true,
-  imports: [SectionImage, DropOverlay, SpinePresetPreview, Icon],
+  imports: [SectionImage, DropOverlay, SpinePreset, Icon],
   templateUrl: './cover-preview-separate.html',
   styleUrl: './cover-preview-separate.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

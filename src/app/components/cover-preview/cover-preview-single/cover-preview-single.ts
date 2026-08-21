@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, ElementRef, computed, effect, injec
 import { CoverStore } from '../../../services/cover.store';
 import { DragDropService } from '../../../services/drag-drop.service';
 import { SectionImage } from '../section-image/section-image';
-import { DropOverlay } from '../drop-overlay/drop-overlay';
+import { DropOverlay } from '../../../shared/drop-overlay/drop-overlay';
 
 @Component({
   selector: 'app-cover-preview-single',

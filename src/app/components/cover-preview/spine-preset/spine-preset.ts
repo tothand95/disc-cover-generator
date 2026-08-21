@@ -1,5 +1,5 @@
 import { UpperCasePipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { buildSpineSvg } from '@core/spine/svg';
 import type { SpinePresetInput } from '@core/types';
@@ -13,14 +13,14 @@ import { resolveSpineSvgOptions } from '../../../utils/spine/buildOptions';
  * they come from our own SVG builder.
  */
 @Component({
-  selector: 'app-spine-preset-preview',
+  selector: 'app-spine-preset',
   standalone: true,
   imports: [UpperCasePipe],
-  templateUrl: './spine-preset-preview.html',
-  styleUrl: './spine-preset-preview.scss',
+  templateUrl: './spine-preset.html',
+  styleUrl: './spine-preset.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpinePresetPreview {
+export class SpinePreset {
   readonly widthPx = input.required<number>();
   readonly heightPx = input.required<number>();
 

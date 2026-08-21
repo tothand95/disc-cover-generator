@@ -15,19 +15,26 @@
   >
     <!-- Back cell -->
     <div class="cell">
-      <app-section-image [url]="store.images.backUrl()" [fit]="store.images.fit()" placeholder="back cover" (fileChange)="store.images.backFile.set($event)" />
+      <app-section-image
+        [url]="store.images.backUrl()"
+        [fit]="store.images.fit()"
+        placeholder="back cover"
+        (fileChange)="store.images.backFile.set($event)"
+      />
       <app-drop-overlay [visible]="drag.isDraggingFile()" label="back cover" (fileSelected)="store.images.backFile.set($event)" />
     </div>
 
     <!-- Spine cell -->
     <div class="cell cell--spine">
       @if (store.images.spineUrl()) {
-        <app-section-image [url]="store.images.spineUrl()" [fit]="store.images.fit()" placeholder="spine image" (fileChange)="store.images.spineFile.set($event)" />
-      } @else {
-        <app-spine-preset-preview
-          [widthPx]="spineWidthPx()"
-          [heightPx]="stageHeightPx()"
+        <app-section-image
+          [url]="store.images.spineUrl()"
+          [fit]="store.images.fit()"
+          placeholder="spine image"
+          (fileChange)="store.images.spineFile.set($event)"
         />
+      } @else {
+        <app-spine-preset [widthPx]="spineWidthPx()" [heightPx]="stageHeightPx()" />
         <div class="spine-overlay">
           <button type="button" class="spine-overlay__pill" (click)="spineFileInput.click()">
             <app-icon name="image" [size]="14" />
@@ -41,7 +48,12 @@
 
     <!-- Front cell -->
     <div class="cell">
-      <app-section-image [url]="store.images.frontUrl()" [fit]="store.images.fit()" placeholder="front cover" (fileChange)="store.images.frontFile.set($event)" />
+      <app-section-image
+        [url]="store.images.frontUrl()"
+        [fit]="store.images.fit()"
+        placeholder="front cover"
+        (fileChange)="store.images.frontFile.set($event)"
+      />
       @if (frontTopImage(); as ft) {
         <div class="front-top" [style.height.px]="ft.blockHeightPx" [style.background]="ft.wideningPx > 0 ? '#000000' : 'transparent'">
           <img [src]="ft.url" alt="" draggable="false" [style.top.px]="ft.wideningPx" [style.height.px]="ft.imgHeightPx" />
