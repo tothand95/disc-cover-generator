@@ -1,7 +1,7 @@
 <h1>Disc Cover Generator</h1>
 <button
   type="button"
-  class="theme-toggle"
+  class="btn btn-secondary theme-toggle"
   (click)="theme.toggle()"
   [attr.aria-label]="theme.resolved() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
   [title]="theme.resolved() === 'dark' ? 'Light mode' : 'Dark mode'"

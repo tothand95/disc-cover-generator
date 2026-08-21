@@ -159,3 +159,83 @@ button:disabled,
 select:disabled {
   cursor: not-allowed;
 }
+
+// ─── Button classes ────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-fg);
+  font-weight: 600;
+
+  &:hover:not(:disabled) {
+    background: var(--primary-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+  }
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+
+  &:hover:not(:disabled) {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+  }
+}
+
+.btn-pill {
+  position: relative;
+  background: var(--surface);
+  color: var(--text-muted);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  box-shadow: var(--shadow);
+
+  &:hover:not(:disabled) {
+    background: var(--surface-2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+  }
+
+  &--danger {
+    color: var(--danger);
+
+    &:hover:not(:disabled) {
+      background: var(--danger-bg);
+    }
+  }
+}

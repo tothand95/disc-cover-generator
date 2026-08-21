@@ -3,11 +3,11 @@
     <img [src]="url()" alt="" draggable="false" [style.object-fit]="objectFit()" />
     @if (editable()) {
       <div class="section-image__overlay">
-        <button type="button" class="section-image__pill" (click)="openPicker()">
+        <button type="button" class="btn btn-pill" (click)="openPicker()">
           <app-icon name="pencil" [size]="14" />
           <span>Replace</span>
         </button>
-        <button type="button" class="section-image__pill section-image__pill--danger" (click)="clear()">
+        <button type="button" class="btn btn-pill btn-pill--danger" (click)="clear()">
           <app-icon name="trash" [size]="14" />
           <span>Clear</span>
         </button>
