@@ -43,7 +43,6 @@ export class CoverPreviewSeparateNew {
   });
 
   protected readonly spineWidthPx = computed(() => this.preset().spineWidthMm * this.mmToPx());
-  protected readonly stageHeightPx = computed(() => this.preset().heightMm * this.mmToPx());
   protected readonly sideWidthPx = computed(() => this.sideMm() * this.mmToPx());
 
   protected readonly borderPx = computed(() => {

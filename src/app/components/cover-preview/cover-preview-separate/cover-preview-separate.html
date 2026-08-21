@@ -34,7 +34,7 @@
           (fileChange)="store.images.spineFile.set($event)"
         />
       } @else {
-        <app-spine-preset [widthPx]="spineWidthPx()" [heightPx]="stageHeightPx()" />
+        <app-spine-preset />
         <div class="spine-overlay">
           <button type="button" class="spine-overlay__pill" (click)="spineFileInput.click()">
             <app-icon name="image" [size]="14" />
